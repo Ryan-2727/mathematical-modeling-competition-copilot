@@ -6,7 +6,6 @@
 
 [English README](README.en.md)
 
-## 现在是自包含版本
 
 新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
 
