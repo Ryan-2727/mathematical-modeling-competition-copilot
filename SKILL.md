@@ -20,6 +20,7 @@ It does not promise an award. It maximizes award probability through disciplined
 
 1. **Contest setup and strategy**
    - Read `references/embedded/contest-setup.md`.
+   - Use the embedded brainstorming gate in that file before committing to a modeling route.
    - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
    - Create or update `plan.md` and `todo.md`.
 
@@ -29,6 +30,7 @@ It does not promise an award. It maximizes award probability through disciplined
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
 
 3. **Literature and reproduction details**
+   - Read `references/embedded/literature-fetch-and-explain.md` when literature search, paper selection, or paper explanation is needed.
    - Read `references/embedded/paper-context-resolver.md` when a narrow source-backed detail matters.
    - Do not use broad paper summaries as a substitute for model design.
    - Record source, claim, modeling impact, and whether evidence is direct or inferred.
@@ -101,6 +103,7 @@ Use these files as phase playbooks:
 - `references/embedded/contest-setup.md`
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/llm-mm-agent-methodology.md`
+- `references/embedded/literature-fetch-and-explain.md`
 - `references/embedded/paper-context-resolver.md`
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/diagrams.md`

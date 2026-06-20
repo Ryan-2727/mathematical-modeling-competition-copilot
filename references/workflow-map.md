@@ -7,8 +7,10 @@ This repository is designed as a self-contained Codex skill. A new computer can 
 The following formerly separate skills or helper workflows are embedded as reference playbooks:
 
 - `contest-setup.md`: project initialization, `plan.md`, `todo.md`, contest constraints, and task tracking.
+- `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.
 - `llm-mm-agent-methodology.md`: LLM-MM-Agent-inspired four-stage loop and HMML/MLE-Solver-style method selection.
+- `literature-fetch-and-explain.md`: embedded `paper-fetch-skill` and `paper-explainer` workflow for source search, paper explanation, and source notes.
 - `paper-context-resolver.md`: narrow paper or reproduction detail resolution.
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.

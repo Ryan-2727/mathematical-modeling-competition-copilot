@@ -11,8 +11,10 @@
 新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
 
 - 竞赛启动与 `plan.md` / `todo.md`
+- 有边界的建模路线 brainstorming
 - 数学建模六阶段流程
 - LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
+- 文献检索和论文解释流程
 - 论文/文献复现细节查证规则
 - 代码、Notebook、结果表和数据图流程
 - 流程图和结构图规则
@@ -90,7 +92,10 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 只在关键细节影响建模或复现时查证文献，例如数据划分、预处理、评价协议、方法细节、运行假设或来源冲突。
 
-参考：`references/embedded/paper-context-resolver.md`
+参考：
+
+- `references/embedded/literature-fetch-and-explain.md`
+- `references/embedded/paper-context-resolver.md`
 
 ### 4. 计算与实验
 
@@ -184,6 +189,7 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
         |-- contest-setup.md
         |-- mathmodel-six-phase.md
         |-- llm-mm-agent-methodology.md
+        |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
         |-- computation-and-visualization.md
         |-- diagrams.md

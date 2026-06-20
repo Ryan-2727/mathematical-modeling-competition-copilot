@@ -16,6 +16,18 @@ Ask only questions that materially affect the workflow:
 
 If the user provides the problem statement and deadline, proceed with reasonable defaults instead of blocking on minor preferences.
 
+## Embedded Brainstorming Gate
+
+Before committing to a model route, generate a small option set instead of picking the first plausible method:
+
+- list at least one simple baseline model
+- list one stronger model if the data and time budget support it
+- identify which assumptions each option needs
+- state what evidence would make an option fail
+- choose the route that is easiest to verify under the deadline
+
+Keep this brainstorming bounded. Do not expand into speculative features, extra deliverables, or unrelated methods.
+
 ## Required Artifacts
 
 Create or update:

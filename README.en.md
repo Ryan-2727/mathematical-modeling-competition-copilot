@@ -9,8 +9,10 @@ Mathematical Modeling Competition Copilot is a self-contained Codex skill for en
 A new computer can install only this repository and still get the full mathematical modeling competition workflow. The workflow knowledge that used to be spread across multiple helper skills is now embedded under `references/embedded/`:
 
 - contest setup and `plan.md` / `todo.md`
+- bounded brainstorming for model-route selection
 - mathematical modeling six-phase workflow
 - LLM-MM-Agent four-stage methodology and HMML/MLE-Solver-style modeling
+- literature search and paper explanation workflows
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
 - flowcharts and architecture diagrams
@@ -71,7 +73,7 @@ Chinese example:
 
 1. Contest setup and strategy: `references/embedded/contest-setup.md`
 2. Problem analysis and model design: `references/embedded/llm-mm-agent-methodology.md` and `references/embedded/mathmodel-six-phase.md`
-3. Literature and reproduction details: `references/embedded/paper-context-resolver.md`
+3. Literature search, paper explanation, and reproduction details: `references/embedded/literature-fetch-and-explain.md` and `references/embedded/paper-context-resolver.md`
 4. Computation and experiments: `references/embedded/computation-and-visualization.md`
 5. Tabular analysis and scenario sheets
 6. Figures, flowcharts, and diagrams: `references/embedded/diagrams.md`
@@ -134,6 +136,7 @@ Restart Codex after installation so the skill is discovered.
         |-- contest-setup.md
         |-- mathmodel-six-phase.md
         |-- llm-mm-agent-methodology.md
+        |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
         |-- computation-and-visualization.md
         |-- diagrams.md
