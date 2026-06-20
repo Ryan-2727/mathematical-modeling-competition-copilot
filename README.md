@@ -1,14 +1,42 @@
 # Mathematical Modeling Competition Copilot
 
-**Mathematical Modeling Competition Copilot** 是一个面向数学建模竞赛的 Codex skill，用于把赛题分析、建模设计、文献细节、可复现实验、图表表格、论文撰写和最终核验串成一个完整工作流。
+**Mathematical Modeling Competition Copilot** 是一个自包含的 Codex skill，用于数学建模竞赛的端到端工作流：审题、建模、文献细节查证、可复现实验、图表表格、论文撰写和最终核验。
 
 适用场景包括 MCM/ICM、CUMCM、华为杯、校赛以及其他类似数学建模竞赛。
 
 [English README](README.en.md)
 
+## 现在是自包含版本
+
+新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
+
+- 竞赛启动与 `plan.md` / `todo.md`
+- 数学建模六阶段流程
+- LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
+- 论文/文献复现细节查证规则
+- 代码、Notebook、结果表和数据图流程
+- 流程图和结构图规则
+- 论文撰写规则
+- LaTeX 和学术表格规则
+- 最终核验规则
+- 工具缺失时的 fallback 规则
+
+## 不能完全内嵌的能力
+
+下面这些不是纯文字工作流，而是依赖 Codex 插件或本机运行时。新电脑如果需要这些能力，请在 Codex 中安装或启用对应插件：
+
+| 能力 | 需要安装/启用 | 没有时的 fallback |
+| --- | --- | --- |
+| Jupyter Notebook 创建、编辑、执行 | Data Analytics 插件中的 `jupyter-notebooks` | 使用 Python 脚本和 Markdown 报告，并记录 Notebook 未执行 |
+| DOCX 创建、编辑、渲染检查 | Documents 插件 | 用 Markdown/LaTeX 起草论文，并记录 DOCX 未视觉验证 |
+| PDF 渲染、抽取、页面检查 | PDF 插件 | 生成源文件或请求本地 PDF 检查，并记录未验证项 |
+| XLSX、公式、图表、工作簿渲染 | Spreadsheets 插件 | 使用 CSV/Markdown 表格，并记录公式或布局未验证 |
+
+这些插件不是本仓库安装时自动带上的，因为它们包含运行时、渲染器或文件处理工具，不能靠把说明文字复制进 skill 来实现。
+
 ## 这个 Skill 能做什么
 
-这个 skill 是数学建模项目的总控入口。它不承诺“保证拿奖”，而是通过更规范的流程提高产出质量和获奖概率：
+这个 skill 是数学建模项目的总控入口。它不承诺“保证拿奖”，而是通过规范流程提高产出质量和获奖概率：
 
 1. 明确竞赛要求、提交格式、论文语言和时间预算。
 2. 拆解赛题子问题，形成可执行建模路线。
@@ -45,129 +73,61 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 1. 竞赛启动与策略
 
-首先确认竞赛类型、论文语言、提交格式、时间预算、队伍分工、可用数据和最终交付物。如果任务目标不清楚，会先进行需求澄清，再开始建模。
+确认竞赛类型、论文语言、提交格式、时间预算、队伍分工、可用数据和最终交付物。创建或更新 `plan.md` 和 `todo.md`。
 
-最低产出：
-
-- `plan.md`
-- `todo.md`
-- 竞赛约束和成功标准
+参考：`references/embedded/contest-setup.md`
 
 ### 2. 赛题分析与建模设计
 
-工作流使用受 LLM-MM-Agent 启发的四阶段框架：
+拆解子问题，定义假设、变量、参数、约束、目标函数、候选模型和验证计划。使用内嵌的 LLM-MM-Agent 方法论和数学建模六阶段规则。
 
-- Problem Analysis：赛题分析
-- Mathematical Modeling：数学建模
-- Computational Solving：计算求解
-- Solution Reporting：结果报告
+参考：
 
-建模选择采用 HMML 风格的层级方法选择：先判断建模领域，再细分子领域，比较候选方法，最后选择最简单且足够有说服力的模型。
-
-最低产出：
-
-- 子问题拆解
-- 核心假设
-- 变量和参数定义
-- 约束条件和目标函数
-- 候选方法与选择理由
-- 验证计划
+- `references/embedded/llm-mm-agent-methodology.md`
+- `references/embedded/mathmodel-six-phase.md`
 
 ### 3. 文献与复现细节
 
-当 README、论文或已有资料留下关键空白时，可以使用 `paper-context-resolver` 处理窄范围复现问题，例如：
+只在关键细节影响建模或复现时查证文献，例如数据划分、预处理、评价协议、方法细节、运行假设或来源冲突。
 
-- 数据集划分
-- 数据预处理
-- 评价协议
-- 方法细节
-- checkpoint 或运行假设
-- 论文与仓库说明之间的冲突
-
-它不用于泛泛总结论文。一般文献综述只提取能改进竞赛方案的模型、数据、评价方法或对照基线。
-
-最低产出：
-
-- 文献来源记录
-- 直接证据和推断的区分
-- 来源冲突说明
+参考：`references/embedded/paper-context-resolver.md`
 
 ### 4. 计算与实验
 
-工作流要求区分原始数据、处理后数据、代码、Notebook、结果表和图表。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
+区分原始数据、处理后数据、代码、Notebook、结果表和图表。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
 
-最低产出：
-
-- `code/`
-- `notebooks/`
-- `results/`
-- `reports/experiment_log.md`
-- 代码或 Notebook 的执行状态
+参考：`references/embedded/computation-and-visualization.md`
 
 ### 5. 表格分析与情景表
 
-当任务涉及评分矩阵、敏感性分析、情景对比、仪表盘或 Excel 交付物时，使用电子表格工作流。
-
-要求：
-
-- 公式可见、可追踪。
-- 不硬编码派生结果。
-- 标明单位、假设和数据来源。
-- 保留源数据路径或说明。
+处理评分矩阵、敏感性分析、情景对比、仪表盘和 Excel/CSV 表格。公式、单位、假设和数据来源必须可追踪。
 
 ### 6. 图表、流程图与结构图
 
-数据图和非数据图分开处理：
+数据图和非数据图分开处理。数据图用于支持结论；流程图、算法结构图、因果图和框架图用于解释方法。
 
-- 数据驱动图表属于计算与可视化阶段。
-- 方法流程图、算法结构图、因果结构图、框架图属于图示阶段。
-- 不重复绘制没有信息增量的装饰图。
-
-最低产出：
-
-- `figures/`
-- 图表生成脚本或源数据引用
-- 必要时保留流程图源文件
+参考：`references/embedded/diagrams.md`
 
 ### 7. 论文撰写
 
-论文阶段把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。
+把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致。
 
-最终论文应包含：
-
-- 清晰的摘要：问题、模型、结果、验证。
-- 明确的假设和符号说明。
-- 与子问题对应的模型章节。
-- 可追溯的结果来源。
-- 易读的图表和表格。
-- 关键假设的敏感性或鲁棒性分析。
-- 诚实但不过度削弱结论的局限性。
-- 支撑方法、数据或对照基线的参考文献。
+参考：`references/embedded/paper-writing.md`
 
 ### 8. 表格润色
 
-LaTeX 论文可以使用 `latex-tables` 优化回归表、统计摘要表和学术表格。普通竞赛表格也要满足：
+处理 LaTeX 表格、统计表、摘要表和普通竞赛表格。重点检查标题、单位、来源、精度、列对齐和数值来源。
 
-- 标题简洁。
-- 单位清楚。
-- 来源说明完整。
-- 数值列对齐。
-- 精度合理。
-- 表格数值与结果文件一致。
+参考：`references/embedded/latex-tables.md`
 
 ### 9. 最终核验
 
-工作流最后必须进行终检，不能在没有证据的情况下声称完成。
+提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。
 
-核验内容包括：
+参考：
 
-- 每个子问题都有回答。
-- 每个表格和图都被正文引用并有标题。
-- 单位、符号、变量名称一致。
-- 代码或 Notebook 执行状态已记录。
-- 文献结论有来源链接或引用。
-- DOCX、PDF、LaTeX 或 Typst 输出在适用时完成视觉检查。
-- 最终回复说明哪些内容已验证，哪些仍未验证。
+- `references/embedded/final-verification.md`
+- `references/embedded/tool-fallbacks.md`
 
 ## 默认项目结构
 
@@ -189,28 +149,6 @@ LaTeX 论文可以使用 `latex-tables` 优化回归表、统计摘要表和学�
 |   `-- verification_report.md
 `-- paper/
 ```
-
-## 集成的 Skills
-
-本 skill 会在可用时协调以下个人或插件 skills：
-
-- `brainstorming`
-- `1start-mathmodel`
-- `2analysis-modeling`
-- `3coding-visual`
-- `4drawio`
-- `5writing`
-- `6verity`
-- `llm-mm-agent`
-- `paper-context-resolver`
-- `latex-tables`
-- `verification-before-completion`
-- `jupyter-notebooks`
-- `documents`
-- `pdf`
-- `spreadsheets`
-
-如果某个辅助 skill 不可用，工作流会继续执行同一阶段，并在 `reports/verification_report.md` 中记录缺失项。
 
 ## 安装
 
@@ -241,11 +179,22 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
 |-- agents/
 |   `-- openai.yaml
 `-- references/
-    `-- workflow-map.md
+    |-- workflow-map.md
+    `-- embedded/
+        |-- contest-setup.md
+        |-- mathmodel-six-phase.md
+        |-- llm-mm-agent-methodology.md
+        |-- paper-context-resolver.md
+        |-- computation-and-visualization.md
+        |-- diagrams.md
+        |-- paper-writing.md
+        |-- latex-tables.md
+        |-- final-verification.md
+        `-- tool-fallbacks.md
 ```
 
 ## 设计说明
 
-这个 skill 故意保持轻量。它不捆绑完整求解器、前端应用或论文模板系统，而是给 Codex 一个可靠的数学建模竞赛总控流程。具体工具只在当前任务需要时调用。
+这个 skill 采用“单 skill + 内嵌参考模块”的结构，而不是在仓库里放多个嵌套小 skill。这样新电脑只安装一个仓库，也能稳定触发主 skill，并由主 skill 按阶段读取内嵌规则。
 
-`LLM-MM-Agent` 在这里被视为方法论来源，而不是必须运行的本地依赖。这样可以保留四阶段建模思路，同时让工作流更适合 Codex 内部使用。
+对于 DOCX、PDF、XLSX 和 Notebook 这类需要运行时工具的任务，本仓库提供流程和 fallback，但用户仍应在 Codex 中安装对应插件来获得完整文件处理能力。

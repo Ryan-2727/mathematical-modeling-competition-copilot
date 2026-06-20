@@ -1,12 +1,36 @@
 # Mathematical Modeling Competition Copilot
 
-Mathematical Modeling Competition Copilot is a Codex skill for end-to-end mathematical modeling contest work. It coordinates problem analysis, literature-supported modeling, reproducible computation, figures, tables, paper writing, and final verification for contests such as MCM/ICM, CUMCM, Huawei Cup, and school-level modeling competitions.
+Mathematical Modeling Competition Copilot is a self-contained Codex skill for end-to-end mathematical modeling contest work. It coordinates problem analysis, modeling, literature detail resolution, reproducible computation, figures, tables, paper writing, and final verification for contests such as MCM/ICM, CUMCM, Huawei Cup, and school-level modeling competitions.
 
 [中文 README](README.md)
 
-## Short Description
+## Self-Contained Version
 
-An end-to-end Codex skill for mathematical modeling competitions: analyze the problem, design models, resolve literature details, run reproducible experiments, write the paper, and verify the final submission.
+A new computer can install only this repository and still get the full mathematical modeling competition workflow. The workflow knowledge that used to be spread across multiple helper skills is now embedded under `references/embedded/`:
+
+- contest setup and `plan.md` / `todo.md`
+- mathematical modeling six-phase workflow
+- LLM-MM-Agent four-stage methodology and HMML/MLE-Solver-style modeling
+- narrow paper and reproduction detail resolution
+- code, notebooks, result tables, and data-driven figures
+- flowcharts and architecture diagrams
+- paper writing rules
+- LaTeX and academic table rules
+- final verification rules
+- fallback rules for missing tools
+
+## Capabilities That Cannot Be Fully Embedded
+
+Some capabilities require Codex plugins or local runtimes. Install or enable these in Codex when needed:
+
+| Capability | Install or enable | Fallback when unavailable |
+| --- | --- | --- |
+| Jupyter notebook creation, editing, execution | Data Analytics plugin, `jupyter-notebooks` | Use Python scripts and Markdown reports; record that notebook execution was not verified |
+| DOCX creation, editing, render QA | Documents plugin | Draft in Markdown/LaTeX; record that DOCX visual QA was not performed |
+| PDF rendering, extraction, page inspection | PDF plugin | Generate source files or request local PDF review; record unverified items |
+| XLSX formulas, charts, workbook rendering | Spreadsheets plugin | Use CSV/Markdown tables; record that formulas or layout were not verified |
+
+These are not automatically bundled by this repository because they require file-processing runtimes, renderers, or plugin tools.
 
 ## What This Skill Does
 
@@ -45,117 +69,15 @@ Chinese example:
 
 ## Workflow
 
-### 1. Contest Setup And Strategy
-
-The skill first confirms the contest type, paper language, submission format, time budget, team responsibilities, available data, and expected deliverables. If the task is ambiguous, it uses a brainstorming step before modeling.
-
-Expected outputs:
-
-- `plan.md`
-- `todo.md`
-- contest constraints and success criteria
-
-### 2. Problem Analysis And Model Design
-
-The skill uses an LLM-MM-Agent-inspired four-stage loop:
-
-- Problem analysis
-- Mathematical modeling
-- Computational solving
-- Solution reporting
-
-It also applies HMML-style method selection: choose a modeling domain, narrow the subdomain, compare candidate methods, and select the simplest defensible model that can answer the problem.
-
-Expected outputs:
-
-- subproblem map
-- assumptions
-- variables and parameters
-- constraints and objective functions
-- candidate methods and model rationale
-- validation plan
-
-### 3. Literature And Reproduction Details
-
-For narrow reproduction-critical gaps, the workflow can use `paper-context-resolver`. This is intentionally scoped. It is for details such as dataset splits, preprocessing, evaluation protocols, method assumptions, or conflicts between a paper and repository instructions.
-
-It should not be used for broad paper summaries. General literature review should extract only methods, data, or validation ideas that improve the contest solution.
-
-Expected outputs:
-
-- source notes
-- direct evidence versus inference
-- explicit conflict notes when sources disagree
-
-### 4. Computation And Experiments
-
-The workflow separates raw data, processed data, code, notebooks, result tables, and generated figures. Numeric claims must come from executed code, spreadsheet formulas, or cited sources.
-
-Expected outputs:
-
-- `code/`
-- `notebooks/`
-- `results/`
-- `reports/experiment_log.md`
-- reproducibility status
-
-### 5. Tabular Analysis And Scenario Sheets
-
-The skill uses spreadsheet workflows when the task involves scoring matrices, sensitivity analysis, scenario comparison, dashboards, or Excel deliverables.
-
-Rules:
-
-- Keep formulas visible and traceable.
-- Avoid hardcoding derived values.
-- Label units and assumptions.
-- Record source data paths.
-
-### 6. Figures, Flowcharts, And Diagrams
-
-Data-driven plots and non-data diagrams are treated separately.
-
-- Data charts belong to the computation and visualization phase.
-- Flowcharts, method diagrams, causal diagrams, and framework diagrams belong to the diagramming phase.
-- Decorative duplicates of data charts are avoided.
-
-Expected outputs:
-
-- `figures/`
-- plot source data or script references
-- diagram source files when available
-
-### 7. Paper Writing
-
-The paper workflow assembles the model, results, figures, tables, assumptions, and validation into a contest-ready paper.
-
-The final paper should include:
-
-- a sharp abstract
-- clear assumptions and notation
-- model sections aligned to subproblems
-- reproducible result references
-- readable figures and tables
-- sensitivity or robustness analysis
-- honest limitations
-- method and data references
-
-### 8. Table Polish
-
-For LaTeX papers, the workflow can use `latex-tables` for academic tables such as regression tables and summary statistics. For general contest tables, it enforces concise captions, units, source notes, aligned numeric columns, reasonable precision, and consistency with result files.
-
-### 9. Final Verification
-
-The workflow ends with hard verification before completion claims.
-
-Checks include:
-
-- Every subproblem has an answer.
-- Every table and figure is referenced and captioned.
-- Units, symbols, and variable names are consistent.
-- Code or notebook execution status is recorded.
-- Literature claims have source links or citations.
-- DOCX, PDF, LaTeX, or Typst output is visually inspected when applicable.
-- The final response states what was verified and what remains unverified.
+1. Contest setup and strategy: `references/embedded/contest-setup.md`
+2. Problem analysis and model design: `references/embedded/llm-mm-agent-methodology.md` and `references/embedded/mathmodel-six-phase.md`
+3. Literature and reproduction details: `references/embedded/paper-context-resolver.md`
+4. Computation and experiments: `references/embedded/computation-and-visualization.md`
+5. Tabular analysis and scenario sheets
+6. Figures, flowcharts, and diagrams: `references/embedded/diagrams.md`
+7. Paper writing: `references/embedded/paper-writing.md`
+8. Table polish: `references/embedded/latex-tables.md`
+9. Final verification: `references/embedded/final-verification.md` and `references/embedded/tool-fallbacks.md`
 
 ## Default Project Layout
 
@@ -177,28 +99,6 @@ Checks include:
 |   `-- verification_report.md
 `-- paper/
 ```
-
-## Integrated Skills
-
-This skill can coordinate these installed or plugin-provided skills when available:
-
-- `brainstorming`
-- `1start-mathmodel`
-- `2analysis-modeling`
-- `3coding-visual`
-- `4drawio`
-- `5writing`
-- `6verity`
-- `llm-mm-agent`
-- `paper-context-resolver`
-- `latex-tables`
-- `verification-before-completion`
-- `jupyter-notebooks`
-- `documents`
-- `pdf`
-- `spreadsheets`
-
-If an integrated helper is unavailable, the workflow continues manually and records the missing helper in `reports/verification_report.md`.
 
 ## Installation
 
@@ -229,11 +129,22 @@ Restart Codex after installation so the skill is discovered.
 |-- agents/
 |   `-- openai.yaml
 `-- references/
-    `-- workflow-map.md
+    |-- workflow-map.md
+    `-- embedded/
+        |-- contest-setup.md
+        |-- mathmodel-six-phase.md
+        |-- llm-mm-agent-methodology.md
+        |-- paper-context-resolver.md
+        |-- computation-and-visualization.md
+        |-- diagrams.md
+        |-- paper-writing.md
+        |-- latex-tables.md
+        |-- final-verification.md
+        `-- tool-fallbacks.md
 ```
 
 ## Design Notes
 
-This skill intentionally stays lightweight. It does not bundle a full modeling framework, solver runtime, or paper template system. Instead, it gives Codex a reliable orchestration layer and uses specialized skills or tools only when they are relevant to the current contest task.
+This skill uses one top-level skill plus embedded reference modules, rather than nested sub-skills. That makes installation stable: Codex discovers one skill, and the skill reads its embedded phase rules as needed.
 
-The skill treats the LLM-MM-Agent project as a methodology reference rather than a mandatory runtime dependency. This keeps the contest workflow practical inside Codex while preserving the useful four-stage modeling loop.
+For DOCX, PDF, XLSX, and notebook work, this repository provides the workflow and fallback behavior, but users should install the corresponding Codex plugins for full file-processing capability.

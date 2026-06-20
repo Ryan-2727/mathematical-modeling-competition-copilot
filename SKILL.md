@@ -1,65 +1,66 @@
 ---
 name: mathematical-modeling-competition-copilot
-description: End-to-end mathematical modeling competition workflow for contest problem solving and paper production. Use when Codex needs to help with MCM/ICM, CUMCM, Huawei Cup, school mathematical modeling contests, or similar tasks involving problem analysis, literature-supported modeling, reproducible computation, figures, tables, DOCX/PDF/LaTeX paper writing, and final verification.
+description: Self-contained end-to-end mathematical modeling competition workflow for contest problem solving and paper production. Use when Codex needs to help with MCM/ICM, CUMCM, Huawei Cup, school mathematical modeling contests, or similar tasks involving problem analysis, literature-supported modeling, reproducible computation, figures, tables, DOCX/PDF/LaTeX paper writing, and final verification.
 ---
 
 # Mathematical Modeling Competition Copilot
 
-Use this as the main entry point for mathematical modeling competitions. The goal is not to promise an award; the goal is to maximize award probability through disciplined modeling, reproducible computation, strong writing, and hard verification.
+Use this as the main entry point for mathematical modeling competitions. This skill is self-contained for workflow knowledge: it embeds the contest setup, modeling, literature resolution, computation, writing, table, and verification rules that were previously spread across multiple helper skills.
 
-## Assumptions
+It does not promise an award. It maximizes award probability through disciplined modeling, reproducible computation, strong writing, and hard verification.
 
-- The user wants a practical contest workflow, not a standalone web app.
-- Prefer minimal, verifiable artifacts over speculative complexity.
-- Use external skills when installed; fall back to the same workflow manually when a helper skill is unavailable.
-- Treat `LLM-MM-Agent` as a methodology skill, not as a mandatory runtime dependency.
+## Operating Mode
+
+- Start with the required workflow order below.
+- Read only the embedded reference files needed for the current phase.
+- Use installed plugins when they are available for file-specific work such as notebooks, DOCX, PDF, or spreadsheets.
+- If a plugin or runtime is unavailable, continue with the workflow manually and record the limitation in `reports/verification_report.md`.
 
 ## Required Workflow Order
 
 1. **Contest setup and strategy**
-   - Use `brainstorming` when the problem, constraints, or success criteria are unclear.
-   - If available, use `1start-mathmodel` to create `plan.md` and `todo.md`.
-   - Confirm contest type, language, submission format, time budget, team role split, and available data.
+   - Read `references/embedded/contest-setup.md`.
+   - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
+   - Create or update `plan.md` and `todo.md`.
 
 2. **Problem analysis and model design**
-   - Use `llm-mm-agent` for the four-stage modeling loop.
-   - If available, use `2analysis-modeling` for contest-specific model design.
+   - Read `references/embedded/llm-mm-agent-methodology.md`.
+   - Read `references/embedded/mathmodel-six-phase.md` for contest-specific modeling expectations.
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
 
 3. **Literature and reproduction details**
-   - Use `paper-context-resolver` only for narrow reproduction-critical gaps: dataset split, preprocessing, evaluation protocol, method detail, checkpoint/runtime assumption, or paper-vs-README conflict.
-   - Do not use it for broad paper summaries. For general literature review, search primary sources and extract only methods that can improve the contest solution.
-   - Record source, claim, how it changes the model, and whether evidence is direct or inferred.
+   - Read `references/embedded/paper-context-resolver.md` when a narrow source-backed detail matters.
+   - Do not use broad paper summaries as a substitute for model design.
+   - Record source, claim, modeling impact, and whether evidence is direct or inferred.
 
 4. **Computation and experiments**
-   - Use `jupyter-notebooks` when the notebook is a deliverable, reproducibility record, or exploratory modeling artifact.
-   - Use `3coding-visual` when available for code, result tables, and data figures.
-   - Keep raw data, processed data, code, notebooks, figures, and results separated.
+   - Read `references/embedded/computation-and-visualization.md`.
+   - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
 
 5. **Tabular analysis and scenario sheets**
-   - Use `spreadsheets` for scoring matrices, sensitivity tables, scenario comparison, summary dashboards, and Excel deliverables.
-   - Keep formulas visible and traceable. Avoid hardcoding derived values.
+   - Use spreadsheet-style reasoning for scoring matrices, sensitivity tables, scenario comparison, and dashboards.
+   - If the Spreadsheets plugin is installed, use it for `.xlsx` creation and verification.
+   - If not installed, create CSV/Markdown tables and record the limitation.
 
 6. **Figures, flowcharts, and diagrams**
-   - Use `3coding-visual` for data-driven plots.
-   - Use `4drawio` or equivalent diagramming only for method flowcharts, algorithm pipelines, causal structures, and framework diagrams.
-   - Do not duplicate data charts as decorative diagrams.
+   - Read `references/embedded/diagrams.md`.
+   - Separate data-driven charts from non-data diagrams.
+   - Keep figure captions, labels, and source data traceable.
 
 7. **Paper writing**
-   - Use `5writing` when available for contest paper assembly.
-   - Use `documents` for DOCX creation/editing and visual render QA.
-   - Use `pdf` for PDF rendering, inspection, extraction, and final layout checks.
-   - Use LaTeX/Typst only when the contest or user chooses that path.
+   - Read `references/embedded/paper-writing.md`.
+   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
+   - Use DOCX/PDF/LaTeX/Typst only when the contest or user chooses that path.
 
 8. **Table polish**
-   - Use `latex-tables` for LaTeX regression, summary statistics, and academic tables when available.
-   - For general contest tables, enforce: concise captions, units, source notes, aligned numeric columns, no over-wide tables, no unsupported precision, and no table values that are absent from results.
+   - Read `references/embedded/latex-tables.md` for LaTeX or academic tables.
+   - For general contest tables, enforce captions, units, source notes, aligned numeric columns, reasonable precision, and consistency with result files.
 
 9. **Final verification**
-   - Use `6verity` when available for mathematical modeling deliverable checks.
-   - Use `verification-before-completion` before claiming the work is complete.
-   - Verify: problem requirements, assumptions, formulas, code rerun status, data lineage, table/figure consistency, citations, paper formatting, and final submission files.
+   - Read `references/embedded/final-verification.md`.
+   - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
+   - Do not claim completion without fresh evidence.
 
 ## Default Artifact Layout
 
@@ -91,30 +92,21 @@ Create or preserve this layout unless the user provides an existing project stru
 - If multiple model families fit, compare the simplest credible baseline against one stronger method.
 - If computation cannot be run, do not present numeric conclusions as verified.
 - If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
+- If a plugin is missing, degrade gracefully; do not pretend visual rendering, workbook formulas, or notebook execution were verified.
 
-## Paper Quality Bar
+## Embedded References
 
-The final paper should have:
+Use these files as phase playbooks:
 
-- A sharp abstract with problem, model, result, and validation.
-- Clear assumptions and notation.
-- Model sections aligned to subproblems.
-- Results supported by reproducible outputs.
-- Figures and tables that are readable without hunting through the text.
-- Sensitivity or robustness analysis for key assumptions.
-- Limitations that are honest but not self-defeating.
-- References that support methods, data, or comparison baselines.
+- `references/embedded/contest-setup.md`
+- `references/embedded/mathmodel-six-phase.md`
+- `references/embedded/llm-mm-agent-methodology.md`
+- `references/embedded/paper-context-resolver.md`
+- `references/embedded/computation-and-visualization.md`
+- `references/embedded/diagrams.md`
+- `references/embedded/paper-writing.md`
+- `references/embedded/latex-tables.md`
+- `references/embedded/final-verification.md`
+- `references/embedded/tool-fallbacks.md`
 
-## Verification Checklist
-
-Before final delivery, check:
-
-- Every subproblem has an answer.
-- Every table/figure is referenced, captioned, and consistent with source results.
-- Units, symbols, and variable names are consistent.
-- Code/notebook execution status is recorded.
-- Literature claims have source links or citations.
-- DOCX/PDF/LaTeX output is visually inspected when applicable.
-- The final answer says what was verified and what remains unverified.
-
-Read `references/workflow-map.md` for the dependency map and fallback behavior.
+Read `references/workflow-map.md` for the dependency map, plugin limits, and fallback behavior.
