@@ -25,6 +25,7 @@ The verification loop:
 - Figures match source data and are referenced.
 - Literature claims have sources.
 - Submission format matches contest requirements.
+- For Chinese 2025-format contests, `paper-writing-zh-cn-format2025.md` checks are complete: abstract is first in the electronic paper, commitment and number pages are excluded from the electronic paper, appendix and support-material rules are satisfied, and identity information is absent.
 - Missing plugin/runtime limitations are recorded.
 
 ## Verification Report

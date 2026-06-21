@@ -16,7 +16,7 @@ A new computer can install only this repository and still get the full mathemati
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
 - flowcharts and architecture diagrams
-- paper writing rules
+- paper writing router with Chinese 2025 format and English contest baseline branches
 - LaTeX and academic table rules
 - final verification rules
 - fallback rules for missing tools
@@ -77,7 +77,7 @@ Chinese example:
 4. Computation and experiments: `references/embedded/computation-and-visualization.md`
 5. Tabular analysis and scenario sheets
 6. Figures, flowcharts, and diagrams: `references/embedded/diagrams.md`
-7. Paper writing: `references/embedded/paper-writing.md`
+7. Paper writing: `references/embedded/paper-writing.md`, `references/embedded/paper-writing-zh-cn-format2025.md`, and `references/embedded/paper-writing-en-contest-base.md`
 8. Table polish: `references/embedded/latex-tables.md`
 9. Final verification: `references/embedded/final-verification.md` and `references/embedded/tool-fallbacks.md`
 
@@ -141,6 +141,8 @@ Restart Codex after installation so the skill is discovered.
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md
+        |-- paper-writing-zh-cn-format2025.md
+        |-- paper-writing-en-contest-base.md
         |-- latex-tables.md
         |-- final-verification.md
         `-- tool-fallbacks.md

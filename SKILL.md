@@ -52,6 +52,8 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
+   - For Chinese contests using the 2025 national Chinese format, follow `references/embedded/paper-writing-zh-cn-format2025.md`.
+   - For English contests such as MCM/ICM, preserve and follow `references/embedded/paper-writing-en-contest-base.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
    - Use DOCX/PDF/LaTeX/Typst only when the contest or user chooses that path.
 
@@ -108,6 +110,8 @@ Use these files as phase playbooks:
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
+- `references/embedded/paper-writing-zh-cn-format2025.md`
+- `references/embedded/paper-writing-en-contest-base.md`
 - `references/embedded/latex-tables.md`
 - `references/embedded/final-verification.md`
 - `references/embedded/tool-fallbacks.md`

@@ -17,7 +17,7 @@
 - 论文/文献复现细节查证规则
 - 代码、Notebook、结果表和数据图流程
 - 流程图和结构图规则
-- 论文撰写规则
+- 中文 2025 格式和英语比赛基础版论文撰写分支
 - LaTeX 和学术表格规则
 - 最终核验规则
 - 工具缺失时的 fallback 规则
@@ -116,7 +116,11 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致。
 
-参考：`references/embedded/paper-writing.md`
+参考：
+
+- `references/embedded/paper-writing.md`
+- `references/embedded/paper-writing-zh-cn-format2025.md`
+- `references/embedded/paper-writing-en-contest-base.md`
 
 ### 8. 表格润色
 
@@ -193,6 +197,8 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md
+        |-- paper-writing-zh-cn-format2025.md
+        |-- paper-writing-en-contest-base.md
         |-- latex-tables.md
         |-- final-verification.md
         `-- tool-fallbacks.md

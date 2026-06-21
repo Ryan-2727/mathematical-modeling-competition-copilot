@@ -14,7 +14,9 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `paper-context-resolver.md`: narrow paper or reproduction detail resolution.
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
-- `paper-writing.md`: contest paper structure, writing quality, and claim discipline.
+- `paper-writing.md`: paper-writing branch selector.
+- `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
+- `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
 - `latex-tables.md`: LaTeX table and academic table polish.
 - `final-verification.md`: evidence-before-completion and submission readiness checks.
 - `tool-fallbacks.md`: what requires optional Codex plugins and what to do when they are missing.
