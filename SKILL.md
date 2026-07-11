@@ -54,6 +54,11 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
+   - When a paired award-winning/public paper is available, read
+     `references/embedded/exemplar-driven-paper-writing.md` and create an
+     `exemplar_manifest.yml` before drafting.
+   - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
+     LaTeX or the contest submission is a Chinese national-format paper.
    - For Chinese contests using the 2025 national Chinese format, follow `references/embedded/paper-writing-zh-cn-format2025.md`.
    - For English contests such as MCM/ICM, preserve and follow `references/embedded/paper-writing-en-contest-base.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
@@ -67,6 +72,15 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/final-verification.md`.
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
+
+10. **Exemplar regression loop**
+   - Freeze a baseline paper before inspecting the paired exemplar.
+   - Run `scripts/exemplar_metrics.py` and write a scorecard covering task coverage,
+     model traceability, validation, abstract, narrative, figures/tables, LaTeX
+     hygiene, and reproducibility.
+   - Fix only generalizable skill gaps, rerun the same problem, and compare the
+     scorecard. Repeat for the next pair. If source material is missing, record the
+     exact blocker instead of inventing a comparison.
 
 ## Default Artifact Layout
 
@@ -100,6 +114,9 @@ Create or preserve this layout unless the user provides an existing project stru
 - If computation cannot be run, do not present numeric conclusions as verified.
 - If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
 - If a plugin is missing, degrade gracefully; do not pretend visual rendering, workbook formulas, or notebook execution were verified.
+- If an exemplar is published as page images, measure those images and use them as
+  a layout benchmark; do not claim text-level or semantic comparison unless OCR or
+  an equivalent source is actually available.
 
 ## Embedded References
 
@@ -114,6 +131,8 @@ Use these files as phase playbooks:
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
+- `references/embedded/exemplar-driven-paper-writing.md`
+- `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-zh-cn-format2025.md`
 - `references/embedded/paper-writing-en-contest-base.md`
 - `references/embedded/latex-tables.md`

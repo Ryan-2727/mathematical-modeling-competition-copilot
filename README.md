@@ -18,6 +18,7 @@
 - 代码、Notebook、结果表和数据图流程
 - 流程图和结构图规则
 - 中文 2025 格式和英语比赛基础版论文撰写分支
+- 优秀论文配对、基线冻结、量化对照和迭代回归流程
 - LaTeX 和学术表格规则
 - 最终核验规则
 - 工具缺失时的 fallback 规则
@@ -62,7 +63,8 @@
 5. 用代码、Notebook 或电子表格完成可复现实验。
 6. 生成数据图、流程图、模型图和论文表格。
 7. 组装 DOCX、PDF、LaTeX 或 Typst 论文。
-8. 在最终提交前核验题目要求、公式、结果、图表、引用和格式。
+8. 有对应优秀论文时，先冻结基线，再按结构、验证、图表和版式进行对照迭代。
+9. 在最终提交前核验题目要求、公式、结果、图表、引用和格式。
 
 ## 什么时候使用
 
@@ -136,6 +138,8 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-writing-zh-cn-format2025.md`
+- `references/embedded/exemplar-driven-paper-writing.md`
+- `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-en-contest-base.md`
 
 ### 8. 表格润色
