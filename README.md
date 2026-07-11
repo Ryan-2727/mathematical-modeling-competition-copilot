@@ -22,6 +22,22 @@
 - 最终核验规则
 - 工具缺失时的 fallback 规则
 
+## 国赛模型路由增强
+
+当比赛类型为中国大学生数学建模竞赛（CUMCM / 国赛）时，skill 会先读取 `references/embedded/cumcm-model-selection.md`，再为每个小问建立“题目特征 → 模型 → 软件实现 → 验证 → 结果 → 论文位置”的追踪链。
+
+- 按任务特征选择优化与调度、网络与路径、综合评价、预测与拟合、统计与分类、随机系统或机理动态模型。
+- 覆盖本地模型库的 30 章内容及判别分析，包括规划、AHP、灰色系统、时间序列、回归、排队、马尔可夫链、微分方程等。
+- Python、MATLAB、LINGO 为同等路径：按模型匹配度、可复现性和团队可用环境选择，不要求三者同时使用。
+- 每个模型均包含适用条件、常见误用、实现边界和最低验证要求；默认先完成可解释的基线模型，再按证据增加一个增强或对照模型。
+
+国赛示例：
+
+```text
+使用 $mathematical-modeling-competition-copilot 参加中国大学生数学建模竞赛。
+比赛剩余 3 天，可用 Python、MATLAB、LINGO。请先完成题意拆解、模型候选比较和验证方案。
+```
+
 ## 不能完全内嵌的能力
 
 下面这些不是纯文字工作流，而是依赖 Codex 插件或本机运行时。新电脑如果需要这些能力，请在 Codex 中安装或启用对应插件：
@@ -190,6 +206,7 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
     |-- workflow-map.md
     `-- embedded/
         |-- contest-setup.md
+        |-- cumcm-model-selection.md
         |-- mathmodel-six-phase.md
         |-- llm-mm-agent-methodology.md
         |-- literature-fetch-and-explain.md
