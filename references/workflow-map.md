@@ -8,6 +8,7 @@ The following formerly separate skills or helper workflows are embedded as refer
 
 - `contest-setup.md`: project initialization, `plan.md`, `todo.md`, contest constraints, and task tracking.
 - `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
+- `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.
 - `llm-mm-agent-methodology.md`: LLM-MM-Agent-inspired four-stage loop and HMML/MLE-Solver-style method selection.
 - `literature-fetch-and-explain.md`: embedded `paper-fetch-skill` and `paper-explainer` workflow for source search, paper explanation, and source notes.
@@ -37,7 +38,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Phase | Minimum output | Verification |
 | --- | --- | --- |
 | Setup | `plan.md`, `todo.md` | User constraints captured |
-| Analysis | `reports/problem_analysis.md` | Every subproblem mapped |
+| Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
 | Modeling | `reports/model_design.md` | Variables, formulas, assumptions defined |
 | Literature | source notes | Claims tied to sources |
 | Computation | code/notebooks, `results/` | Executed or gap stated |
