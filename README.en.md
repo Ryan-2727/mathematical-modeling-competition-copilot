@@ -21,6 +21,21 @@ A new computer can install only this repository and still get the full mathemati
 - final verification rules
 - fallback rules for missing tools
 
+## CUMCM Model Routing
+
+For the China Undergraduate Mathematical Contest in Modeling (CUMCM), the skill reads `references/embedded/cumcm-model-selection.md` before selecting methods. It maintains a trace for every subproblem: `task signal -> model -> implementation -> validation -> result -> paper section`.
+
+- It routes optimization and scheduling, networks and paths, multi-criteria evaluation, prediction and fitting, statistics and classification, stochastic systems, and mechanistic dynamic models.
+- The guide covers the local 30-chapter model library and discriminant analysis, including programming, AHP, grey systems, time series, regression, queueing, Markov chains, and differential equations.
+- Python, MATLAB, and LINGO are equal implementation paths. The skill chooses according to model fit, reproducibility, and the team's available environment; it does not require using all three.
+- Each model card states when to use it, common misuse, implementation limits, and a minimum validation gate. The default is an interpretable baseline, followed by at most one evidence-backed enhancement or comparison.
+
+CUMCM example:
+
+```text
+Use $mathematical-modeling-competition-copilot for CUMCM. We have three days and can use Python, MATLAB, and LINGO. First produce the problem decomposition, model options, and validation plan.
+```
+
 ## Capabilities That Cannot Be Fully Embedded
 
 Some capabilities require Codex plugins or local runtimes. Install or enable these in Codex when needed:
@@ -134,6 +149,7 @@ Restart Codex after installation so the skill is discovered.
     |-- workflow-map.md
     `-- embedded/
         |-- contest-setup.md
+        |-- cumcm-model-selection.md
         |-- mathmodel-six-phase.md
         |-- llm-mm-agent-methodology.md
         |-- literature-fetch-and-explain.md
