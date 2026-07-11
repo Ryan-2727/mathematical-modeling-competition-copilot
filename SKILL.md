@@ -22,11 +22,13 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/contest-setup.md`.
    - Use the embedded brainstorming gate in that file before committing to a modeling route.
    - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
+   - If the contest is CUMCM / 中国大学生数学建模竞赛（国赛）, read `references/embedded/cumcm-model-selection.md` before selecting models. Ask for, or infer from the context, the available Python, MATLAB, and LINGO environments; treat them as equal paths and select the one that best matches the method and reproducibility need.
    - Create or update `plan.md` and `todo.md`.
 
 2. **Problem analysis and model design**
    - Read `references/embedded/llm-mm-agent-methodology.md`.
    - Read `references/embedded/mathmodel-six-phase.md` for contest-specific modeling expectations.
+   - For CUMCM, route each subproblem through the task signals and model cards in `references/embedded/cumcm-model-selection.md`. Maintain a trace from subproblem to data, model, implementation, validation, result file, and paper section.
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
 
 3. **Literature and reproduction details**
@@ -94,6 +96,7 @@ Create or preserve this layout unless the user provides an existing project stru
 - If the problem statement is missing, ask for it before modeling.
 - If data is missing but the task can proceed with public or synthetic data, label that explicitly.
 - If multiple model families fit, compare the simplest credible baseline against one stronger method.
+- For CUMCM, do not stack models for appearance. Select at most one primary model and one evidence-backed comparison or enhancement per subproblem; apply the method-specific minimum validation gate from `cumcm-model-selection.md`.
 - If computation cannot be run, do not present numeric conclusions as verified.
 - If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
 - If a plugin is missing, degrade gracefully; do not pretend visual rendering, workbook formulas, or notebook execution were verified.
@@ -103,6 +106,7 @@ Create or preserve this layout unless the user provides an existing project stru
 Use these files as phase playbooks:
 
 - `references/embedded/contest-setup.md`
+- `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/literature-fetch-and-explain.md`
