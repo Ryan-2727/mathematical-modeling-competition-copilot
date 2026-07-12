@@ -45,6 +45,13 @@ Create or update `reports/verification_report.md` with:
 - unresolved risks
 - final submission readiness
 
+## Optional award-focused review
+
+After this baseline verification and before the submission freeze, ask the user
+whether they want the optional post-paper award review. If they opt in and
+accept revisions, repeat this verification module after rebuilding the affected
+results and paper.
+
 ## Red Flags
 
 Stop and verify when about to write:

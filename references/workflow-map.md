@@ -18,6 +18,7 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
 - `data-traceability-and-reproducibility.md`: data audit, traceability table, environment capture, model-specific validation gates, and clean reruns.
 - `evidence-and-quality-gates.md`: claim ledger, reproducible-run manifest, numerical diagnostics, argument coverage, and historical-corpus originality preflight.
+- `post-paper-award-review.md`: user-opt-in reviewer simulation and claim stress test after paper completion, before freeze.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
 - `paper-writing.md`: paper-writing branch selector.
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
@@ -53,6 +54,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Figures/tables | `figures/`, tables | Referenced and consistent |
 | Writing | `paper/` | Results match computation |
 | Final check | verification report, argument coverage, claim report | Completion claims backed by evidence |
+| Optional review | `reports/post_paper_review.md` | Only after explicit user opt-in; final checks rerun after changes |
 | Submission | hash manifest and receipt evidence | Final artifact frozen and anonymous |
 
 ## Fallback Behavior

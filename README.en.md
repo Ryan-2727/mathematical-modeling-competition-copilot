@@ -24,6 +24,7 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - data audit, traceability, environment capture, anonymity scanning, and hashing
 - CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
+- optional post-paper award review: simulated reviewers and claim stress tests, only after user confirmation
 
 ## CUMCM Model Routing
 

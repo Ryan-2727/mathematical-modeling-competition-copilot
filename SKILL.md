@@ -87,12 +87,19 @@ It does not promise an award. It maximizes award probability through disciplined
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
 
-10. **Freeze and submit**
+10. **Optional award-focused post-paper review**
+   - Only after modeling and the complete paper are finished and phase 9 has run,
+     ask whether the user wants this optional phase. Do not run it by default.
+   - If the user opts in, read `references/embedded/post-paper-award-review.md`.
+     Produce prioritized reviewer findings and proposed fixes; do not use current-problem answer sources or paired exemplars.
+   - After any accepted revision, rerun phase 9 before freezing.
+
+11. **Freeze and submit**
    - Read `references/embedded/submission-and-anonymity.md`.
    - Run anonymity scan, environment capture, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
-11. **Paper-learning regression loop**
+12. **Paper-learning regression loop**
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
      visual inspection; convert recurring strengths into reusable writing rules.
    - Solve each test problem independently and freeze the baseline source,
@@ -166,6 +173,7 @@ Use these files as phase playbooks:
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/data-traceability-and-reproducibility.md`
 - `references/embedded/evidence-and-quality-gates.md`
+- `references/embedded/post-paper-award-review.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`
