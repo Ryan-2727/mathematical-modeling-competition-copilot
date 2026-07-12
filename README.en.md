@@ -2,7 +2,7 @@
 
 Mathematical Modeling Competition Copilot is a self-contained Codex skill for end-to-end mathematical modeling contest work. It coordinates problem analysis, modeling, literature detail resolution, reproducible computation, figures, tables, paper writing, and final verification for contests such as MCM/ICM, CUMCM, Huawei Cup, and school-level modeling competitions.
 
-[中文 README](README.md)
+[中文 README](README.zh-CN.md)
 
 ## Self-Contained Version
 

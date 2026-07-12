@@ -1,178 +1,104 @@
 # Mathematical Modeling Competition Copilot
 
-**Mathematical Modeling Competition Copilot** 是一个自包含的 Codex skill，用于数学建模竞赛的端到端工作流：审题、建模、文献细节查证、可复现实验、图表表格、论文撰写和最终核验。
+Mathematical Modeling Competition Copilot is a self-contained Codex skill for end-to-end mathematical modeling contest work. It coordinates problem analysis, modeling, literature detail resolution, reproducible computation, figures, tables, paper writing, and final verification for contests such as MCM/ICM, CUMCM, Huawei Cup, and school-level modeling competitions.
 
-适用场景包括 MCM/ICM、CUMCM、华为杯、校赛以及其他类似数学建模竞赛。
+[中文 README](README.zh-CN.md)
 
-[English README](README.en.md)
+## Self-Contained Version
 
+A new computer can install only this repository and still get the full mathematical modeling competition workflow. The workflow knowledge that used to be spread across multiple helper skills is now embedded under `references/embedded/`:
 
-新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
+- contest setup and `plan.md` / `todo.md`
+- bounded brainstorming for model-route selection
+- mathematical modeling six-phase workflow
+- LLM-MM-Agent four-stage methodology and HMML/MLE-Solver-style modeling
+- literature search and paper explanation workflows
+- narrow paper and reproduction detail resolution
+- code, notebooks, result tables, and data-driven figures
+- flowcharts and architecture diagrams
+- paper writing router with Chinese 2025 format and English contest baseline branches
+- cross-year exemplar-corpus lessons for structure, visuals, and evidence narrative
+- LaTeX and academic table rules
+- final verification rules
+- fallback rules for missing tools
+- contest mode, current-rules snapshot, AI-use evidence, and submission freeze
+- data audit, traceability, environment capture, anonymity scanning, and hashing
 
-- 竞赛启动与 `plan.md` / `todo.md`
-- 有边界的建模路线 brainstorming
-- 数学建模六阶段流程
-- LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
-- 文献检索和论文解释流程
-- 论文/文献复现细节查证规则
-- 代码、Notebook、结果表和数据图流程
-- 流程图和结构图规则
-- 中文 2025 格式和英语比赛基础版论文撰写分支
-- 从优秀论文语料库学习结构、图表语法、验证叙事和 LaTeX 写作规范
-- 多年份优秀论文库的跨题型写作规律
-- LaTeX 和学术表格规则
-- 最终核验规则
-- 工具缺失时的 fallback 规则
-- 比赛模式、当年规则快照、AI 使用留痕与提交冻结
-- 数据审计、追踪表、环境记录、匿名扫描和哈希核验
+## CUMCM Model Routing
 
-## 国赛模型路由增强
+For the China Undergraduate Mathematical Contest in Modeling (CUMCM), the skill reads `references/embedded/cumcm-model-selection.md` before selecting methods. It maintains a trace for every subproblem: `task signal -> model -> implementation -> validation -> result -> paper section`.
 
-当比赛类型为中国大学生数学建模竞赛（CUMCM / 国赛）时，skill 会先读取 `references/embedded/cumcm-model-selection.md`，再为每个小问建立“题目特征 → 模型 → 软件实现 → 验证 → 结果 → 论文位置”的追踪链。
+- It routes optimization and scheduling, networks and paths, multi-criteria evaluation, prediction and fitting, statistics and classification, stochastic systems, and mechanistic dynamic models.
+- The guide covers the local 30-chapter model library and discriminant analysis, including programming, AHP, grey systems, time series, regression, queueing, Markov chains, and differential equations.
+- Python, MATLAB, and LINGO are equal implementation paths. The skill chooses according to model fit, reproducibility, and the team's available environment; it does not require using all three.
+- Each model card states when to use it, common misuse, implementation limits, and a minimum validation gate. The default is an interpretable baseline, followed by at most one evidence-backed enhancement or comparison.
 
-- 按任务特征选择优化与调度、网络与路径、综合评价、预测与拟合、统计与分类、随机系统或机理动态模型。
-- 覆盖本地模型库的 30 章内容及判别分析，包括规划、AHP、灰色系统、时间序列、回归、排队、马尔可夫链、微分方程等。
-- Python、MATLAB、LINGO 为同等路径：按模型匹配度、可复现性和团队可用环境选择，不要求三者同时使用。
-- 每个模型均包含适用条件、常见误用、实现边界和最低验证要求；默认先完成可解释的基线模型，再按证据增加一个增强或对照模型。
-
-国赛示例：
+CUMCM example:
 
 ```text
-使用 $mathematical-modeling-competition-copilot 参加中国大学生数学建模竞赛。
-比赛剩余 3 天，可用 Python、MATLAB、LINGO。请先完成题意拆解、模型候选比较和验证方案。
+Use $mathematical-modeling-competition-copilot for CUMCM. We have three days and can use Python, MATLAB, and LINGO. First produce the problem decomposition, model options, and validation plan.
 ```
 
-## 不能完全内嵌的能力
+## Capabilities That Cannot Be Fully Embedded
 
-下面这些不是纯文字工作流，而是依赖 Codex 插件或本机运行时。新电脑如果需要这些能力，请在 Codex 中安装或启用对应插件：
+Some capabilities require Codex plugins or local runtimes. Install or enable these in Codex when needed:
 
-| 能力 | 需要安装/启用 | 没有时的 fallback |
+| Capability | Install or enable | Fallback when unavailable |
 | --- | --- | --- |
-| Jupyter Notebook 创建、编辑、执行 | Data Analytics 插件中的 `jupyter-notebooks` | 使用 Python 脚本和 Markdown 报告，并记录 Notebook 未执行 |
-| DOCX 创建、编辑、渲染检查 | Documents 插件 | 用 Markdown/LaTeX 起草论文，并记录 DOCX 未视觉验证 |
-| PDF 渲染、抽取、页面检查 | PDF 插件 | 生成源文件或请求本地 PDF 检查，并记录未验证项 |
-| XLSX、公式、图表、工作簿渲染 | Spreadsheets 插件 | 使用 CSV/Markdown 表格，并记录公式或布局未验证 |
+| Jupyter notebook creation, editing, execution | Data Analytics plugin, `jupyter-notebooks` | Use Python scripts and Markdown reports; record that notebook execution was not verified |
+| DOCX creation, editing, render QA | Documents plugin | Draft in Markdown/LaTeX; record that DOCX visual QA was not performed |
+| PDF rendering, extraction, page inspection | PDF plugin | Generate source files or request local PDF review; record unverified items |
+| XLSX formulas, charts, workbook rendering | Spreadsheets plugin | Use CSV/Markdown tables; record that formulas or layout were not verified |
 
-这些插件不能在本仓库安装时自动带上
+These are not automatically bundled by this repository because they require file-processing runtimes, renderers, or plugin tools.
 
-## 这个 Skill 能做什么
+## What This Skill Does
 
-这个 skill 是数学建模项目的总控入口。它不承诺“保证拿奖”，而是通过规范流程提高产出质量和获奖概率：
+This skill acts as the main entry point for a mathematical modeling project. It does not claim to guarantee an award. Its purpose is to improve the probability of a strong submission by enforcing a disciplined workflow:
 
-1. 固定比赛模式并快照当年官方规则、AI 政策、截止时间和提交流程。
-2. 拆解赛题子问题，形成可执行建模路线和追踪表。
-3. 完成数据审计，设计可解释、可验证、可写进论文的模型。
-4. 在合规范围内查证文献与复现细节；正式比赛禁止当前题目的公开讨论和互动求助。
-5. 用可复现代码、Notebook 或电子表格完成实验并记录环境、数据哈希和求解器状态。
-6. 生成有明确论证作用的数据图、流程图、模型图和论文表格。
-7. 组装论文并披露 AI 使用。
-8. 从优秀论文语料库学习通用规则后，再独立解题并进行事后复盘。
-9. 执行匿名检查、哈希冻结、提交包验证和回执确认。
+1. Freeze the contest mode and snapshot current official rules, AI policy, deadline, and submission procedure.
+2. Decompose the problem into subquestions and build a traceability table.
+3. Audit data and design defensible, testable mathematical models.
+4. Resolve literature or reproduction-critical details within the contest’s source and communication rules.
+5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, and solver evidence.
+6. Generate figures, flowcharts, and tables that support explicit claims.
+7. Assemble a contest paper and disclose AI use as required.
+8. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
 
-## 什么时候使用
+## When To Use
 
-当你需要 Codex 帮你完成以下工作时，可以使用本 skill：
+Use this skill when you want Codex to help with:
 
-- 数学建模竞赛完整解题。
-- 根据赛题生成建模计划和论文结构。
-- 构建包含数据、代码、结果、图表和报告的可复现项目。
-- 撰写、润色或检查数学建模论文。
-- 在提交前检查结果和论文是否一致、完整、可验证。
+- MCM/ICM, CUMCM, Huawei Cup, or similar mathematical modeling contests.
+- Turning a contest statement into a model plan and paper outline.
+- Building a reproducible modeling project with code, notebooks, results, figures, and reports.
+- Writing or polishing a mathematical modeling paper.
+- Checking whether the final submission is internally consistent and ready to submit.
 
-示例：
-
-```text
-使用 $mathematical-modeling-competition-copilot 帮我完成这个数学建模题，从建模到论文终检。
-```
-
-英文示例：
+Example prompt:
 
 ```text
 Use $mathematical-modeling-competition-copilot to solve this mathematical modeling contest problem and prepare a verified paper.
 ```
 
-## 工作流
+Chinese example:
 
-### 0. 比赛模式与合规
+```text
+使用 $mathematical-modeling-competition-copilot 帮我完成这个数学建模题，从建模到论文终检。
+```
 
-固定训练、正式比赛或赛后复盘模式；记录当年官方规则、AI 政策、允许的资料、截止时间和提交流程。正式比赛禁止浏览当前题目的讨论、答案和互动求助来源。
+## Workflow
 
-参考：`references/embedded/contest-modes-and-compliance.md`
+0. Contest mode and compliance: `contest-modes-and-compliance.md`
+1. Contest setup and strategy: `contest-setup.md`
+2. Problem analysis and model design: `llm-mm-agent-methodology.md` and `mathmodel-six-phase.md`
+3. Literature and reproduction details: `literature-fetch-and-explain.md` and `paper-context-resolver.md`
+4. Data audit, traceability, and computation: `data-traceability-and-reproducibility.md` and `computation-and-visualization.md`
+5. Figures and diagrams: `diagrams.md`
+6. Paper writing: `paper-writing.md` plus the current-rules branch
+7. Final verification and submission: `final-verification.md` and `submission-and-anonymity.md`
 
-### 1. 竞赛启动与策略
-
-确认竞赛类型、论文语言、提交格式、时间预算、队伍分工、可用数据和最终交付物。创建或更新 `plan.md` 和 `todo.md`。
-
-参考：`references/embedded/contest-setup.md`
-
-### 2. 赛题分析与建模设计
-
-拆解子问题，定义假设、变量、参数、约束、目标函数、候选模型和验证计划。使用内嵌的 LLM-MM-Agent 方法论和数学建模六阶段规则。
-
-参考：
-
-- `references/embedded/llm-mm-agent-methodology.md`
-- `references/embedded/mathmodel-six-phase.md`
-
-### 3. 文献与复现细节
-
-只在关键细节影响建模或复现时查证文献，例如数据划分、预处理、评价协议、方法细节、运行假设或来源冲突。
-
-参考：
-
-- `references/embedded/literature-fetch-and-explain.md`
-- `references/embedded/paper-context-resolver.md`
-
-### 4. 计算与实验
-
-区分原始数据、处理后数据、代码、Notebook、结果表和图表；完成数据审计、子问题追踪、环境记录和验证门。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
-
-参考：
-
-- `references/embedded/data-traceability-and-reproducibility.md`
-- `references/embedded/computation-and-visualization.md`
-
-### 5. 表格分析与情景表
-
-处理评分矩阵、敏感性分析、情景对比、仪表盘和 Excel/CSV 表格。公式、单位、假设和数据来源必须可追踪。
-
-### 6. 图表、流程图与结构图
-
-数据图和非数据图分开处理。数据图用于支持结论；流程图、算法结构图、因果图和框架图用于解释方法。
-
-参考：`references/embedded/diagrams.md`
-
-### 7. 论文撰写
-
-把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致。
-
-参考：
-
-- `references/embedded/paper-writing.md`
-- `references/embedded/paper-writing-zh-cn-format2025.md`
-- `references/embedded/paper-learning-from-exemplars.md`
-- `references/embedded/2025-corpus-observations.md`
-- `references/embedded/latex-paper-pipeline.md`
-- `references/embedded/paper-writing-en-contest-base.md`
-- `references/embedded/paper-writing-mcm-icm-current.md`
-
-### 8. 表格润色
-
-处理 LaTeX 表格、统计表、摘要表和普通竞赛表格。重点检查标题、单位、来源、精度、列对齐和数值来源。
-
-参考：`references/embedded/latex-tables.md`
-
-### 9. 最终核验
-
-提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。
-
-参考：
-
-- `references/embedded/final-verification.md`
-- `references/embedded/tool-fallbacks.md`
-- `references/embedded/submission-and-anonymity.md`
-
-## 默认项目结构
+## Default Project Layout
 
 ```text
 .
@@ -193,9 +119,9 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 `-- paper/
 ```
 
-## 安装
+## Installation
 
-把仓库克隆到 Codex skills 目录：
+Clone this repository into your Codex skills directory:
 
 ### Windows PowerShell
 
@@ -209,9 +135,9 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
 git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot.git "$HOME/.codex/skills/mathematical-modeling-competition-copilot"
 ```
 
-安装后重启 Codex，让 skill 被重新发现。
+Restart Codex after installation so the skill is discovered.
 
-## 仓库结构
+## Repository Structure
 
 ```text
 .
@@ -240,8 +166,8 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
         `-- tool-fallbacks.md
 ```
 
-## 设计说明
+## Design Notes
 
-这个 skill 采用“单 skill + 内嵌参考模块”的结构，而不是在仓库里放多个嵌套小 skill。这样新电脑只安装一个仓库，也能稳定触发主 skill，并由主 skill 按阶段读取内嵌规则。
+This skill uses one top-level skill plus embedded reference modules, rather than nested sub-skills. That makes installation stable: Codex discovers one skill, and the skill reads its embedded phase rules as needed.
 
-对于 DOCX、PDF、XLSX 和 Notebook 这类需要运行时工具的任务，本仓库提供流程和 fallback，但用户仍应在 Codex 中安装对应插件来获得完整文件处理能力。
+For DOCX, PDF, XLSX, and notebook work, this repository provides the workflow and fallback behavior, but users should install the corresponding Codex plugins for full file-processing capability.
