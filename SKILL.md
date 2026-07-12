@@ -54,9 +54,10 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
-   - When a paired award-winning/public paper is available, read
-     `references/embedded/exemplar-driven-paper-writing.md` and create an
-     `exemplar_manifest.yml` before drafting.
+   - When improving paper-writing ability or when an offline corpus of excellent
+     papers is available, read `references/embedded/paper-learning-from-exemplars.md`.
+   - For the learned 2025 Chinese-paper profile, read
+     `references/embedded/2025-corpus-observations.md`.
    - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
      LaTeX or the contest submission is a Chinese national-format paper.
    - For Chinese contests using the 2025 national Chinese format, follow `references/embedded/paper-writing-zh-cn-format2025.md`.
@@ -73,14 +74,15 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
 
-10. **Exemplar regression loop**
-   - Freeze a baseline paper before inspecting the paired exemplar.
-   - Run `scripts/exemplar_metrics.py` and write a scorecard covering task coverage,
-     model traceability, validation, abstract, narrative, figures/tables, LaTeX
-     hygiene, and reproducibility.
-   - Fix only generalizable skill gaps, rerun the same problem, and compare the
-     scorecard. Repeat for the next pair. If source material is missing, record the
-     exact blocker instead of inventing a comparison.
+10. **Paper-learning regression loop**
+   - Profile an offline corpus once with `scripts/paper_corpus_metrics.py` and
+     visual inspection; convert recurring strengths into reusable writing rules.
+   - Solve each test problem independently and freeze the baseline source,
+     results, figures, and LaTeX paper before any post-hoc comparison.
+   - Compare the baseline with the corpus profile, revise no more than three
+     generalizable gaps, then re-solve from the statement and data. Never require a
+     current-problem paper as an input and never copy exemplar wording, numbers,
+     models, or figures.
 
 ## Default Artifact Layout
 
@@ -114,9 +116,9 @@ Create or preserve this layout unless the user provides an existing project stru
 - If computation cannot be run, do not present numeric conclusions as verified.
 - If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
 - If a plugin is missing, degrade gracefully; do not pretend visual rendering, workbook formulas, or notebook execution were verified.
-- If an exemplar is published as page images, measure those images and use them as
-  a layout benchmark; do not claim text-level or semantic comparison unless OCR or
-  an equivalent source is actually available.
+- If corpus PDFs are scanned, use visual rendering as the authority for layout and
+  record OCR/text-extraction limitations; do not claim semantic comparison from
+  empty or incomplete extracted text.
 
 ## Embedded References
 
@@ -131,7 +133,8 @@ Use these files as phase playbooks:
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
-- `references/embedded/exemplar-driven-paper-writing.md`
+- `references/embedded/paper-learning-from-exemplars.md`
+- `references/embedded/2025-corpus-observations.md`
 - `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-zh-cn-format2025.md`
 - `references/embedded/paper-writing-en-contest-base.md`
