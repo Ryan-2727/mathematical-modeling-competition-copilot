@@ -17,6 +17,7 @@ A new computer can install only this repository and still get the full mathemati
 - code, notebooks, result tables, and data-driven figures
 - flowcharts and architecture diagrams
 - paper writing router with Chinese 2025 format and English contest baseline branches
+- cross-year exemplar-corpus lessons for structure, visuals, and evidence narrative
 - LaTeX and academic table rules
 - final verification rules
 - fallback rules for missing tools

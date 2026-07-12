@@ -19,7 +19,7 @@ Record only reusable observations in `references/` or a project report:
 4. Convert observations into rules with evidence and exceptions. Keep the source
    PDFs outside the skill repository unless redistribution is authorized.
 
-Use `scripts/paper_corpus_metrics.py --pdf-dir <corpus> --out <report.json>` for
+Use `scripts/paper_corpus_metrics.py --pdf-dir <corpus> --recursive --out <report.json>` for
 repeatable page-count and page-size measurements. Because many competition papers
 are scanned PDFs, do not assume text extraction is complete; visual inspection is
 the authority for layout, and OCR is only an aid for semantic indexing.
@@ -119,4 +119,3 @@ When improving the skill itself, use this order:
 
 Store the evidence in `reports/paper_learning_iteration_*.md`; distinguish observed
 facts, design rules, and unresolved limitations.
-

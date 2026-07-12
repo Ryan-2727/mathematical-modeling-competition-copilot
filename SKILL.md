@@ -65,6 +65,8 @@ It does not promise an award. It maximizes award probability through disciplined
      papers is available, read `references/embedded/paper-learning-from-exemplars.md`.
    - For the learned 2025 Chinese-paper profile, read
      `references/embedded/2025-corpus-observations.md`.
+   - For cross-year CUMCM writing patterns, read
+     `references/embedded/multi-year-corpus-observations.md`.
    - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
      LaTeX or the contest submission is a Chinese national-format paper.
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
@@ -85,8 +87,8 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/submission-and-anonymity.md`.
    - Run anonymity scan, environment capture, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
 
-10. **Paper-learning regression loop**
-   - Profile an offline corpus once with `scripts/paper_corpus_metrics.py` and
+11. **Paper-learning regression loop**
+   - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
      visual inspection; convert recurring strengths into reusable writing rules.
    - Solve each test problem independently and freeze the baseline source,
      results, figures, and LaTeX paper before any post-hoc comparison.
@@ -158,6 +160,7 @@ Use these files as phase playbooks:
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`
 - `references/embedded/2025-corpus-observations.md`
+- `references/embedded/multi-year-corpus-observations.md`
 - `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-zh-cn-format2025.md`
 - `references/embedded/paper-writing-en-contest-base.md`

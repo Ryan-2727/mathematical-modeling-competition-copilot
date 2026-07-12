@@ -58,6 +58,17 @@ class ScriptTests(unittest.TestCase):
             self.run_script("set_submission_state.py", "--manifest", str(manifest), "--state", "verified", "--evidence", str(report))
             self.assertEqual(json.loads(manifest.read_text(encoding="utf-8"))["submission_state"], "verified")
 
+    def test_recursive_corpus_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "corpus" / "2025"
+            root.mkdir(parents=True)
+            (root / "A001.pdf").write_bytes(b"not-a-real-pdf")
+            out = root.parent.parent / "metrics.json"
+            self.run_script("paper_corpus_metrics.py", "--pdf-dir", str(root.parent.parent), "--recursive", "--out", str(out))
+            data = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(data["pdf_count"], 1)
+            self.assertTrue(data["papers"][0]["relative_path"].replace("\\", "/").endswith("corpus/2025/A001.pdf"))
+
 
 if __name__ == "__main__":
     unittest.main()
