@@ -55,4 +55,3 @@ Before freeze, ask:
    depends on estimated data or fitted parameters?
 5. Could a reader remove any paragraph, figure, or table without losing evidence?
    If yes, remove or consolidate it.
-
