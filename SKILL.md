@@ -18,6 +18,11 @@ It does not promise an award. It maximizes award probability through disciplined
 
 ## Required Workflow Order
 
+0. **Contest mode, rules, and compliance**
+   - Read `references/embedded/contest-modes-and-compliance.md` before viewing or researching a live problem.
+   - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
+   - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
+
 1. **Contest setup and strategy**
    - Read `references/embedded/contest-setup.md`.
    - Use the embedded brainstorming gate in that file before committing to a modeling route.
@@ -30,6 +35,7 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/mathmodel-six-phase.md` for contest-specific modeling expectations.
    - For CUMCM, route each subproblem through the task signals and model cards in `references/embedded/cumcm-model-selection.md`. Maintain a trace from subproblem to data, model, implementation, validation, result file, and paper section.
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
+   - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
 
 3. **Literature and reproduction details**
    - Read `references/embedded/literature-fetch-and-explain.md` when literature search, paper selection, or paper explanation is needed.
@@ -39,6 +45,7 @@ It does not promise an award. It maximizes award probability through disciplined
 
 4. **Computation and experiments**
    - Read `references/embedded/computation-and-visualization.md`.
+   - Read `references/embedded/data-traceability-and-reproducibility.md` before fitting a data-driven model.
    - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
 
@@ -60,8 +67,8 @@ It does not promise an award. It maximizes award probability through disciplined
      `references/embedded/2025-corpus-observations.md`.
    - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
      LaTeX or the contest submission is a Chinese national-format paper.
-   - For Chinese contests using the 2025 national Chinese format, follow `references/embedded/paper-writing-zh-cn-format2025.md`.
-   - For English contests such as MCM/ICM, preserve and follow `references/embedded/paper-writing-en-contest-base.md`.
+   - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
+   - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
    - Use DOCX/PDF/LaTeX/Typst only when the contest or user chooses that path.
 
@@ -73,6 +80,10 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/final-verification.md`.
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
+
+10. **Freeze and submit**
+   - Read `references/embedded/submission-and-anonymity.md`.
+   - Run anonymity scan, environment capture, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
 
 10. **Paper-learning regression loop**
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py` and
@@ -103,7 +114,13 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- problem_analysis.md
 |   |-- model_design.md
 |   |-- experiment_log.md
+|   |-- contest_rules_snapshot.md
+|   |-- data_audit.md
+|   |-- traceability.md
+|   |-- ai_usage_log.jsonl
 |   `-- verification_report.md
+|-- environment/
+|-- support/
 `-- paper/
 ```
 
@@ -119,18 +136,24 @@ Create or preserve this layout unless the user provides an existing project stru
 - If corpus PDFs are scanned, use visual rendering as the authority for layout and
   record OCR/text-extraction limitations; do not claim semantic comparison from
   empty or incomplete extracted text.
+- Do not silently reuse prior-year rules. A current official rule snapshot is required before a live contest can become submission-ready.
+- Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
+- A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
+- A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
 
 ## Embedded References
 
 Use these files as phase playbooks:
 
 - `references/embedded/contest-setup.md`
+- `references/embedded/contest-modes-and-compliance.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/literature-fetch-and-explain.md`
 - `references/embedded/paper-context-resolver.md`
 - `references/embedded/computation-and-visualization.md`
+- `references/embedded/data-traceability-and-reproducibility.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`
@@ -138,8 +161,10 @@ Use these files as phase playbooks:
 - `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-zh-cn-format2025.md`
 - `references/embedded/paper-writing-en-contest-base.md`
+- `references/embedded/paper-writing-mcm-icm-current.md`
 - `references/embedded/latex-tables.md`
 - `references/embedded/final-verification.md`
 - `references/embedded/tool-fallbacks.md`
+- `references/embedded/submission-and-anonymity.md`
 
 Read `references/workflow-map.md` for the dependency map, plugin limits, and fallback behavior.

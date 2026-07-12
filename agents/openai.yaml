@@ -1,4 +1,4 @@
 interface:
   display_name: "Mathematical Modeling Competition Copilot"
-  short_description: "Contest modeling, writing, and verification workflow."
-  default_prompt: "Use $mathematical-modeling-competition-copilot to solve this mathematical modeling contest problem and prepare a verified paper."
+  short_description: "Contest modeling with compliance, reproducibility, and verified submission."
+  default_prompt: "Use $mathematical-modeling-competition-copilot to solve this contest problem, snapshot current rules, keep AI and data evidence, and prepare a verified submission."

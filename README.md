@@ -22,6 +22,8 @@
 - LaTeX 和学术表格规则
 - 最终核验规则
 - 工具缺失时的 fallback 规则
+- 比赛模式、当年规则快照、AI 使用留痕与提交冻结
+- 数据审计、追踪表、环境记录、匿名扫描和哈希核验
 
 ## 国赛模型路由增强
 
@@ -56,15 +58,15 @@
 
 这个 skill 是数学建模项目的总控入口。它不承诺“保证拿奖”，而是通过规范流程提高产出质量和获奖概率：
 
-1. 明确竞赛要求、提交格式、论文语言和时间预算。
-2. 拆解赛题子问题，形成可执行建模路线。
-3. 设计可解释、可验证、可写进论文的数学模型。
-4. 在需要时查证论文/文献中的关键复现细节。
-5. 用代码、Notebook 或电子表格完成可复现实验。
-6. 生成数据图、流程图、模型图和论文表格。
-7. 组装 DOCX、PDF、LaTeX 或 Typst 论文。
-8. 先用优秀论文语料库提炼通用写作规则，再独立解题、冻结论文并做事后对照迭代。
-9. 在最终提交前核验题目要求、公式、结果、图表、引用和格式。
+1. 固定比赛模式并快照当年官方规则、AI 政策、截止时间和提交流程。
+2. 拆解赛题子问题，形成可执行建模路线和追踪表。
+3. 完成数据审计，设计可解释、可验证、可写进论文的模型。
+4. 在合规范围内查证文献与复现细节；正式比赛禁止当前题目的公开讨论和互动求助。
+5. 用可复现代码、Notebook 或电子表格完成实验并记录环境、数据哈希和求解器状态。
+6. 生成有明确论证作用的数据图、流程图、模型图和论文表格。
+7. 组装论文并披露 AI 使用。
+8. 从优秀论文语料库学习通用规则后，再独立解题并进行事后复盘。
+9. 执行匿名检查、哈希冻结、提交包验证和回执确认。
 
 ## 什么时候使用
 
@@ -89,6 +91,12 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 ```
 
 ## 工作流
+
+### 0. 比赛模式与合规
+
+固定训练、正式比赛或赛后复盘模式；记录当年官方规则、AI 政策、允许的资料、截止时间和提交流程。正式比赛禁止浏览当前题目的讨论、答案和互动求助来源。
+
+参考：`references/embedded/contest-modes-and-compliance.md`
 
 ### 1. 竞赛启动与策略
 
@@ -116,9 +124,12 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 4. 计算与实验
 
-区分原始数据、处理后数据、代码、Notebook、结果表和图表。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
+区分原始数据、处理后数据、代码、Notebook、结果表和图表；完成数据审计、子问题追踪、环境记录和验证门。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
 
-参考：`references/embedded/computation-and-visualization.md`
+参考：
+
+- `references/embedded/data-traceability-and-reproducibility.md`
+- `references/embedded/computation-and-visualization.md`
 
 ### 5. 表格分析与情景表
 
@@ -142,6 +153,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 - `references/embedded/2025-corpus-observations.md`
 - `references/embedded/latex-paper-pipeline.md`
 - `references/embedded/paper-writing-en-contest-base.md`
+- `references/embedded/paper-writing-mcm-icm-current.md`
 
 ### 8. 表格润色
 
@@ -157,6 +169,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 - `references/embedded/final-verification.md`
 - `references/embedded/tool-fallbacks.md`
+- `references/embedded/submission-and-anonymity.md`
 
 ## 默认项目结构
 

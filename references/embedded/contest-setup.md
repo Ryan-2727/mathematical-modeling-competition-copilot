@@ -13,6 +13,8 @@ Ask only questions that materially affect the workflow:
 - Available data and whether external data is allowed.
 - Team roles, if the user wants division of work.
 - Known subproblem count, if the statement makes it obvious.
+- Operating mode: training, live contest, or post-hoc review.
+- Official rules URL/version, deadline time zone, AI disclosure requirement, and submission/hash procedure.
 
 If the user provides the problem statement and deadline, proceed with reasonable defaults instead of blocking on minor preferences.
 
@@ -58,4 +60,6 @@ Before modeling starts:
 - The contest problem statement is available or the missing statement is explicitly requested.
 - Submission requirements are known or marked unknown.
 - Data availability and external-data policy are recorded.
+- Current contest rules are snapshotted and critical compliance fields are verified.
+- In live mode, allowed source classes and prohibited interactive/discussion sources are recorded before any web research.
 - The project artifact layout is created or mapped to an existing structure.

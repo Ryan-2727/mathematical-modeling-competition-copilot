@@ -8,6 +8,7 @@ Use this module for code, notebooks, result tables, and data-driven figures.
 - Keep parameters visible near the top of scripts or notebooks.
 - Use deterministic seeds when stochastic methods are involved.
 - Preserve raw data and document cleaning steps.
+- Record data hashes, software/solver versions, solver status, tolerances, and stopping criteria for every primary run.
 - Generate result tables from executed code or formulas.
 - Store important outputs in machine-readable form such as CSV, JSON, or XLSX when possible.
 
@@ -46,3 +47,5 @@ Before writing numeric claims:
 - Key values match result tables.
 - Figures match source data.
 - Units and scales are clear.
+- The data-audit and traceability rows are complete.
+- The validation method and acceptance criterion were selected before interpreting results; unsupported accuracy claims are absent.

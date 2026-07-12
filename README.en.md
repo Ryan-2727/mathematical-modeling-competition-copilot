@@ -20,6 +20,8 @@ A new computer can install only this repository and still get the full mathemati
 - LaTeX and academic table rules
 - final verification rules
 - fallback rules for missing tools
+- contest mode, current-rules snapshot, AI-use evidence, and submission freeze
+- data audit, traceability, environment capture, anonymity scanning, and hashing
 
 ## CUMCM Model Routing
 
@@ -53,14 +55,14 @@ These are not automatically bundled by this repository because they require file
 
 This skill acts as the main entry point for a mathematical modeling project. It does not claim to guarantee an award. Its purpose is to improve the probability of a strong submission by enforcing a disciplined workflow:
 
-1. Clarify contest constraints and strategy.
-2. Decompose the problem into subquestions.
-3. Design defensible mathematical models.
-4. Resolve literature or reproduction-critical details when needed.
-5. Run reproducible code, notebooks, or spreadsheets.
-6. Generate figures, flowcharts, and tables.
-7. Assemble a contest paper in DOCX, PDF, LaTeX, or Typst workflows.
-8. Verify requirements, formulas, results, formatting, and final files before completion.
+1. Freeze the contest mode and snapshot current official rules, AI policy, deadline, and submission procedure.
+2. Decompose the problem into subquestions and build a traceability table.
+3. Audit data and design defensible, testable mathematical models.
+4. Resolve literature or reproduction-critical details within the contest’s source and communication rules.
+5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, and solver evidence.
+6. Generate figures, flowcharts, and tables that support explicit claims.
+7. Assemble a contest paper and disclose AI use as required.
+8. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
 
 ## When To Use
 
@@ -86,15 +88,14 @@ Chinese example:
 
 ## Workflow
 
-1. Contest setup and strategy: `references/embedded/contest-setup.md`
-2. Problem analysis and model design: `references/embedded/llm-mm-agent-methodology.md` and `references/embedded/mathmodel-six-phase.md`
-3. Literature search, paper explanation, and reproduction details: `references/embedded/literature-fetch-and-explain.md` and `references/embedded/paper-context-resolver.md`
-4. Computation and experiments: `references/embedded/computation-and-visualization.md`
-5. Tabular analysis and scenario sheets
-6. Figures, flowcharts, and diagrams: `references/embedded/diagrams.md`
-7. Paper writing: `references/embedded/paper-writing.md`, `references/embedded/paper-writing-zh-cn-format2025.md`, and `references/embedded/paper-writing-en-contest-base.md`
-8. Table polish: `references/embedded/latex-tables.md`
-9. Final verification: `references/embedded/final-verification.md` and `references/embedded/tool-fallbacks.md`
+0. Contest mode and compliance: `contest-modes-and-compliance.md`
+1. Contest setup and strategy: `contest-setup.md`
+2. Problem analysis and model design: `llm-mm-agent-methodology.md` and `mathmodel-six-phase.md`
+3. Literature and reproduction details: `literature-fetch-and-explain.md` and `paper-context-resolver.md`
+4. Data audit, traceability, and computation: `data-traceability-and-reproducibility.md` and `computation-and-visualization.md`
+5. Figures and diagrams: `diagrams.md`
+6. Paper writing: `paper-writing.md` plus the current-rules branch
+7. Final verification and submission: `final-verification.md` and `submission-and-anonymity.md`
 
 ## Default Project Layout
 

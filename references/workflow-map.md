@@ -7,6 +7,7 @@ This repository is designed as a self-contained Codex skill. A new computer can 
 The following formerly separate skills or helper workflows are embedded as reference playbooks:
 
 - `contest-setup.md`: project initialization, `plan.md`, `todo.md`, contest constraints, and task tracking.
+- `contest-modes-and-compliance.md`: live-contest boundary, current rules snapshot, AI-use evidence, and submission-state machine.
 - `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.
@@ -14,13 +15,16 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `literature-fetch-and-explain.md`: embedded `paper-fetch-skill` and `paper-explainer` workflow for source search, paper explanation, and source notes.
 - `paper-context-resolver.md`: narrow paper or reproduction detail resolution.
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
+- `data-traceability-and-reproducibility.md`: data audit, traceability table, environment capture, model-specific validation gates, and clean reruns.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
 - `paper-writing.md`: paper-writing branch selector.
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
 - `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
+- `paper-writing-mcm-icm-current.md`: current-rule verification checklist for MCM/ICM submission and AI disclosure.
 - `latex-tables.md`: LaTeX table and academic table polish.
 - `final-verification.md`: evidence-before-completion and submission readiness checks.
 - `tool-fallbacks.md`: what requires optional Codex plugins and what to do when they are missing.
+- `submission-and-anonymity.md`: metadata/path scanning, support-package scope, copyright checks, final hashes, and receipt evidence.
 
 ## Optional Codex Plugins
 
@@ -38,13 +42,16 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Phase | Minimum output | Verification |
 | --- | --- | --- |
 | Setup | `plan.md`, `todo.md` | User constraints captured |
+| Compliance | `contest_manifest.json`, rules snapshot, AI log | Current rules and live-mode boundary recorded |
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
+| Data | `reports/data_audit.md`, `reports/traceability.md` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md` | Variables, formulas, assumptions defined |
 | Literature | source notes | Claims tied to sources |
 | Computation | code/notebooks, `results/` | Executed or gap stated |
 | Figures/tables | `figures/`, tables | Referenced and consistent |
 | Writing | `paper/` | Results match computation |
 | Final check | `reports/verification_report.md` | Completion claims backed by evidence |
+| Submission | hash manifest and receipt evidence | Final artifact frozen and anonymous |
 
 ## Fallback Behavior
 
