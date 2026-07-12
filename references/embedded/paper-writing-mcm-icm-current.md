@@ -32,4 +32,3 @@ The first PDF page is the summary. The summary reports approach and important
 conclusions, not a restatement of the prompt. The final PDF is English, meets the
 verified total-page limit, is anonymous, and is frozen at contest close. Use the
 submission receipt to transition from `submitted` to `receipt_verified`.
-

@@ -47,4 +47,3 @@ computing results:
 
 Do not turn an unavailable validation into a claim of accuracy. Explain its
 limitation and use the conclusion only within the supported scope.
-
