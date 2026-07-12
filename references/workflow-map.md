@@ -8,6 +8,7 @@ The following formerly separate skills or helper workflows are embedded as refer
 
 - `contest-setup.md`: project initialization, `plan.md`, `todo.md`, contest constraints, and task tracking.
 - `contest-modes-and-compliance.md`: live-contest boundary, current rules snapshot, AI-use evidence, and submission-state machine.
+- `cumcm-2026-rules.md`: executable CUMCM 2026 format, support-package, AI-report, and submission-profile checks.
 - `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.
@@ -16,6 +17,7 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `paper-context-resolver.md`: narrow paper or reproduction detail resolution.
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
 - `data-traceability-and-reproducibility.md`: data audit, traceability table, environment capture, model-specific validation gates, and clean reruns.
+- `evidence-and-quality-gates.md`: claim ledger, reproducible-run manifest, numerical diagnostics, argument coverage, and historical-corpus originality preflight.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
 - `paper-writing.md`: paper-writing branch selector.
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
@@ -44,13 +46,13 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Setup | `plan.md`, `todo.md` | User constraints captured |
 | Compliance | `contest_manifest.json`, rules snapshot, AI log | Current rules and live-mode boundary recorded |
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
-| Data | `reports/data_audit.md`, `reports/traceability.md` | Data provenance and claim-to-result chain complete |
+| Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md` | Variables, formulas, assumptions defined |
 | Literature | source notes | Claims tied to sources |
 | Computation | code/notebooks, `results/` | Executed or gap stated |
 | Figures/tables | `figures/`, tables | Referenced and consistent |
 | Writing | `paper/` | Results match computation |
-| Final check | `reports/verification_report.md` | Completion claims backed by evidence |
+| Final check | verification report, argument coverage, claim report | Completion claims backed by evidence |
 | Submission | hash manifest and receipt evidence | Final artifact frozen and anonymous |
 
 ## Fallback Behavior

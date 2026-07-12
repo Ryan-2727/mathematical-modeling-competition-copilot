@@ -22,6 +22,11 @@ paths, and material that reveals team identity.
 Use `scripts/build_support_archive.py` with explicit repeated `--include` paths;
 never archive an entire project directory by default.
 
+For CUMCM 2026 with AI use, include `AI工具使用详情.pdf`; render it from the
+audit log and inspect it before archiving. Scan final PDF text/metadata, Office
+metadata, and archive paths before freezing. An unavailable reader is an
+unresolved check, not a pass.
+
 ## Copyright and permissions
 
 For each non-team asset, record source, license/permission, exact location of use,

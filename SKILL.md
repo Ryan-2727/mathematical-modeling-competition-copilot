@@ -22,6 +22,7 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/contest-modes-and-compliance.md` before viewing or researching a live problem.
    - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
    - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
+   - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and select the `cumcm-2026` verification profile.
 
 1. **Contest setup and strategy**
    - Read `references/embedded/contest-setup.md`.
@@ -48,6 +49,8 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/data-traceability-and-reproducibility.md` before fitting a data-driven model.
    - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
+   - Maintain `reports/claims.csv` and run `scripts/run_reproduction.py` for the frozen pipeline.
+   - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
 
 5. **Tabular analysis and scenario sheets**
    - Use spreadsheet-style reasoning for scoring matrices, sensitivity tables, scenario comparison, and dashboards.
@@ -82,10 +85,12 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/final-verification.md`.
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
+   - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
 
 10. **Freeze and submit**
    - Read `references/embedded/submission-and-anonymity.md`.
    - Run anonymity scan, environment capture, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
+   - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
 11. **Paper-learning regression loop**
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
@@ -119,6 +124,8 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- contest_rules_snapshot.md
 |   |-- data_audit.md
 |   |-- traceability.md
+|   |-- claims.csv
+|   |-- argument_coverage.csv
 |   |-- ai_usage_log.jsonl
 |   `-- verification_report.md
 |-- environment/
@@ -142,6 +149,7 @@ Create or preserve this layout unless the user provides an existing project stru
 - Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
 - A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
 - A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
+- Treat PDF page sequence, appendix boundaries, OCR output, and Office metadata as visual or tool-dependent checks; record an unresolved limitation instead of inferring success.
 
 ## Embedded References
 
@@ -149,6 +157,7 @@ Use these files as phase playbooks:
 
 - `references/embedded/contest-setup.md`
 - `references/embedded/contest-modes-and-compliance.md`
+- `references/embedded/cumcm-2026-rules.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/llm-mm-agent-methodology.md`
@@ -156,6 +165,7 @@ Use these files as phase playbooks:
 - `references/embedded/paper-context-resolver.md`
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/data-traceability-and-reproducibility.md`
+- `references/embedded/evidence-and-quality-gates.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`

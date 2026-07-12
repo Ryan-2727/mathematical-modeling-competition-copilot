@@ -25,12 +25,14 @@ The verification loop:
 - Figures match source data and are referenced.
 - Literature claims have sources.
 - Submission format matches contest requirements.
+- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026`; explicitly record main-text pages, visual abstract-first/no-TOC checks, and the support archive result.
 - For Chinese 2025-format contests, `paper-writing-zh-cn-format2025.md` checks are complete: abstract is first in the electronic paper, commitment and number pages are excluded from the electronic paper, appendix and support-material rules are satisfied, and identity information is absent.
 - Missing plugin/runtime limitations are recorded.
 - The contest rules snapshot is current and all critical fields are verified.
 - AI use/non-use declaration and required detail report match the actual workflow.
 - Data source permissions, transformations, hashes, environment, command, seed, solver status, and validation evidence are recorded.
 - Submission state, final hashes, anonymity scan, artifact size, and receipt are recorded when submission is in scope.
+- `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
 
 ## Verification Report
 
