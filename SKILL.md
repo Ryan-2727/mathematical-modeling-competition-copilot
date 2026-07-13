@@ -1,11 +1,13 @@
 ---
 name: mathematical-modeling-competition-copilot
-description: Self-contained end-to-end mathematical modeling competition workflow for contest problem solving and paper production. Use when Codex needs to help with MCM/ICM, CUMCM, Huawei Cup, school mathematical modeling contests, or similar tasks involving problem analysis, literature-supported modeling, reproducible computation, figures, tables, DOCX/PDF/LaTeX paper writing, and final verification.
+description: Explicit-invocation-only end-to-end mathematical modeling competition workflow for contest problem solving and paper production. Use ONLY when the user explicitly invokes `$mathematical-modeling-competition-copilot` or supplies a direct link to this SKILL.md. Do not use it automatically for ordinary mathematical modeling questions.
 ---
 
 # Mathematical Modeling Competition Copilot
 
-Use this as the main entry point for mathematical modeling competitions. This skill is self-contained for workflow knowledge: it embeds the contest setup, modeling, literature resolution, computation, writing, table, and verification rules that were previously spread across multiple helper skills.
+Use this only after the user explicitly invokes `$mathematical-modeling-competition-copilot` or supplies a direct link to this SKILL.md. Do not infer invocation merely because a request concerns mathematical modeling, a contest, or paper writing; answer those requests normally unless the user explicitly calls this skill.
+
+When explicitly invoked, use this as the main entry point for mathematical modeling competitions. This skill is self-contained for workflow knowledge: it embeds the contest setup, modeling, literature resolution, computation, writing, table, and verification rules that were previously spread across multiple helper skills.
 
 It does not promise an award. It maximizes award probability through disciplined modeling, reproducible computation, strong writing, and hard verification.
 
