@@ -28,16 +28,24 @@ It does not promise an award. It maximizes award probability through disciplined
 
 1. **Contest setup and strategy**
    - Read `references/embedded/contest-setup.md`.
+   - Read `references/embedded/award-oriented-workflow.md` and
+     `references/embedded/contest-operations-72h.md`. Adapt the milestone hours
+     proportionally when the contest is not 72 hours.
    - Use the embedded brainstorming gate in that file before committing to a modeling route.
    - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
    - If the contest is CUMCM / 中国大学生数学建模竞赛（国赛）, read `references/embedded/cumcm-model-selection.md` before selecting models. Ask for, or infer from the context, the available Python, MATLAB, and LINGO environments; treat them as equal paths and select the one that best matches the method and reproducibility need.
-   - Create or update `plan.md` and `todo.md`.
+   - Create or update `plan.md`, `todo.md`, and `reports/milestones.csv`.
 
 2. **Problem analysis and model design**
    - Read `references/embedded/llm-mm-agent-methodology.md`.
    - Read `references/embedded/mathmodel-six-phase.md` for contest-specific modeling expectations.
+   - Read `references/embedded/problem-structure-playbooks.md`; choose a route
+     from problem structure and evidence needs, not from algorithm prestige.
    - For CUMCM, route each subproblem through the task signals and model cards in `references/embedded/cumcm-model-selection.md`. Maintain a trace from subproblem to data, model, implementation, validation, result file, and paper section.
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
+   - Maintain `reports/model_decision_log.csv`. For each subproblem compare a
+     credible baseline with candidate routes, record the failure test and
+     validation cost, and explain why the selected model matches the mechanism.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
 
 3. **Literature and reproduction details**
@@ -49,6 +57,11 @@ It does not promise an award. It maximizes award probability through disciplined
 4. **Computation and experiments**
    - Read `references/embedded/computation-and-visualization.md`.
    - Read `references/embedded/data-traceability-and-reproducibility.md` before fitting a data-driven model.
+   - Read `references/embedded/data-units-and-source-quality.md` and maintain
+     `reports/units.csv` for quantities, conversions, ranges, and source scope.
+   - Read `references/embedded/stress-testing-and-uncertainty.md`. Register at
+     least one proportionate, predeclared stress test for every decisive
+     subproblem claim in `reports/stress_tests.csv` and save its result artifact.
    - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
    - Maintain `reports/claims.csv` and run `scripts/run_reproduction.py` for the frozen pipeline.
@@ -92,8 +105,12 @@ It does not promise an award. It maximizes award probability through disciplined
 10. **Optional award-focused post-paper review**
    - Only after modeling and the complete paper are finished and phase 9 has run,
      ask whether the user wants this optional phase. Do not run it by default.
-   - If the user opts in, read `references/embedded/post-paper-award-review.md`.
-     Produce prioritized reviewer findings and proposed fixes; do not use current-problem answer sources or paired exemplars.
+   - If the user opts in, read `references/embedded/post-paper-award-review.md`
+     and `references/embedded/reviewer-scorecard-and-presentation.md`. Produce
+     prioritized reviewer findings and `reports/reviewer_scorecard.csv`; do not
+     use current-problem answer sources or paired exemplars.
+   - Run `scripts/verify_award_readiness.py`. Treat a pass as evidence-structure
+     completeness only, never as proof of mathematical truth or an award prediction.
    - After any accepted revision, rerun phase 9 before freezing.
 
 11. **Freeze and submit**
@@ -102,6 +119,8 @@ It does not promise an award. It maximizes award probability through disciplined
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
 12. **Paper-learning regression loop**
+   - Read `references/embedded/training-evaluation-loop.md` before using an
+     excellent-paper corpus to improve this skill.
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
      visual inspection; convert recurring strengths into reusable writing rules.
    - Solve each test problem independently and freeze the baseline source,
@@ -135,6 +154,11 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- traceability.md
 |   |-- claims.csv
 |   |-- argument_coverage.csv
+|   |-- model_decision_log.csv
+|   |-- stress_tests.csv
+|   |-- units.csv
+|   |-- reviewer_scorecard.csv
+|   |-- milestones.csv
 |   |-- ai_usage_log.jsonl
 |   `-- verification_report.md
 |-- environment/
@@ -147,6 +171,9 @@ Create or preserve this layout unless the user provides an existing project stru
 - If the problem statement is missing, ask for it before modeling.
 - If data is missing but the task can proceed with public or synthetic data, label that explicitly.
 - If multiple model families fit, compare the simplest credible baseline against one stronger method.
+- Treat creativity as a problem-specific improvement in abstraction, mechanism,
+  constraint design, diagnostic evidence, or decision insight. Algorithmic
+  complexity without measurable benefit is not creativity.
 - For CUMCM, do not stack models for appearance. Select at most one primary model and one evidence-backed comparison or enhancement per subproblem; apply the method-specific minimum validation gate from `cumcm-model-selection.md`.
 - If computation cannot be run, do not present numeric conclusions as verified.
 - If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
@@ -158,6 +185,9 @@ Create or preserve this layout unless the user provides an existing project stru
 - Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
 - A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
 - A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
+- Every decisive conclusion needs a proportionate failure-oriented test. Choose
+  the test before seeing its outcome and preserve the result even when it weakens
+  the preferred model.
 - Treat PDF page sequence, appendix boundaries, OCR output, and Office metadata as visual or tool-dependent checks; record an unresolved limitation instead of inferring success.
 
 ## Embedded References
@@ -165,17 +195,23 @@ Create or preserve this layout unless the user provides an existing project stru
 Use these files as phase playbooks:
 
 - `references/embedded/contest-setup.md`
+- `references/embedded/award-oriented-workflow.md`
+- `references/embedded/contest-operations-72h.md`
 - `references/embedded/contest-modes-and-compliance.md`
 - `references/embedded/cumcm-2026-rules.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
+- `references/embedded/problem-structure-playbooks.md`
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/literature-fetch-and-explain.md`
 - `references/embedded/paper-context-resolver.md`
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/data-traceability-and-reproducibility.md`
+- `references/embedded/data-units-and-source-quality.md`
 - `references/embedded/evidence-and-quality-gates.md`
+- `references/embedded/stress-testing-and-uncertainty.md`
 - `references/embedded/post-paper-award-review.md`
+- `references/embedded/reviewer-scorecard-and-presentation.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`
@@ -189,5 +225,6 @@ Use these files as phase playbooks:
 - `references/embedded/final-verification.md`
 - `references/embedded/tool-fallbacks.md`
 - `references/embedded/submission-and-anonymity.md`
+- `references/embedded/training-evaluation-loop.md`
 
 Read `references/workflow-map.md` for the dependency map, plugin limits, and fallback behavior.

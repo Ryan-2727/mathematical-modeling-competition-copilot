@@ -105,7 +105,8 @@ choose the smallest set that covers the claims and remains readable.
 
 ## Independent improvement loop
 
-When improving the skill itself, use this order:
+When improving the skill itself, also read `training-evaluation-loop.md` and use
+this order:
 
 1. Select a problem and solve it independently with the current skill.
 2. Freeze the source, results, figures, and LaTeX paper; record the baseline.

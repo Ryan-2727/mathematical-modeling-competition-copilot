@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+work_fixture/
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

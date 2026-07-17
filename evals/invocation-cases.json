@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "purpose": "Regression cases for explicit-invocation-only behavior.",
+  "cases": [
+    {
+      "id": "negative-general-modeling",
+      "expected": "do_not_invoke",
+      "prompt": "How do I choose between linear regression and a random forest?"
+    },
+    {
+      "id": "negative-contest-question",
+      "expected": "do_not_invoke",
+      "prompt": "Explain what sensitivity analysis means in a modeling contest."
+    },
+    {
+      "id": "negative-paper-polish",
+      "expected": "do_not_invoke",
+      "prompt": "Please improve the clarity of this mathematical modeling paragraph."
+    },
+    {
+      "id": "positive-dollar-invocation",
+      "expected": "invoke",
+      "prompt": "Use $mathematical-modeling-competition-copilot for this CUMCM problem."
+    },
+    {
+      "id": "positive-direct-link",
+      "expected": "invoke",
+      "prompt": "Use the skill at C:\\Users\\user\\.codex\\skills\\mathematical-modeling-competition-copilot\\SKILL.md."
+    }
+  ]
+}

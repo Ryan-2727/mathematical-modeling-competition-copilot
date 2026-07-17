@@ -2,6 +2,16 @@
 
 Mathematical Modeling Competition Copilot is a self-contained Codex skill for end-to-end mathematical modeling contest work. It coordinates problem analysis, modeling, literature detail resolution, reproducible computation, figures, tables, paper writing, and final verification for contests such as MCM/ICM, CUMCM, Huawei Cup, and school-level modeling competitions.
 
+## Explicit Invocation Only
+
+This skill is never intended to trigger from an ordinary modeling, contest, or
+paper-writing question. Invoke it explicitly with
+`$mathematical-modeling-competition-copilot` or a direct link to `SKILL.md`.
+
+```text
+Use $mathematical-modeling-competition-copilot for this contest problem.
+```
+
 [中文 README](README.zh-CN.md)
 
 ## Self-Contained Version
@@ -9,12 +19,15 @@ Mathematical Modeling Competition Copilot is a self-contained Codex skill for en
 A new computer can install only this repository and still get the full mathematical modeling competition workflow. The workflow knowledge that used to be spread across multiple helper skills is now embedded under `references/embedded/`:
 
 - contest setup and `plan.md` / `todo.md`
+- award-oriented evidence gates, a 72-hour milestone board, and stop-loss rules
 - bounded brainstorming for model-route selection
+- problem-structure playbooks and an auditable baseline-versus-candidate model decision log
 - mathematical modeling six-phase workflow
 - LLM-MM-Agent four-stage methodology and HMML/MLE-Solver-style modeling
 - literature search and paper explanation workflows
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
+- source-scope and unit checks plus predeclared, failure-oriented stress tests
 - flowcharts and architecture diagrams
 - paper writing router with Chinese 2025 format and English contest baseline branches
 - cross-year exemplar-corpus lessons for structure, visuals, and evidence narrative
@@ -24,7 +37,8 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - data audit, traceability, environment capture, anonymity scanning, and hashing
 - CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
-- optional post-paper award review: simulated reviewers and claim stress tests, only after user confirmation
+- optional post-paper award review: three reviewer lenses, a four-dimension evidence scorecard, and structural award-readiness verification, only after user confirmation
+- hidden-exemplar regression for learning reusable strengths from excellent papers without depending on a paired solution
 
 ## CUMCM Model Routing
 
@@ -60,12 +74,13 @@ This skill acts as the main entry point for a mathematical modeling project. It 
 
 1. Freeze the contest mode and snapshot current official rules, AI policy, deadline, and submission procedure.
 2. Decompose the problem into subquestions and build a traceability table.
-3. Audit data and design defensible, testable mathematical models.
+3. Audit data, reconcile units, compare a credible baseline against candidates, and record why the selected model fits the mechanism.
 4. Resolve literature or reproduction-critical details within the contest’s source and communication rules.
-5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, and solver evidence.
+5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, solver, uncertainty, and failure-oriented stress-test evidence.
 6. Generate figures, flowcharts, and tables that support explicit claims.
 7. Assemble a contest paper and disclose AI use as required.
-8. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
+8. After the full paper is complete, offer an optional independent review of assumption rationality, model creativity, result correctness, and writing clarity.
+9. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
 
 ## When To Use
 
@@ -92,13 +107,13 @@ Chinese example:
 ## Workflow
 
 0. Contest mode and compliance: `contest-modes-and-compliance.md`
-1. Contest setup and strategy: `contest-setup.md`
-2. Problem analysis and model design: `llm-mm-agent-methodology.md` and `mathmodel-six-phase.md`
+1. Contest setup and strategy: `contest-setup.md`, `award-oriented-workflow.md`, and `contest-operations-72h.md`
+2. Problem analysis and model design: `llm-mm-agent-methodology.md`, `mathmodel-six-phase.md`, and `problem-structure-playbooks.md`
 3. Literature and reproduction details: `literature-fetch-and-explain.md` and `paper-context-resolver.md`
-4. Data audit, traceability, and computation: `data-traceability-and-reproducibility.md` and `computation-and-visualization.md`
+4. Data audit, traceability, and computation: `data-traceability-and-reproducibility.md`, `data-units-and-source-quality.md`, `stress-testing-and-uncertainty.md`, and `computation-and-visualization.md`
 5. Figures and diagrams: `diagrams.md`
 6. Paper writing: `paper-writing.md` plus the current-rules branch
-7. Final verification and submission: `final-verification.md` and `submission-and-anonymity.md`
+7. Final verification and submission: `final-verification.md`, optional `reviewer-scorecard-and-presentation.md`, and `submission-and-anonymity.md`
 
 ## Default Project Layout
 
@@ -117,6 +132,11 @@ Chinese example:
 |   |-- problem_analysis.md
 |   |-- model_design.md
 |   |-- experiment_log.md
+|   |-- model_decision_log.csv
+|   |-- stress_tests.csv
+|   |-- units.csv
+|   |-- reviewer_scorecard.csv
+|   |-- milestones.csv
 |   `-- verification_report.md
 `-- paper/
 ```
@@ -138,6 +158,14 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
 ```
 
 Restart Codex after installation so the skill is discovered.
+
+To synchronize an existing local installation from a repository checkout on
+Windows, preview first and then run:
+
+```powershell
+.\scripts\sync_local_skill.ps1 -WhatIf
+.\scripts\sync_local_skill.ps1
+```
 
 ## Repository Structure
 

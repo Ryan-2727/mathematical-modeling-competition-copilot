@@ -44,6 +44,31 @@ def main() -> int:
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/claims.csv", "claim_id,subproblem,claim,source_file,source_locator,command,figure_or_table,paper_location,human_verification,status\n")
     write_if_missing(root / "reports/argument_coverage.csv", "subproblem,need_or_mechanism,model,solution,quantified_result,interpretation,validation,status\n")
+    write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
+    write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
+    write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
+    write_if_missing(
+        root / "reports/reviewer_scorecard.csv",
+        "dimension,score_1_to_5,evidence,major_objection,smallest_fix,status\n"
+        "assumption_rationality,,,,,pending\n"
+        "model_creativity,,,,,pending\n"
+        "result_correctness,,,,,pending\n"
+        "writing_clarity,,,,,pending\n",
+    )
+    write_if_missing(
+        root / "reports/milestones.csv",
+        "milestone,hour,deliverable,owner,gate,status\n"
+        "scope-lock,3,problem split and compliance snapshot,unassigned,scope agreed,pending\n"
+        "data-lock,8,data audit and baseline plan,unassigned,data usable,pending\n"
+        "route-lock,12,model decision log,unassigned,primary route selected,pending\n"
+        "baseline-run,30,complete baseline results,unassigned,all subproblems answered,pending\n"
+        "validation-lock,42,diagnostics and stress tests,unassigned,decisive claims tested,pending\n"
+        "figure-lock,54,final figures and tables,unassigned,all numbers traceable,pending\n"
+        "draft-lock,60,complete paper draft,unassigned,no missing section,pending\n"
+        "review-lock,66,independent consistency review,unassigned,major objections resolved,pending\n"
+        "submission-build,70,final anonymous submission files,unassigned,profile checks pass,pending\n"
+        "receipt-lock,72,hashes and receipt evidence,unassigned,submission verified,pending\n",
+    )
     write_if_missing(root / "reports/ai_usage_log.jsonl", "")
     write_if_missing(root / "reports/verification_report.md", "# Verification report\n\n## Submission state\n\ndraft\n\n## Checks\n\n| Check | Status | Evidence |\n| --- | --- | --- |\n")
     print(root / "contest_manifest.json")

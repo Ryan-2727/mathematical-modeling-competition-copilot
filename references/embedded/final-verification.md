@@ -19,9 +19,11 @@ The verification loop:
 - Every subproblem is answered.
 - Assumptions are listed and used consistently.
 - Variables and units are consistent.
+- `reports/model_decision_log.csv` explains the selected route against a credible baseline for every subproblem.
 - Formulas match the model explanation.
 - Code, notebook, or spreadsheet execution status is recorded.
 - Result tables match paper values.
+- Every decisive subproblem claim has a completed, failure-oriented entry in `reports/stress_tests.csv` and a preserved result file.
 - Figures match source data and are referenced.
 - Literature claims have sources.
 - Submission format matches contest requirements.
@@ -50,7 +52,8 @@ Create or update `reports/verification_report.md` with:
 After this baseline verification and before the submission freeze, ask the user
 whether they want the optional post-paper award review. If they opt in and
 accept revisions, repeat this verification module after rebuilding the affected
-results and paper.
+results and paper, complete `reports/reviewer_scorecard.csv`, and run
+`scripts/verify_award_readiness.py`.
 
 ## Red Flags
 

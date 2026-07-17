@@ -6,16 +6,29 @@
 
 [English README](README.md)
 
+## 仅限显式调用
+
+普通的数学建模、竞赛或论文问题不会触发本 skill。只有显式写出
+`$mathematical-modeling-competition-copilot`，或直接引用其 `SKILL.md`
+链接时才使用。
+
+```text
+使用 $mathematical-modeling-competition-copilot 完成这道竞赛题。
+```
+
 
 新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
 
 - 竞赛启动与 `plan.md` / `todo.md`
+- 获奖导向证据门、72 小时里程碑看板和止损规则
 - 有边界的建模路线 brainstorming
+- 按问题结构选路，以及可审计的“基线—候选模型”取舍日志
 - 数学建模六阶段流程
 - LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
 - 文献检索和论文解释流程
 - 论文/文献复现细节查证规则
 - 代码、Notebook、结果表和数据图流程
+- 数据来源范围、量纲单位核验，以及预先登记的失败导向压力测试
 - 流程图和结构图规则
 - 中文 2025 格式和英语比赛基础版论文撰写分支
 - 从优秀论文语料库学习结构、图表语法、验证叙事和 LaTeX 写作规范
@@ -26,7 +39,8 @@
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
 - CUMCM 2026 规则配置、AI 使用详情 PDF、证据账本、可复现运行清单与论证覆盖检查
-- 论文完成后的可选冲奖评审：模拟评委与关键结论压力测试，仅在用户确认后执行
+- 论文完成后的可选冲奖评审：三类模拟评委、四维证据评分卡与获奖准备度结构验收，仅在用户确认后执行
+- 隐藏优秀论文的独立基线回归：学习可迁移优点，但不依赖配对答案
 
 ## 国赛模型路由增强
 
@@ -63,13 +77,14 @@
 
 1. 固定比赛模式并快照当年官方规则、AI 政策、截止时间和提交流程。
 2. 拆解赛题子问题，形成可执行建模路线和追踪表。
-3. 完成数据审计，设计可解释、可验证、可写进论文的模型。
+3. 完成数据审计与量纲核验，对比可信基线和候选模型，并记录所选模型为何匹配问题机理。
 4. 在合规范围内查证文献与复现细节；正式比赛禁止当前题目的公开讨论和互动求助。
-5. 用可复现代码、Notebook 或电子表格完成实验并记录环境、数据哈希和求解器状态。
+5. 用可复现代码、Notebook 或电子表格完成实验，记录环境、数据哈希、求解器、不确定性与失败导向压力测试证据。
 6. 生成有明确论证作用的数据图、流程图、模型图和论文表格。
 7. 组装论文并披露 AI 使用。
 8. 从优秀论文语料库学习通用规则后，再独立解题并进行事后复盘。
-9. 执行匿名检查、哈希冻结、提交包验证和回执确认。
+9. 论文完整完成后，询问是否进行假设合理性、模型创新性、结果正确性和表达清晰度的独立冲奖评审。
+10. 执行匿名检查、哈希冻结、提交包验证和回执确认。
 
 ## 什么时候使用
 
@@ -103,18 +118,23 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 1. 竞赛启动与策略
 
-确认竞赛类型、论文语言、提交格式、时间预算、队伍分工、可用数据和最终交付物。创建或更新 `plan.md` 和 `todo.md`。
+确认竞赛类型、论文语言、提交格式、时间预算、队伍分工、可用数据和最终交付物。创建或更新 `plan.md`、`todo.md` 和 `reports/milestones.csv`。
 
-参考：`references/embedded/contest-setup.md`
+参考：
+
+- `references/embedded/contest-setup.md`
+- `references/embedded/award-oriented-workflow.md`
+- `references/embedded/contest-operations-72h.md`
 
 ### 2. 赛题分析与建模设计
 
-拆解子问题，定义假设、变量、参数、约束、目标函数、候选模型和验证计划。使用内嵌的 LLM-MM-Agent 方法论和数学建模六阶段规则。
+拆解子问题，定义假设、变量、参数、约束、目标函数、候选模型和验证计划。按问题结构选路，并在 `reports/model_decision_log.csv` 中记录基线、候选、失败测试、验证成本和取舍证据。
 
 参考：
 
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/mathmodel-six-phase.md`
+- `references/embedded/problem-structure-playbooks.md`
 
 ### 3. 文献与复现细节
 
@@ -127,11 +147,13 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 4. 计算与实验
 
-区分原始数据、处理后数据、代码、Notebook、结果表和图表；完成数据审计、子问题追踪、环境记录和验证门。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
+区分原始数据、处理后数据、代码、Notebook、结果表和图表；完成数据审计、单位与来源范围核验、子问题追踪、环境记录和失败导向压力测试。所有数值结论必须来自已执行代码、电子表格公式或可信来源。
 
 参考：
 
 - `references/embedded/data-traceability-and-reproducibility.md`
+- `references/embedded/data-units-and-source-quality.md`
+- `references/embedded/stress-testing-and-uncertainty.md`
 - `references/embedded/computation-and-visualization.md`
 
 ### 5. 表格分析与情景表
@@ -174,6 +196,15 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 - `references/embedded/tool-fallbacks.md`
 - `references/embedded/submission-and-anonymity.md`
 
+### 10. 可选冲奖评审
+
+仅在建模、完整论文和第 9 阶段核验全部完成后，询问用户是否需要。用户确认后，由模型、证据和论文三类评委独立审阅，完成四维评分卡，并运行获奖准备度结构验收；通过不等于数学正确，也不代表保证获奖。
+
+参考：
+
+- `references/embedded/post-paper-award-review.md`
+- `references/embedded/reviewer-scorecard-and-presentation.md`
+
 ## 默认项目结构
 
 ```text
@@ -191,6 +222,11 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- problem_analysis.md
 |   |-- model_design.md
 |   |-- experiment_log.md
+|   |-- model_decision_log.csv
+|   |-- stress_tests.csv
+|   |-- units.csv
+|   |-- reviewer_scorecard.csv
+|   |-- milestones.csv
 |   `-- verification_report.md
 `-- paper/
 ```
@@ -212,6 +248,13 @@ git clone https://github.com/Ryan-2727/mathematical-modeling-competition-copilot
 ```
 
 安装后重启 Codex，让 skill 被重新发现。
+
+Windows 上更新已有本地安装时，先预览再执行：
+
+```powershell
+.\scripts\sync_local_skill.ps1 -WhatIf
+.\scripts\sync_local_skill.ps1
+```
 
 ## 仓库结构
 

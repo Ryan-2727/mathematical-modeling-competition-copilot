@@ -26,9 +26,21 @@ class ScriptTests(unittest.TestCase):
             self.run_script("init_contest.py", "--project-dir", str(root), "--contest", "CUMCM", "--year", "2026", "--mode", "training")
             manifest = json.loads((root / "contest_manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(manifest["mode"], "training")
+            for filename in (
+                "model_decision_log.csv",
+                "stress_tests.csv",
+                "units.csv",
+                "reviewer_scorecard.csv",
+                "milestones.csv",
+            ):
+                self.assertTrue((root / "reports" / filename).is_file(), filename)
             log = root / "reports" / "ai_usage_log.jsonl"
             self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "reviewed")
             self.assertIn("TestAI", log.read_text(encoding="utf-8"))
+
+    def test_skill_contract_and_invocation_gate(self) -> None:
+        result = self.run_script("validate_skill_contract.py")
+        self.assertIn("PASS", result.stdout)
 
     def test_anonymity_scan(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -84,6 +96,59 @@ class ScriptTests(unittest.TestCase):
             reproducibility = root / "reports" / "reproduce.json"
             self.run_script("run_reproduction.py", "--project-dir", str(root), "--command", f'{sys.executable} -c "open(\'results/rebuilt.txt\', \'w\').write(\'ok\')"', "--expected", "results/rebuilt.txt", "--out", str(reproducibility))
             self.assertEqual(json.loads(reproducibility.read_text(encoding="utf-8"))["status"], "PASS")
+
+    def test_award_readiness_pass_and_missing_stress_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            reports = root / "reports"
+            self.run_script("init_contest.py", "--project-dir", str(root), "--contest", "CUMCM", "--year", "2026", "--mode", "training")
+            (root / "results" / "q1_stress.json").write_text("{}", encoding="utf-8")
+            (reports / "argument_coverage.csv").write_text(
+                "subproblem,need_or_mechanism,model,solution,quantified_result,interpretation,validation,status\n"
+                "Q1,mechanism,baseline plus candidate,executed,42,decision meaning,stress test,complete\n",
+                encoding="utf-8",
+            )
+            (reports / "model_decision_log.csv").write_text(
+                "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n"
+                "Q1,mean model,robust model,matches outliers,independent errors,outlier injection,low,robust model,lower held-out error,complete\n",
+                encoding="utf-8",
+            )
+            stress_header = "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n"
+            (reports / "stress_tests.csv").write_text(
+                stress_header
+                + "C1,Q1,data perturbation,inject five percent outliers,error increase below ten percent,results/q1_stress.json,eight percent increase,pass,complete\n",
+                encoding="utf-8",
+            )
+            (reports / "units.csv").write_text(
+                "symbol,meaning,unit,source,conversion,range_check,status\n"
+                "x,observed quantity,kg,provided data,none,nonnegative,complete\n",
+                encoding="utf-8",
+            )
+            score_rows = [
+                f"{dimension},4,paper and result evidence,remaining objection,targeted revision,complete"
+                for dimension in (
+                    "assumption_rationality",
+                    "model_creativity",
+                    "result_correctness",
+                    "writing_clarity",
+                )
+            ]
+            (reports / "reviewer_scorecard.csv").write_text(
+                "dimension,score_1_to_5,evidence,major_objection,smallest_fix,status\n"
+                + "\n".join(score_rows)
+                + "\n",
+                encoding="utf-8",
+            )
+            milestones = (reports / "milestones.csv").read_text(encoding="utf-8").replace(",pending\n", ",complete\n")
+            (reports / "milestones.csv").write_text(milestones, encoding="utf-8")
+            out = reports / "award_readiness.json"
+            self.run_script("verify_award_readiness.py", "--project-dir", str(root), "--out", str(out))
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
+
+            (reports / "stress_tests.csv").write_text(stress_header, encoding="utf-8")
+            self.run_script("verify_award_readiness.py", "--project-dir", str(root), "--out", str(out), expect=1)
+            failure = json.loads(out.read_text(encoding="utf-8"))
+            self.assertTrue(any("does not cover subproblem Q1" in error for error in failure["errors"]))
 
     def test_similarity_preflight(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

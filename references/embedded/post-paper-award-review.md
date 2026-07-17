@@ -21,6 +21,13 @@ code, results, paper, and already permitted sources. Do not search for current
 problem answers, compare against a paired exemplar, or import outside solution
 content.
 
+Read `reviewer-scorecard-and-presentation.md`. Complete
+`reports/reviewer_scorecard.csv` for these four evidence dimensions:
+`assumption_rationality`, `model_creativity`, `result_correctness`, and
+`writing_clarity`. The 1--5 scores are an internal diagnostic, not an official
+contest scoring formula. Every score needs paper/result evidence, the strongest
+remaining objection, the smallest credible fix, and a completion status.
+
 Run three independent lenses:
 
 1. **Model reviewer:** challenge assumptions, mechanism, model choice, and
@@ -41,4 +48,14 @@ advanced.
 
 After any accepted revision, rerun code as needed, refresh the claims ledger,
 rebuild the paper, and repeat final verification before freezing. Record any AI
-use in the existing audit log and obey the current contest's AI rules.
+use in the existing audit log and obey the current contest's AI rules. Then run:
+
+```bash
+python scripts/verify_award_readiness.py \
+  --project-dir <project-dir> \
+  --out <project-dir>/reports/award_readiness.json
+```
+
+Passing confirms that the decision, stress-test, unit, reviewer, milestone, and
+subproblem evidence ledgers are structurally complete. It does not establish
+that the mathematics is correct and does not predict an award.
