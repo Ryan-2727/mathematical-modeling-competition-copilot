@@ -22,7 +22,8 @@ Scholar query that a human can reproduce.
 
 1. `reports/bibliography.csv` records citation key, bibliographic metadata,
    authoritative verification source and time, exact-title Scholar query,
-   supported claim and source locator, and status.
+   observed Scholar-result status and check time, supported claim and source
+   locator, and status.
 2. `paper/main.tex`, included section files, and `paper/references.bib` form the
    source of the paper. `paper/main.pdf` must be produced by an actual LaTeX
    build; a source-only draft is not a completed paper.

@@ -4,9 +4,11 @@ This is the executable contract for Chinese competition papers.
 
 ## Source layout
 
-Use one `main.tex`, ordered section files, one references file, and an appendix
-file. Keep figures in `figures/` and use paths relative to `main.tex`. Do not create
-generated include files that hide figure or section references.
+Use one `paper/main.tex`, ordered section files, `paper/references.bib`, and an
+appendix file. Keep figures in a stable project folder and use portable relative
+paths. Preserve every local class, style, font, table, and asset required to rebuild
+`paper/main.pdf`. Do not create generated include files that hide figure or section
+references.
 
 ## Minimum paper elements
 
@@ -17,7 +19,17 @@ generated include files that hide figure or section references.
 4. One subsection per subproblem, each containing model purpose, derivation,
    algorithm, result, and interpretation.
 5. At least one independent validation or sensitivity check for each primary model.
-6. Strengths, limitations, references, and runnable-code appendix.
+6. Strengths, limitations, at least 10 unique and relevant scholarly references,
+   and a runnable-code appendix or support-package pointer.
+
+## Reference integrity
+
+Read `verified-literature-and-two-part-delivery.md`. Keep all bibliography entries
+in `paper/references.bib` and all source evidence in `reports/bibliography.csv`.
+Every ledger key must appear in BibTeX and be cited in the LaTeX body; uncited
+padding does not count. Verify metadata through an authoritative record and save an
+exact-title Google Scholar query, then read and record the passage supporting the
+paper's claim. Never generate plausible-looking citations from memory.
 
 ## Figure and table policy
 
@@ -38,11 +50,19 @@ does not support it.
 ## Build and QA
 
 ```powershell
-xelatex -interaction=nonstopmode main.tex
-xelatex -interaction=nonstopmode main.tex
+Push-Location paper
+xelatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+biber main  # use bibtex main instead when the template selects BibTeX
+xelatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+xelatex -interaction=nonstopmode -halt-on-error -file-line-error main.tex
+Pop-Location
 ```
 
-After compilation, check missing references, missing graphics, overfull boxes,
-placeholders, page count, abstract-page fit, figure/table captions, and accidental
-identity or local-path disclosure. If XeLaTeX or a PDF rasterizer is unavailable,
-record the exact limitation in `reports/verification_report.md`.
+Treat a fatal command, undefined citation/reference, missing graphic, or absent
+`paper/main.pdf` as a failed build. After compilation, inspect the log and rendered
+PDF for overfull boxes, placeholders, page count, abstract-page fit, page order,
+font substitution, clipped equations/tables, figure/table captions, and accidental
+identity or local-path disclosure. Run `scripts/verify_paper_delivery.py` only after
+building the support archive. If XeLaTeX, the bibliography backend, or a PDF
+rasterizer is unavailable, record the exact limitation in
+`reports/verification_report.md` and do not call the paper complete.

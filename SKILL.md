@@ -49,10 +49,17 @@ It does not promise an award. It maximizes award probability through disciplined
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
 
 3. **Literature and reproduction details**
+   - Read `references/embedded/verified-literature-and-two-part-delivery.md`
+     whenever a completed paper is in scope.
    - Read `references/embedded/literature-fetch-and-explain.md` when literature search, paper selection, or paper explanation is needed.
    - Read `references/embedded/paper-context-resolver.md` when a narrow source-backed detail matters.
    - Do not use broad paper summaries as a substitute for model design.
-   - Record source, claim, modeling impact, and whether evidence is direct or inferred.
+   - Maintain `reports/bibliography.csv`. A completed paper requires at least 10
+     unique, relevant scholarly works that are cited in the LaTeX body, verified
+     against authoritative metadata, confirmed by an observed exact-title Google
+     Scholar result, and read at the passage supporting the attributed claim.
+   - Record source, claim, source locator, modeling impact, and whether evidence
+     is direct or inferred. Never fabricate bibliographic metadata or source content.
 
 4. **Computation and experiments**
    - Read `references/embedded/computation-and-visualization.md`.
@@ -90,7 +97,11 @@ It does not promise an award. It maximizes award probability through disciplined
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
    - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
-   - Use DOCX/PDF/LaTeX/Typst only when the contest or user chooses that path.
+   - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
+     LaTeX source, including `paper/main.tex`, every included source file,
+     `paper/references.bib`, and required figures, tables, styles, and assets.
+     Do not substitute DOCX, Markdown, Typst, or source-only output for this
+     deliverable unless the user explicitly changes the requirement.
 
 8. **Table polish**
    - Read `references/embedded/latex-tables.md` for LaTeX or academic tables.
@@ -101,6 +112,9 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
+   - Build `support.zip` from `support/materials_manifest.csv`, then run
+     `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
+     the rendered PDF and the cited source passages separately.
 
 10. **Optional award-focused post-paper review**
    - Only after modeling and the complete paper are finished and phase 9 has run,
@@ -115,7 +129,11 @@ It does not promise an award. It maximizes award probability through disciplined
 
 11. **Freeze and submit**
    - Read `references/embedded/submission-and-anonymity.md`.
-   - Run anonymity scan, environment capture, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
+   - Deliver two explicit parts: (1) `paper/main.pdf` with the complete LaTeX
+     source tree, and (2) `support.zip` with runnable code, legally distributable
+     data or reproducible retrieval evidence, environment, exact commands, results,
+     licenses, and hashes.
+   - Run anonymity scan, environment capture, paper-delivery verification, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
 12. **Paper-learning regression loop**
@@ -154,6 +172,7 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- traceability.md
 |   |-- claims.csv
 |   |-- argument_coverage.csv
+|   |-- bibliography.csv
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
@@ -162,8 +181,17 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- ai_usage_log.jsonl
 |   `-- verification_report.md
 |-- environment/
+|   `-- README.md
 |-- support/
+|   |-- README.md
+|   |-- reproduction_commands.txt
+|   |-- materials_manifest.csv
+|   `-- data_inventory.csv
+|-- support.zip
 `-- paper/
+    |-- main.tex
+    |-- references.bib
+    `-- main.pdf
 ```
 
 ## Decision Rules
@@ -188,6 +216,12 @@ Create or preserve this layout unless the user provides an existing project stru
 - Every decisive conclusion needs a proportionate failure-oriented test. Choose
   the test before seeing its outcome and preserve the result even when it weakens
   the preferred model.
+- A completed paper needs at least 10 real, relevant, uniquely cited scholarly
+  references. Authoritative metadata and an exact-title Google Scholar query are
+  necessary but not sufficient: read the supporting passage and never infer or
+  fabricate source content.
+- Do not call the work complete until both the compiled PDF plus rebuildable
+  LaTeX source and the verified support-material archive are present.
 - Treat PDF page sequence, appendix boundaries, OCR output, and Office metadata as visual or tool-dependent checks; record an unresolved limitation instead of inferring success.
 
 ## Embedded References
@@ -205,6 +239,7 @@ Use these files as phase playbooks:
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/literature-fetch-and-explain.md`
 - `references/embedded/paper-context-resolver.md`
+- `references/embedded/verified-literature-and-two-part-delivery.md`
 - `references/embedded/computation-and-visualization.md`
 - `references/embedded/data-traceability-and-reproducibility.md`
 - `references/embedded/data-units-and-source-quality.md`

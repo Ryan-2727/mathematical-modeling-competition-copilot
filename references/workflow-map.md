@@ -18,6 +18,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `llm-mm-agent-methodology.md`: LLM-MM-Agent-inspired four-stage loop and HMML/MLE-Solver-style method selection.
 - `literature-fetch-and-explain.md`: embedded `paper-fetch-skill` and `paper-explainer` workflow for source search, paper explanation, and source notes.
 - `paper-context-resolver.md`: narrow paper or reproduction detail resolution.
+- `verified-literature-and-two-part-delivery.md`: ten-source evidence ledger,
+  BibTeX/LaTeX cross-check, compiled-paper contract, and reproducible support package.
 - `computation-and-visualization.md`: code, notebooks, result tables, data validation, and data-driven figures.
 - `data-traceability-and-reproducibility.md`: data audit, traceability table, environment capture, model-specific validation gates, and clean reruns.
 - `data-units-and-source-quality.md`: source hierarchy, unit checks, scope alignment, leakage controls, and transformations.
@@ -56,13 +58,13 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
 | Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md`, `reports/model_decision_log.csv` | Variables and assumptions defined; route selection justified against a baseline |
-| Literature | source notes | Claims tied to sources |
+| Literature | `reports/bibliography.csv`, `paper/references.bib` | At least 10 uniquely cited works have authoritative metadata, exact-title Scholar queries, and checked source passages |
 | Computation | code/notebooks, `results/`, `reports/stress_tests.csv`, `reports/units.csv` | Executed; units reconciled; decisive claims challenged |
 | Figures/tables | `figures/`, tables | Referenced and consistent |
-| Writing | `paper/` | Results match computation |
-| Final check | verification report, argument coverage, claim report | Completion claims backed by evidence |
+| Writing | `paper/main.tex`, `paper/main.pdf`, complete LaTeX source tree | PDF builds, renders correctly, and results match computation |
+| Final check | verification report, argument coverage, claim report, `reports/paper_delivery.json` | Completion claims backed by evidence; paper and support gates pass |
 | Optional review | `reports/post_paper_review.md`, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; four evidence dimensions reviewed and final checks rerun after changes |
-| Submission | hash manifest and receipt evidence | Final artifact frozen and anonymous |
+| Submission | PDF plus LaTeX source, `support.zip`, hash manifest, receipt evidence | Both deliverable parts are complete, frozen, verified, and anonymous |
 
 ## Fallback Behavior
 

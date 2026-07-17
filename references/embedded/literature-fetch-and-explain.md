@@ -24,6 +24,9 @@ Use it when literature can improve model choice, parameter setting, validation, 
    - year
    - DOI, URL, or stable identifier
    - why it matters for the model
+   - authoritative metadata verification and access date
+   - an exact-title Google Scholar query URL
+   - the supported claim and a page/section/equation/table locator
 4. Reject sources that are only loosely related, inaccessible when evidence is needed, or not useful for a model decision.
 
 ## Paper Explanation Workflow
@@ -47,11 +50,15 @@ Then produce a short source note:
 ## Source Note: <title>
 
 - Citation:
+- Authoritative metadata record:
+- Exact-title Google Scholar query:
+- Google Scholar result and checked-at date:
 - Modeling use:
 - Key method:
 - Reusable assumptions:
 - Parameters or formulas:
 - Evidence strength: direct / inferred / weak
+- Supporting passage locator:
 - Risk or limitation:
 ```
 
@@ -61,7 +68,11 @@ Use `paper-context-resolver.md` only after this broader fetch-and-explain step l
 
 ## Citation Discipline
 
+- For a completed paper, follow `verified-literature-and-two-part-delivery.md`
+  and enter every cited work in `reports/bibliography.csv`.
 - Never fabricate citations, titles, author names, years, URLs, or formulas.
+- Never attribute a method detail or finding that was not checked in the source;
+  metadata verification does not verify the paper's content.
 - Mark uncertain details as uncertain.
 - Separate what the paper states from what is inferred for the contest model.
 - Every source used in the final paper must support a specific claim, assumption, method choice, parameter, or comparison.

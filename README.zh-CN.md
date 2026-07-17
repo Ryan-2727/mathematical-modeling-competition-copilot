@@ -4,7 +4,7 @@
 
 适用场景包括 MCM/ICM、CUMCM、华为杯、校赛以及其他类似数学建模竞赛。
 
-[English README](README.md)
+[![Switch to English](https://img.shields.io/badge/README-English-0969da)](README.md)
 
 ## 仅限显式调用
 
@@ -26,6 +26,8 @@
 - 数学建模六阶段流程
 - LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
 - 文献检索和论文解释流程
+- 真实文献证据账本：至少 10 篇真实、相关且在正文实际引用的学术
+  文献，核对权威元数据、Google Scholar 精确题名检索和支持性原文
 - 论文/文献复现细节查证规则
 - 代码、Notebook、结果表和数据图流程
 - 数据来源范围、量纲单位核验，以及预先登记的失败导向压力测试
@@ -41,6 +43,25 @@
 - CUMCM 2026 规则配置、AI 使用详情 PDF、证据账本、可复现运行清单与论证覆盖检查
 - 论文完成后的可选冲奖评审：三类模拟评委、四维证据评分卡与获奖准备度结构验收，仅在用户确认后执行
 - 隐藏优秀论文的独立基线回归：学习可迁移优点，但不依赖配对答案
+- 双交付硬门槛：编译后的 PDF 与完整 LaTeX 源码，以及包含代码、
+  数据证据、环境、命令和结果哈希的支撑材料包
+
+## 完成硬标准
+
+一篇论文只有同时满足以下两项才算完成：
+
+1. `paper/main.pdf` 由随附的 LaTeX 源码编译得到；源码包含
+   `paper/main.tex`、`paper/references.bib`、所有分节文件，以及重建 PDF
+   所需的图、表、类、样式和本地资源。
+2. `support.zip` 包含可运行代码、允许分发的数据或可复现的数据获取
+   证据、环境/依赖信息、精确运行命令、代表性结果、许可信息和 SHA-256。
+
+LaTeX 正文必须实际引用至少 10 篇互不重复、真实且相关的学术文献。
+每篇文献都要写入 `reports/bibliography.csv`，核对出版社、DOI/Crossref、
+OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题名检索，
+确认精确题名结果并记录核验日期，再阅读支持论文论断的原文位置。严禁虚构书目信息、原文内容和定位信息。
+完成前必须运行 `scripts/verify_paper_delivery.py`；脚本通过只代表结构核验
+通过，不能替代人工阅读原文和检查 PDF 版面。
 
 ## 国赛模型路由增强
 
@@ -81,10 +102,11 @@
 4. 在合规范围内查证文献与复现细节；正式比赛禁止当前题目的公开讨论和互动求助。
 5. 用可复现代码、Notebook 或电子表格完成实验，记录环境、数据哈希、求解器、不确定性与失败导向压力测试证据。
 6. 生成有明确论证作用的数据图、流程图、模型图和论文表格。
-7. 组装论文并披露 AI 使用。
-8. 从优秀论文语料库学习通用规则后，再独立解题并进行事后复盘。
-9. 论文完整完成后，询问是否进行假设合理性、模型创新性、结果正确性和表达清晰度的独立冲奖评审。
-10. 执行匿名检查、哈希冻结、提交包验证和回执确认。
+7. 用 LaTeX 组装并编译论文，实际引用至少 10 篇已核验学术文献，并按规则披露 AI 使用。
+8. 生成并核验独立支撑材料包，包含代码、数据证据、环境、命令、结果、许可和哈希。
+9. 从优秀论文语料库学习通用规则后，再独立解题并进行事后复盘。
+10. 完整论文和基础核验完成后，询问是否进行假设合理性、模型创新性、结果正确性和表达清晰度的独立冲奖评审。
+11. 执行匿名检查、哈希冻结、提交包验证和回执确认。
 
 ## 什么时候使用
 
@@ -144,6 +166,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 - `references/embedded/literature-fetch-and-explain.md`
 - `references/embedded/paper-context-resolver.md`
+- `references/embedded/verified-literature-and-two-part-delivery.md`
 
 ### 4. 计算与实验
 
@@ -168,7 +191,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 7. 论文撰写
 
-把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致。
+把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致，并交付编译后的 `paper/main.pdf` 与完整 LaTeX 源码。
 
 参考：
 
@@ -188,7 +211,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 9. 最终核验
 
-提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。
+提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。构建 `support.zip` 后运行 `scripts/verify_paper_delivery.py`，核验真实文献证据与论文/支撑材料双交付。
 
 参考：
 
@@ -225,10 +248,21 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
+|   |-- bibliography.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
 |   `-- verification_report.md
+|-- environment/
+|-- support/
+|   |-- README.md
+|   |-- reproduction_commands.txt
+|   |-- materials_manifest.csv
+|   `-- data_inventory.csv
+|-- support.zip
 `-- paper/
+    |-- main.tex
+    |-- references.bib
+    `-- main.pdf
 ```
 
 ## 安装
@@ -275,6 +309,7 @@ Windows 上更新已有本地安装时，先预览再执行：
         |-- llm-mm-agent-methodology.md
         |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
+        |-- verified-literature-and-two-part-delivery.md
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md

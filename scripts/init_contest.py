@@ -44,6 +44,7 @@ def main() -> int:
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/claims.csv", "claim_id,subproblem,claim,source_file,source_locator,command,figure_or_table,paper_location,human_verification,status\n")
     write_if_missing(root / "reports/argument_coverage.csv", "subproblem,need_or_mechanism,model,solution,quantified_result,interpretation,validation,status\n")
+    write_if_missing(root / "reports/bibliography.csv", "citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,claim_supported,source_locator,status\n")
     write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
     write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
@@ -71,6 +72,21 @@ def main() -> int:
     )
     write_if_missing(root / "reports/ai_usage_log.jsonl", "")
     write_if_missing(root / "reports/verification_report.md", "# Verification report\n\n## Submission state\n\ndraft\n\n## Checks\n\n| Check | Status | Evidence |\n| --- | --- | --- |\n")
+    write_if_missing(root / "paper/references.bib", "")
+    write_if_missing(
+        root / "support/README.md",
+        "# Support materials\n\nDocument the environment, dependency installation, data provenance, exact reproduction commands, expected outputs, and the relationship between code, results, figures, and paper claims. State the execution order, runtime estimate, random seeds, solver status, and any data that cannot legally be redistributed.\n",
+    )
+    write_if_missing(
+        root / "support/reproduction_commands.txt",
+        "# Replace these placeholders with exact commands that run from the project root.\n# 1. install dependencies\n# 2. retrieve or prepare data\n# 3. run models\n# 4. regenerate figures and tables\n# 5. build the LaTeX paper\n",
+    )
+    write_if_missing(root / "support/materials_manifest.csv", "path,category,source,license,sha256,included,notes\n")
+    write_if_missing(root / "support/data_inventory.csv", "dataset,included_path,source_url,license,version_or_date,sha256,retrieval_command,status\n")
+    write_if_missing(
+        root / "environment/README.md",
+        "# Environment\n\nRecord operating system, runtime and solver versions, dependency lock or package list, hardware-sensitive settings, locale, seeds, and installation commands.\n",
+    )
     print(root / "contest_manifest.json")
     return 0
 

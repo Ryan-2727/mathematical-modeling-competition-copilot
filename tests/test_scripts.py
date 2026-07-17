@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import csv
+import hashlib
 import json
 import shutil
 import subprocess
@@ -34,6 +36,16 @@ class ScriptTests(unittest.TestCase):
                 "milestones.csv",
             ):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
+            for filename in (
+                root / "reports" / "bibliography.csv",
+                root / "paper" / "references.bib",
+                root / "support" / "README.md",
+                root / "support" / "reproduction_commands.txt",
+                root / "support" / "materials_manifest.csv",
+                root / "support" / "data_inventory.csv",
+                root / "environment" / "README.md",
+            ):
+                self.assertTrue(filename.is_file(), str(filename))
             log = root / "reports" / "ai_usage_log.jsonl"
             self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "reviewed")
             self.assertIn("TestAI", log.read_text(encoding="utf-8"))
@@ -149,6 +161,209 @@ class ScriptTests(unittest.TestCase):
             self.run_script("verify_award_readiness.py", "--project-dir", str(root), "--out", str(out), expect=1)
             failure = json.loads(out.read_text(encoding="utf-8"))
             self.assertTrue(any("does not cover subproblem Q1" in error for error in failure["errors"]))
+
+    def test_verified_literature_and_two_part_delivery(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            self.run_script(
+                "init_contest.py",
+                "--project-dir", str(root),
+                "--contest", "CUMCM",
+                "--year", "2026",
+                "--mode", "training",
+            )
+            keys = [f"ref{i}" for i in range(10)]
+            main_tex = root / "paper" / "main.tex"
+            main_tex.write_text(
+                "\\documentclass{article}\n\\begin{document}\n"
+                f"Evidence \\cite{{{','.join(keys)}}}.\n"
+                "\\bibliographystyle{plain}\n\\bibliography{references}\n"
+                "\\end{document}\n",
+                encoding="utf-8",
+            )
+            (root / "paper" / "main.pdf").write_bytes(b"%PDF-1.4\n" + b"verified build fixture\n" * 12)
+            (root / "paper" / "references.bib").write_text(
+                "\n".join(
+                    f"@article{{{key}, title={{Verified Modeling Reference {i}}}, "
+                    f"author={{Author, Test}}, journal={{Journal of Tests}}, year={{202{i % 10}}}}}"
+                    for i, key in enumerate(keys)
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            bibliography_path = root / "reports" / "bibliography.csv"
+            bibliography_fields = [
+                "citation_key", "title", "authors", "year", "venue", "doi_or_url",
+                "verification_source", "verified_at", "scholar_query", "scholar_checked_at",
+                "scholar_status", "claim_supported", "source_locator", "status",
+            ]
+            bibliography_rows = [
+                {
+                    "citation_key": key,
+                    "title": f"Verified Modeling Reference {i}",
+                    "authors": "Test Author",
+                    "year": f"202{i % 10}",
+                    "venue": "Journal of Tests",
+                    "doi_or_url": f"https://doi.org/10.1000/test.{i}",
+                    "verification_source": f"Crossref and publisher metadata record {i}",
+                    "verified_at": "2026-07-17",
+                    "scholar_query": f"https://scholar.google.com/scholar?q=%22Verified+Modeling+Reference+{i}%22",
+                    "scholar_checked_at": "2026-07-17",
+                    "scholar_status": "found",
+                    "claim_supported": f"methodological claim {i}",
+                    "source_locator": "abstract and methods section",
+                    "status": "verified",
+                }
+                for i, key in enumerate(keys)
+            ]
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+
+            artifacts = {
+                "code/run.py": b"print('reproduce')\n",
+                "data/processed/input.csv": b"x,y\n1,2\n",
+                "environment/requirements.txt": b"numpy==2.0.0\n",
+                "results/summary.csv": b"metric,value\nscore,1.0\n",
+            }
+            for relative, content in artifacts.items():
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+            (root / "support" / "reproduction_commands.txt").write_text(
+                "python code/run.py\n"
+                "xelatex -interaction=nonstopmode -output-directory=paper paper/main.tex\n",
+                encoding="utf-8",
+            )
+            categories = {
+                "code/run.py": "code",
+                "data/processed/input.csv": "processed-data",
+                "environment/requirements.txt": "environment",
+                "results/summary.csv": "result",
+            }
+            manifest_path = root / "support" / "materials_manifest.csv"
+            with manifest_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=["path", "category", "source", "license", "sha256", "included", "notes"],
+                )
+                writer.writeheader()
+                for relative, category in categories.items():
+                    writer.writerow({
+                        "path": relative,
+                        "category": category,
+                        "source": "team-generated fixture",
+                        "license": "contest-use",
+                        "sha256": hashlib.sha256((root / relative).read_bytes()).hexdigest(),
+                        "included": "yes",
+                        "notes": "required for reproduction",
+                    })
+            data_path = root / "data" / "processed" / "input.csv"
+            with (root / "support" / "data_inventory.csv").open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle,
+                    fieldnames=[
+                        "dataset", "included_path", "source_url", "license", "version_or_date",
+                        "sha256", "retrieval_command", "status",
+                    ],
+                )
+                writer.writeheader()
+                writer.writerow({
+                    "dataset": "processed fixture",
+                    "included_path": "data/processed/input.csv",
+                    "source_url": "https://example.org/contest-data",
+                    "license": "contest-use",
+                    "version_or_date": "2026-07-17",
+                    "sha256": hashlib.sha256(data_path.read_bytes()).hexdigest(),
+                    "retrieval_command": "provided with the contest fixture",
+                    "status": "included",
+                })
+
+            self.run_script(
+                "build_support_archive.py",
+                "--project-dir", str(root),
+                "--materials-manifest", "support/materials_manifest.csv",
+                "--out", str(root / "support.zip"),
+                "--manifest", str(root / "support_manifest.json"),
+            )
+            support_manifest = json.loads((root / "support_manifest.json").read_text(encoding="utf-8"))
+            self.assertTrue(all(isinstance(path, str) for path in support_manifest["files"]))
+            self.assertEqual(len(support_manifest["files"]), len(support_manifest["artifacts"]))
+            report = root / "reports" / "paper_delivery.json"
+            self.run_script("verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report))
+            self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "PASS")
+
+            original_tex = main_tex.read_text(encoding="utf-8")
+            main_tex.write_text(original_tex.replace(",ref9", ""), encoding="utf-8")
+            self.run_script(
+                "verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report), expect=1
+            )
+            citation_failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertTrue(any("at least 10" in error for error in citation_failure["errors"]))
+            main_tex.write_text(original_tex, encoding="utf-8")
+
+            bibliography_rows[0]["verification_source"] = ""
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+            self.run_script(
+                "verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report), expect=1
+            )
+            source_failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertTrue(any("empty required fields" in error for error in source_failure["errors"]))
+            bibliography_rows[0]["verification_source"] = "Crossref and publisher metadata record 0"
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+
+            bibliography_rows[0]["scholar_status"] = "not_found"
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+            self.run_script(
+                "verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report), expect=1
+            )
+            scholar_failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertTrue(any("not confirmed in Google Scholar" in error for error in scholar_failure["errors"]))
+            bibliography_rows[0]["scholar_status"] = "found"
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+
+            original_title = bibliography_rows[9]["title"]
+            original_query = bibliography_rows[9]["scholar_query"]
+            bibliography_rows[9]["title"] = bibliography_rows[8]["title"]
+            bibliography_rows[9]["scholar_query"] = bibliography_rows[8]["scholar_query"]
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+            self.run_script(
+                "verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report), expect=1
+            )
+            duplicate_failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertTrue(any("duplicates title" in error for error in duplicate_failure["errors"]))
+            self.assertTrue(any("at least 10" in error for error in duplicate_failure["errors"]))
+            bibliography_rows[9]["title"] = original_title
+            bibliography_rows[9]["scholar_query"] = original_query
+            with bibliography_path.open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=bibliography_fields)
+                writer.writeheader()
+                writer.writerows(bibliography_rows)
+
+            (root / "code" / "run.py").write_text("print('changed')\n", encoding="utf-8")
+            self.run_script(
+                "verify_paper_delivery.py", "--project-dir", str(root), "--out", str(report), expect=1
+            )
+            hash_failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertTrue(any("SHA-256 mismatch" in error for error in hash_failure["errors"]))
+            self.assertTrue(any("stale or modified copy" in error for error in hash_failure["errors"]))
 
     def test_similarity_preflight(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

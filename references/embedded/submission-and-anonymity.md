@@ -19,8 +19,18 @@ and long intermediate outputs only when current rules require or permit them. Ex
 cache folders, virtual environments, keys, credentials, editor backups, private
 paths, and material that reveals team identity.
 
-Use `scripts/build_support_archive.py` with explicit repeated `--include` paths;
-never archive an entire project directory by default.
+Complete `support/materials_manifest.csv` and `support/data_inventory.csv`. Include
+runnable code, legally distributable data or official retrieval evidence,
+environment/dependency evidence, exact reproduction commands, and representative
+results with source, license, purpose, and SHA-256 values. Then use:
+
+```powershell
+python scripts/build_support_archive.py --project-dir . --materials-manifest support/materials_manifest.csv --out support.zip --manifest support_manifest.json
+python scripts/verify_paper_delivery.py --project-dir . --out reports/paper_delivery.json
+```
+
+Use explicit repeated `--include` paths only for a deliberately smaller
+contest-specific archive. Never archive an entire project directory by default.
 
 For CUMCM 2026 with AI use, include `AI工具使用详情.pdf`; render it from the
 audit log and inspect it before archiving. Scan final PDF text/metadata, Office

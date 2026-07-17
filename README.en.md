@@ -12,7 +12,7 @@ paper-writing question. Invoke it explicitly with
 Use $mathematical-modeling-competition-copilot for this contest problem.
 ```
 
-[中文 README](README.zh-CN.md)
+[![Switch to Chinese](https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-d93025)](README.zh-CN.md)
 
 ## Self-Contained Version
 
@@ -25,6 +25,9 @@ A new computer can install only this repository and still get the full mathemati
 - mathematical modeling six-phase workflow
 - LLM-MM-Agent four-stage methodology and HMML/MLE-Solver-style modeling
 - literature search and paper explanation workflows
+- a verified bibliography ledger: at least 10 real, relevant, uniquely cited
+  scholarly works, authoritative metadata, exact-title Google Scholar queries,
+  and checked source passages
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
 - source-scope and unit checks plus predeclared, failure-oriented stress tests
@@ -39,6 +42,27 @@ A new computer can install only this repository and still get the full mathemati
 - CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
 - optional post-paper award review: three reviewer lenses, a four-dimension evidence scorecard, and structural award-readiness verification, only after user confirmation
 - hidden-exemplar regression for learning reusable strengths from excellent papers without depending on a paired solution
+- a hard two-part delivery gate: compiled PDF plus complete LaTeX source, and a
+  hashed support archive containing code, data evidence, environment, commands,
+  and results
+
+## Hard Completion Contract
+
+A completed paper must satisfy both conditions:
+
+1. `paper/main.pdf` is compiled from the delivered LaTeX source, and the source
+   includes `paper/main.tex`, `paper/references.bib`, all included sections, and
+   every required figure, table, class, style, and asset.
+2. `support.zip` contains runnable code, legally distributable data or reproducible
+   retrieval evidence, environment/dependency evidence, exact commands,
+   representative results, licenses, and SHA-256 hashes.
+
+The LaTeX body must cite at least 10 unique, relevant scholarly works. Each source
+is recorded in `reports/bibliography.csv`, checked against authoritative metadata,
+confirmed by an observed exact-title Google Scholar result, and read at the passage supporting the
+paper's claim. Fabricated metadata or source content is prohibited. Run
+`scripts/verify_paper_delivery.py` before claiming completion; its pass is a
+structural check and does not replace human source reading or PDF inspection.
 
 ## CUMCM Model Routing
 
@@ -78,9 +102,10 @@ This skill acts as the main entry point for a mathematical modeling project. It 
 4. Resolve literature or reproduction-critical details within the contest’s source and communication rules.
 5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, solver, uncertainty, and failure-oriented stress-test evidence.
 6. Generate figures, flowcharts, and tables that support explicit claims.
-7. Assemble a contest paper and disclose AI use as required.
-8. After the full paper is complete, offer an optional independent review of assumption rationality, model creativity, result correctness, and writing clarity.
-9. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
+7. Assemble and compile the LaTeX paper with at least 10 verified, actually cited scholarly sources; disclose AI use as required.
+8. Build and verify the separate support-material archive with code, data evidence, environment, commands, results, licenses, and hashes.
+9. After the full paper and baseline verification are complete, offer an optional independent review of assumption rationality, model creativity, result correctness, and writing clarity.
+10. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
 
 ## When To Use
 
@@ -109,11 +134,11 @@ Chinese example:
 0. Contest mode and compliance: `contest-modes-and-compliance.md`
 1. Contest setup and strategy: `contest-setup.md`, `award-oriented-workflow.md`, and `contest-operations-72h.md`
 2. Problem analysis and model design: `llm-mm-agent-methodology.md`, `mathmodel-six-phase.md`, and `problem-structure-playbooks.md`
-3. Literature and reproduction details: `literature-fetch-and-explain.md` and `paper-context-resolver.md`
+3. Literature and reproduction details: `verified-literature-and-two-part-delivery.md`, `literature-fetch-and-explain.md`, and `paper-context-resolver.md`
 4. Data audit, traceability, and computation: `data-traceability-and-reproducibility.md`, `data-units-and-source-quality.md`, `stress-testing-and-uncertainty.md`, and `computation-and-visualization.md`
 5. Figures and diagrams: `diagrams.md`
-6. Paper writing: `paper-writing.md` plus the current-rules branch
-7. Final verification and submission: `final-verification.md`, optional `reviewer-scorecard-and-presentation.md`, and `submission-and-anonymity.md`
+6. Paper writing: `paper-writing.md`, `latex-paper-pipeline.md`, and the current-rules branch
+7. Final verification and submission: `verify_paper_delivery.py`, `final-verification.md`, optional `reviewer-scorecard-and-presentation.md`, and `submission-and-anonymity.md`
 
 ## Default Project Layout
 
@@ -135,10 +160,21 @@ Chinese example:
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
+|   |-- bibliography.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
 |   `-- verification_report.md
+|-- environment/
+|-- support/
+|   |-- README.md
+|   |-- reproduction_commands.txt
+|   |-- materials_manifest.csv
+|   `-- data_inventory.csv
+|-- support.zip
 `-- paper/
+    |-- main.tex
+    |-- references.bib
+    `-- main.pdf
 ```
 
 ## Installation
@@ -186,6 +222,7 @@ Windows, preview first and then run:
         |-- llm-mm-agent-methodology.md
         |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
+        |-- verified-literature-and-two-part-delivery.md
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md

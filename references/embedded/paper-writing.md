@@ -16,6 +16,10 @@ Use this module to select the correct paper-writing branch.
 - Introduce figures and tables before or near their appearance.
 - Tie every conclusion to a result, figure, table, or source.
 - Do not invent numbers while writing.
+- Cite at least 10 unique, relevant, real scholarly works in the LaTeX body.
+  Verify each work and its supported claim using
+  `verified-literature-and-two-part-delivery.md`; never invent metadata, source
+  content, or locators and never pad the bibliography with uncited sources.
 - Keep limitations honest but not self-defeating.
 - Preserve the contest's anonymity and submission rules over generic writing preferences.
 
@@ -29,3 +33,7 @@ Record the selected branch in `reports/verification_report.md`:
 - whether DOCX/PDF render verification was performed
 - page-limit calculation and current rules source
 - AI disclosure and submission-state evidence
+- authoritative bibliography ledger and exact-title Google Scholar checks
+- compiled `paper/main.pdf` plus complete LaTeX source
+- verified `support.zip` containing code, data or retrieval evidence, environment,
+  exact commands, results, licenses, and hashes
