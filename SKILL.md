@@ -86,6 +86,10 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
+   - Read `references/embedded/paper-depth-and-page-budget.md` and create
+     `reports/paper_depth_plan.csv` before drafting. Count main text and
+     appendices separately; current official limits always override corpus-derived
+     targets.
    - When improving paper-writing ability or when an offline corpus of excellent
      papers is available, read `references/embedded/paper-learning-from-exemplars.md`.
    - For the learned 2025 Chinese-paper profile, read
@@ -96,7 +100,18 @@ It does not promise an award. It maximizes award probability through disciplined
      LaTeX or the contest submission is a Chinese national-format paper.
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
    - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
-   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
+   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper. For every numbered
+     subproblem, preserve the complete chain: task mechanism -> method rationale
+     -> variables/assumptions -> derivation -> algorithm -> quantified result and
+     interpretation -> local validation. Do not replace this chain with a short
+     method summary followed by an answer.
+   - For a complex CUMCM-style problem with four or more linked subproblems, use
+     24 main-text pages as a depth floor and 28--30 pages as the preferred range
+     when the verified rules allow 30 pages. If there is no official page cap,
+     normally plan 24--32 pages of main text and at least 30 pages in the complete
+     PDF including required appendices. These are anti-underwriting gates, not
+     permission to pad; reduce them when the official limit or problem scope
+     requires it and record the reason.
    - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
      LaTeX source, including `paper/main.tex`, every included source file,
      `paper/references.bib`, and required figures, tables, styles, and assets.
@@ -112,6 +127,10 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
+   - Run `scripts/verify_paper_depth.py` with the verified main-text count,
+     appendix count, selected minimums, official maximum, and expected subproblem
+     count. Treat its pass as structural evidence only; visually inspect whether
+     the derivations and explanations are substantive.
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.

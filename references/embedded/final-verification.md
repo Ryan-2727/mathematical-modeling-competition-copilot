@@ -31,6 +31,9 @@ The verification loop:
   supported claim, and a source locator. The cited passages have been read.
 - Submission format matches contest requirements.
 - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026`; explicitly record main-text pages, visual abstract-first/no-TOC checks, and the support archive result.
+- Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
+  counts. Confirm every numbered subproblem has its own completed depth-plan row;
+  a long code appendix does not compensate for an abbreviated main argument.
 - For Chinese 2025-format contests, `paper-writing-zh-cn-format2025.md` checks are complete: abstract is first in the electronic paper, commitment and number pages are excluded from the electronic paper, appendix and support-material rules are satisfied, and identity information is absent.
 - Missing plugin/runtime limitations are recorded.
 - The contest rules snapshot is current and all critical fields are verified.

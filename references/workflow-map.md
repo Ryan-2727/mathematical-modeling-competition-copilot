@@ -29,6 +29,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `reviewer-scorecard-and-presentation.md`: four-dimension internal scorecard and reader-first abstract, figure, and table review.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
 - `paper-writing.md`: paper-writing branch selector.
+- `paper-depth-and-page-budget.md`: evidence-based main-text depth profiles,
+  section budgets, and detailed-versus-brief writing rules.
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
 - `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
 - `paper-writing-mcm-icm-current.md`: current-rule verification checklist for MCM/ICM submission and AI disclosure.

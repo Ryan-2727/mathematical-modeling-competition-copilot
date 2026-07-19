@@ -11,7 +11,8 @@ When a reference corpus is available, profile it once before solving new problem
 Record only reusable observations in `references/` or a project report:
 
 1. Render the first three pages and representative middle/end pages of every PDF.
-2. Measure page count, page size, abstract length, section hierarchy, figure/table
+2. Measure total PDF pages, main-text boundary, appendix boundary, page size,
+   abstract length, section hierarchy, figure/table
    roles, equation density, validation patterns, appendix/code treatment, and
    header/footer behavior.
 3. Sample at least two papers from different task types. Do not generalize from a
@@ -99,9 +100,13 @@ constraint:
 - Use XeLaTeX with an explicit `main.tex`, ordered section files, `\label`/`\ref`,
   and data generated from executed result files.
 
-The corpus contains different lengths and visual densities; therefore the skill
-must not impose a universal number of pages, figures, tables, or equations. It must
-choose the smallest set that covers the claims and remains readable.
+The corpus contains different lengths and visual densities; therefore total PDF
+length alone must not become a universal quota. Separate main text from code and
+other appendices. Use the bounded depth profiles in
+`paper-depth-and-page-budget.md`: current rules are hard constraints, while the
+profile supplies an anti-underwriting floor and a preferred range for comparable
+problem complexity. Figures, tables, and equations remain claim-driven rather
+than quota-driven.
 
 ## Independent improvement loop
 
