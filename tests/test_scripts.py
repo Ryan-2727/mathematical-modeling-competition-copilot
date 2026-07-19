@@ -410,6 +410,48 @@ class ScriptTests(unittest.TestCase):
             self.run_script("similarity_preflight.py", "--draft", str(draft), "--corpus-dir", str(corpus), "--out", str(out), "--min-overlap", "1")
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "REVIEW")
 
+    def test_portable_latex_archive(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            archive = root / "portable.zip"
+            settings = {
+                "latex-workshop.latex.outDir": "%DIR%",
+                "latex-workshop.latex.tools": [{
+                    "name": "xelatex", "command": "xelatex",
+                    "args": ["-synctex=1", "-interaction=nonstopmode", "-file-line-error", "%DOCFILE%"],
+                }],
+                "latex-workshop.latex.recipes": [{"name": "XeLaTeX × 2", "tools": ["xelatex", "xelatex"]}],
+                "latex-workshop.view.pdf.viewer": "tab",
+                "latex-workshop.view.pdf.tab.editorGroup": "right",
+            }
+            files = {
+                "main.tex": """% !TeX program = xelatex
+% !TeX encoding = UTF-8
+\\documentclass{article}
+\\input{sections/placeholder.tex}\\begin{document}Portable fixture\\end{document}
+""",
+                "README.md": "VS Code XeLaTeX main.tex Ctrl+Alt+V\\nOverleaf XeLaTeX main.tex\\n",
+                ".latexmkrc": "$pdf_mode = 5;\\n$xelatex = 'xelatex %O %S';\\n",
+                ".vscode/settings.json": json.dumps(settings),
+                "references.bib": "@article{fixture, title={Fixture}}\\n",
+                "sections/placeholder.tex": "% placeholder\\n",
+                "figures/placeholder.txt": "fixture\\n",
+                "code/fixture.py": "print('fixture')\\n",
+            }
+            with zipfile.ZipFile(archive, "w") as bundle:
+                for relative, content in files.items():
+                    bundle.writestr(relative, content)
+            report = root / "portable.json"
+            self.run_script("verify_portable_latex.py", "--archive", str(archive), "--out", str(report))
+            self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "PASS")
+
+            files["main.tex"] = files["main.tex"].replace("\\begin{document}", "\\input{../escape}\\begin{document}")
+            with zipfile.ZipFile(archive, "w") as bundle:
+                for relative, content in files.items():
+                    bundle.writestr(relative, content)
+            self.run_script("verify_portable_latex.py", "--archive", str(archive), "--out", str(report), expect=1)
+            self.assertIn("non-portable input reference", " ".join(json.loads(report.read_text(encoding="utf-8"))["errors"]))
+
     def test_cumcm_2026_submission_profile(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

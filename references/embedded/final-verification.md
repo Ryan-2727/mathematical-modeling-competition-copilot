@@ -43,6 +43,13 @@ The verification loop:
 - `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
 - `paper/main.tex` compiles to the inspected `paper/main.pdf`; source and PDF are
   both retained as the first deliverable.
+- When LaTeX source is delivered, create a portable source ZIP with `main.tex`
+  at its archive root. It must include `README.md`, `.latexmkrc`,
+  `.vscode/settings.json`, all included sections, bibliography, figures, code,
+  styles, and assets. Run `scripts/verify_portable_latex.py --archive <zip>
+  --out <report> --compile`; record its JSON result, archive hash, and any
+  unavailable XeLaTeX limitation. Confirm VS Code can use the packaged
+  `XeLaTeX × 2` recipe and that the root `main.tex` is the stated Overleaf entrypoint.
 - `support.zip` contains the allow-listed code, data or legal retrieval evidence,
   environment, exact commands, results, licenses, and hashes as the second
   deliverable. `scripts/verify_paper_delivery.py` returns `PASS`.
@@ -59,6 +66,8 @@ Create or update `reports/verification_report.md` with:
 - final submission readiness
 - `reports/paper_delivery.json`, including its structural-only scope and the
   separate human checks of source content and rendered PDF layout
+- portable LaTeX archive path, hash, root-entrypoint check, VS Code recipe check,
+  fresh-directory compile status, PDF page count, and Overleaf configuration note
 
 ## Optional award-focused review
 

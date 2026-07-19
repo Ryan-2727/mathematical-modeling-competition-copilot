@@ -115,6 +115,14 @@ It does not promise an award. It maximizes award probability through disciplined
    - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
      LaTeX source, including `paper/main.tex`, every included source file,
      `paper/references.bib`, and required figures, tables, styles, and assets.
+   - When delivering LaTeX to a user, package a portable source ZIP whose root
+     contains the single entrypoint `main.tex`, `README.md`, `.latexmkrc`,
+     `.vscode/settings.json`, `sections/`, and every referenced figure, code,
+     bibliography, style, and asset. Use UTF-8 and XeLaTeX. Configure VS Code
+     LaTeX Workshop to build `main.tex` twice with `%DOCFILE%`, find PDF output
+     in `%DIR%`, and preview it in a tab; make the same root ZIP directly usable
+     by Overleaf with `main.tex` selected as the main document. Read
+     `latex-paper-pipeline.md` for the required layout and verification steps.
      Do not substitute DOCX, Markdown, Typst, or source-only output for this
      deliverable unless the user explicitly changes the requirement.
 
@@ -134,6 +142,10 @@ It does not promise an award. It maximizes award probability through disciplined
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.
+   - When a portable LaTeX source ZIP is delivered, run
+     `scripts/verify_portable_latex.py --archive <zip> --out <report> --compile`
+     after final packaging. Treat a pass as evidence that the archive rebuilds
+     from a fresh directory, not as proof that a remote Overleaf account was used.
 
 10. **Optional award-focused post-paper review**
    - Only after modeling and the complete paper are finished and phase 9 has run,
@@ -152,6 +164,9 @@ It does not promise an award. It maximizes award probability through disciplined
      source tree, and (2) `support.zip` with runnable code, legally distributable
      data or reproducible retrieval evidence, environment, exact commands, results,
      licenses, and hashes.
+   - If a user requests LaTeX source, include the verified portable source ZIP
+     in part (1), retain its hash, and state the exact VS Code and Overleaf
+     entrypoint (`main.tex`) in the delivery note.
    - Run anonymity scan, environment capture, paper-delivery verification, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
@@ -210,6 +225,12 @@ Create or preserve this layout unless the user provides an existing project stru
 `-- paper/
     |-- main.tex
     |-- references.bib
+    |-- sections/
+    |-- figures/
+    |-- code/
+    |-- .vscode/settings.json
+    |-- .latexmkrc
+    |-- README.md
     `-- main.pdf
 ```
 
