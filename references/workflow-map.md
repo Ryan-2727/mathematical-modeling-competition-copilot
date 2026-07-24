@@ -29,6 +29,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `reviewer-scorecard-and-presentation.md`: four-dimension internal scorecard and reader-first abstract, figure, and table review.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
 - `paper-writing.md`: paper-writing branch selector.
+- `paper-depth-and-page-budget.md`: evidence-based main-text depth profiles,
+  section budgets, and detailed-versus-brief writing rules.
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
 - `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
 - `paper-writing-mcm-icm-current.md`: current-rule verification checklist for MCM/ICM submission and AI disclosure.
@@ -64,7 +66,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Computation | code/notebooks, `results/`, `reports/stress_tests.csv`, `reports/units.csv` | Executed; units reconciled; decisive claims challenged |
 | Figures/tables | `figures/`, tables | Referenced and consistent |
 | Writing | `paper/main.tex`, `paper/main.pdf`, complete portable LaTeX source tree | Overleaf-style root and VS Code `build/` outputs compile with XeLaTeX/latexmk, render correctly, and match computation |
-| Final check | verification report, argument coverage, claim report, `reports/latex_compatibility.json`, `reports/paper_delivery.json` | Compatibility report is fresh and compile-backed; completion claims and paper/support gates pass |
+| Final check | verification report, paper-depth report, argument coverage, claim report, `reports/latex_compatibility.json`, portable-source ZIP report, `reports/paper_delivery.json` | Depth plan is complete; compatibility and ZIP reports are compile-backed; completion claims and paper/support gates pass |
 | Optional review | `reports/post_paper_review.md`, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; four evidence dimensions reviewed and final checks rerun after changes |
 | Submission | PDF plus LaTeX source, `support.zip`, hash manifest, receipt evidence | Both deliverable parts are complete, frozen, verified, and anonymous |
 

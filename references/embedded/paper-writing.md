@@ -11,6 +11,9 @@ Use this module to select the correct paper-writing branch.
 
 ## Shared Writing Rules
 
+- Read `paper-depth-and-page-budget.md` before outlining. Allocate pages by the
+  reasoning burden of each claim, not by equal section lengths, and distinguish
+  main-text depth from code-appendix volume.
 - Define symbols before use.
 - Keep formulas connected to plain-language purpose.
 - Introduce figures and tables before or near their appearance.
@@ -32,6 +35,8 @@ Record the selected branch in `reports/verification_report.md`:
 - any unresolved formatting requirement
 - whether DOCX/PDF render verification was performed
 - page-limit calculation and current rules source
+- planned and actual main-text/appendix pages, depth-profile rationale, and the
+  `verify_paper_depth.py` result
 - AI disclosure and submission-state evidence
 - authoritative bibliography ledger and exact-title Google Scholar checks
 - compiled `paper/main.pdf` plus complete LaTeX source

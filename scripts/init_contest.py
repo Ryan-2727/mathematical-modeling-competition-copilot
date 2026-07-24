@@ -50,6 +50,18 @@ def main() -> int:
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/claims.csv", "claim_id,subproblem,claim,source_file,source_locator,command,figure_or_table,paper_location,human_verification,status\n")
     write_if_missing(root / "reports/argument_coverage.csv", "subproblem,need_or_mechanism,model,solution,quantified_result,interpretation,validation,status\n")
+    write_if_missing(
+        root / "reports/paper_depth_plan.csv",
+        "section,role,planned_pages,actual_pages,required_content,evidence,status\n"
+        "摘要,abstract,1,,逐题方法、关键结果、验证和结论,,pending\n"
+        "问题重述,restatement,1,,输入、约束、输出和任务边界,,pending\n"
+        "问题分析,analysis,2,,逐题机理、方法理由、依赖关系和验证计划,,pending\n"
+        "模型假设与符号,assumptions_notation,1,,仅保留后文实际使用的假设与符号,,pending\n"
+        "问题一,subproblem,,,机理、方法理由、变量、推导、算法、结果解释、局部验证,,pending\n"
+        "综合检验,validation,2,,误差、独立复核、敏感性、鲁棒性或失效边界,,pending\n"
+        "结论与评价,conclusion,1,,逐题直接回答、优缺点和可实施改进,,pending\n"
+        "参考文献,references,1,,正文实际引用且已核验的文献,,pending\n",
+    )
     write_if_missing(root / "reports/bibliography.csv", "citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,claim_supported,source_locator,status\n")
     write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")

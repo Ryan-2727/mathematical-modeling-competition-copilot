@@ -37,9 +37,11 @@ main narrative.
 ## What must not become a rule
 
 Historical papers range widely in page count and layout because rules, archive
-formats, and tasks changed. Never copy their page count, title wording, model stack,
-equations, numerical results, or visual style as a quota. Current official rules
-and the project evidence determine the page budget, format, and required materials.
+formats, tasks, and appendix practices changed. Never copy a PDF's total page
+count, title wording, model stack, equations, numerical results, or visual style as
+a quota. Measure main text and appendices separately. Current official rules and
+the project evidence determine the hard page budget; the complexity profile in
+`paper-depth-and-page-budget.md` supplies a documented anti-underwriting floor.
 
 ## Drafting checklist learned from the corpus
 

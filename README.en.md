@@ -168,8 +168,12 @@ Chinese example:
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- bibliography.csv
+|   |-- paper_depth_plan.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
+|   |-- latex_compatibility.json
+|   |-- portable_latex_verification.json
+|   |-- paper_delivery.json
 |   `-- verification_report.md
 |-- environment/
 |-- support/
@@ -180,6 +184,7 @@ Chinese example:
 |-- support.zip
 `-- paper/
     |-- main.tex
+    |-- README.md
     |-- references.bib
     |-- .latexmkrc
     |-- .vscode/

@@ -44,6 +44,7 @@ def main() -> int:
         "SKILL.md": (
             "at least 10", "paper/main.pdf", "support.zip",
             "scripts/verify_paper_delivery.py", "scripts/verify_latex_compatibility.py",
+            "scripts/verify_paper_depth.py", "scripts/verify_portable_latex.py",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -77,12 +78,22 @@ def main() -> int:
         "scripts/scaffold_latex_paper.py",
         "scripts/verify_latex_compatibility.py",
         "scripts/verify_paper_delivery.py",
+        "scripts/verify_paper_depth.py",
+        "scripts/verify_portable_latex.py",
         "assets/latex-paper-template/main.tex",
+        "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",
         "assets/latex-paper-template/.vscode/settings.json",
         "assets/latex-paper-template/.vscode/extensions.json",
     ):
         if not (ROOT / relative).is_file(): fail(f"missing delivery script: {relative}")
+    portable_reference = ROOT / "references" / "embedded" / "latex-paper-pipeline.md"
+    for phrase in (
+        ".vscode/settings.json", ".latexmkrc", "latexmk (XeLaTeX)",
+        "Ctrl+Alt+V", "verify_portable_latex.py",
+    ):
+        if phrase not in portable_reference.read_text(encoding="utf-8"):
+            fail(f"latex-paper-pipeline.md missing portable LaTeX contract: {phrase}")
     references = set(re.findall(r"`(references/embedded/[^`]+\.md)`", text))
     for relative in references:
         if not (ROOT / relative).is_file(): fail(f"missing referenced file: {relative}")

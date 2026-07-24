@@ -14,6 +14,7 @@ from typing import Any
 
 REQUIRED_FILES = {
     "main.tex",
+    "README.md",
     "references.bib",
     ".latexmkrc",
     ".vscode/settings.json",
@@ -21,7 +22,7 @@ REQUIRED_FILES = {
 }
 REQUIRED_DIRS = {"sections", "figures"}
 SOURCE_SUFFIXES = {
-    ".tex", ".bib", ".cls", ".sty", ".bst", ".json",
+    ".tex", ".bib", ".cls", ".sty", ".bst", ".json", ".md",
     ".pdf", ".png", ".jpg", ".jpeg", ".eps",
 }
 GRAPHIC_SUFFIXES = (".pdf", ".png", ".jpg", ".jpeg", ".eps")
@@ -31,6 +32,7 @@ OS_FONT_RE = re.compile(
 )
 INPUT_RE = re.compile(r"\\(?:input|include)\s*\{([^{}]+)\}")
 GRAPHIC_RE = re.compile(r"\\includegraphics(?:\s*\[[^\]]*\])?\s*\{([^{}]+)\}")
+LISTING_RE = re.compile(r"\\lstinputlisting(?:\s*\[[^\]]*\])?\s*\{([^{}]+)\}")
 LOG_ERROR_PATTERNS = (
     re.compile(r"^!", re.MULTILINE),
     re.compile(r"LaTeX Error:", re.IGNORECASE),
@@ -125,7 +127,7 @@ def static_checks(paper_dir: Path) -> tuple[list[str], list[str], dict[str, Any]
 
     text_files: dict[Path, str] = {}
     for path in source_files(paper_dir):
-        if path.suffix.lower() not in {".tex", ".bib", ".cls", ".sty", ".bst", ".json"} and path.name != ".latexmkrc":
+        if path.suffix.lower() not in {".tex", ".bib", ".cls", ".sty", ".bst", ".json", ".md"} and path.name != ".latexmkrc":
             continue
         try:
             text_files[path] = path.read_text(encoding="utf-8")
@@ -155,6 +157,11 @@ def static_checks(paper_dir: Path) -> tuple[list[str], list[str], dict[str, Any]
     ):
         errors.append("main.tex does not use references.bib")
 
+    readme_text = text_files.get(paper_dir / "README.md", "")
+    for phrase in ("VS Code", "Overleaf", "XeLaTeX", "main.tex", "Ctrl+Alt+V"):
+        if phrase not in readme_text:
+            errors.append(f"README.md missing portable-build instruction: {phrase}")
+
     latexmk_text = text_files.get(paper_dir / ".latexmkrc", "")
     for marker in ("$pdf_mode = 5", "xelatex", "-synctex=1", "-halt-on-error", "-file-line-error"):
         if marker not in latexmk_text:
@@ -174,6 +181,8 @@ def static_checks(paper_dir: Path) -> tuple[list[str], list[str], dict[str, Any]
             errors.append("VS Code must write LaTeX output to %DIR%/build")
         if settings.get("latex-workshop.view.pdf.viewer") != "tab":
             errors.append("VS Code PDF viewer must be set to tab")
+        if settings.get("latex-workshop.view.pdf.tab.editorGroup") != "right":
+            errors.append("VS Code PDF tab must open in the right editor group")
         tools = settings.get("latex-workshop.latex.tools", [])
         recipes = settings.get("latex-workshop.latex.recipes", [])
         xelatex_tools = [
@@ -206,6 +215,7 @@ def static_checks(paper_dir: Path) -> tuple[list[str], list[str], dict[str, Any]
 
     referenced_inputs: list[str] = []
     referenced_graphics: list[str] = []
+    referenced_listings: list[str] = []
     active_tex_files = reachable_tex_files(paper_dir)
     for owner in active_tex_files:
         raw_text = text_files.get(owner)
@@ -238,8 +248,16 @@ def static_checks(paper_dir: Path) -> tuple[list[str], list[str], dict[str, Any]
                 errors.append(
                     f"missing graphic from {owner.relative_to(paper_dir).as_posix()}: {argument}"
                 )
+        for argument in LISTING_RE.findall(text):
+            referenced_listings.append(argument)
+            if resolve_input(paper_dir, owner, argument, "") is None:
+                errors.append(
+                    f"missing or nonportable code listing from "
+                    f"{owner.relative_to(paper_dir).as_posix()}: {argument}"
+                )
     details["referenced_inputs"] = referenced_inputs
     details["referenced_graphics"] = referenced_graphics
+    details["referenced_listings"] = referenced_listings
     details["reachable_tex_files"] = [
         path.relative_to(paper_dir).as_posix() for path in active_tex_files
     ]

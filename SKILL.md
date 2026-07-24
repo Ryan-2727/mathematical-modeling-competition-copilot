@@ -86,6 +86,10 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
+   - Read `references/embedded/paper-depth-and-page-budget.md` and create
+     `reports/paper_depth_plan.csv` before drafting. Count main text and
+     appendices separately; current official limits always override corpus-derived
+     targets.
    - When improving paper-writing ability or when an offline corpus of excellent
      papers is available, read `references/embedded/paper-learning-from-exemplars.md`.
    - For the learned 2025 Chinese-paper profile, read
@@ -99,13 +103,32 @@ It does not promise an award. It maximizes award probability through disciplined
      `--force`; preserve a nonempty paper directory instead of overwriting it.
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
    - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
-   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
+   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper. For every numbered
+     subproblem, preserve the complete chain: task mechanism -> method rationale
+     -> variables/assumptions -> derivation -> algorithm -> quantified result and
+     interpretation -> local validation. Do not replace this chain with a short
+     method summary followed by an answer.
+   - For a complex CUMCM-style problem with four or more linked subproblems, use
+     24 main-text pages as a depth floor and 28--30 pages as the preferred range
+     when the verified rules allow 30 pages. If there is no official page cap,
+     normally plan 24--32 pages of main text and at least 30 pages in the complete
+     PDF including required appendices. These are anti-underwriting gates, not
+     permission to pad; reduce them when the official limit or problem scope
+     requires it and record the reason.
    - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
      LaTeX source, including `paper/main.tex`, every included source file,
      `paper/references.bib`, `.latexmkrc`, `.vscode/`, `sections/`, `figures/`,
      and required tables, styles, and assets. It must compile and preview with
      XeLaTeX/latexmk in both Overleaf and VS Code using only relative paths and
      portable fonts.
+   - When delivering LaTeX to a user, package a portable source ZIP whose root
+     contains the single entrypoint `main.tex`, `README.md`, `.latexmkrc`,
+     `.vscode/`, `sections/`, and every referenced figure, code,
+     bibliography, style, and asset. Use UTF-8 and XeLaTeX. Configure VS Code
+     LaTeX Workshop to build `main.tex` through latexmk, write PDF output under
+     `build/`, and preview it in a tab; make the same root ZIP directly usable by
+     Overleaf with `main.tex` selected as the main document. Read
+     `latex-paper-pipeline.md` for the required layout and verification steps.
      Do not substitute DOCX, Markdown, Typst, or source-only output for this
      deliverable unless the user explicitly changes the requirement.
 
@@ -121,9 +144,17 @@ It does not promise an award. It maximizes award probability through disciplined
    - Run `scripts/verify_latex_compatibility.py` to create a fresh, compile-backed
      `reports/latex_compatibility.json`. Require successful project-root and
      `build/` output builds before the paper-delivery gate.
+   - Run `scripts/verify_paper_depth.py` with the verified main-text count,
+     appendix count, selected minimums, official maximum, and expected subproblem
+     count. Treat its pass as structural evidence only; visually inspect whether
+     the derivations and explanations are substantive.
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.
+   - When a portable LaTeX source ZIP is delivered, run
+     `scripts/verify_portable_latex.py --archive <zip> --out <report> --compile`
+     after final packaging. Treat a pass as evidence that the archive rebuilds
+     from a fresh directory, not as proof that a remote Overleaf account was used.
 
 10. **Optional award-focused post-paper review**
    - Only after modeling and the complete paper are finished and phase 9 has run,
@@ -142,6 +173,9 @@ It does not promise an award. It maximizes award probability through disciplined
      source tree, and (2) `support.zip` with runnable code, legally distributable
      data or reproducible retrieval evidence, environment, exact commands, results,
      licenses, and hashes.
+   - If a user requests LaTeX source, include the verified portable source ZIP
+     in part (1), retain its hash, and state the exact VS Code and Overleaf
+     entrypoint (`main.tex`) in the delivery note.
    - Run anonymity scan, environment capture, paper-delivery verification, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
@@ -182,12 +216,16 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- claims.csv
 |   |-- argument_coverage.csv
 |   |-- bibliography.csv
+|   |-- paper_depth_plan.csv
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
 |   |-- ai_usage_log.jsonl
+|   |-- latex_compatibility.json
+|   |-- portable_latex_verification.json
+|   |-- paper_delivery.json
 |   `-- verification_report.md
 |-- environment/
 |   `-- README.md
@@ -200,6 +238,7 @@ Create or preserve this layout unless the user provides an existing project stru
 `-- paper/
     |-- main.tex
     |-- references.bib
+    |-- README.md
     |-- .latexmkrc
     |-- .vscode/
     |   |-- settings.json

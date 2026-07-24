@@ -37,6 +37,7 @@ class ScriptTests(unittest.TestCase):
                 "units.csv",
                 "reviewer_scorecard.csv",
                 "milestones.csv",
+                "paper_depth_plan.csv",
             ):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
             for filename in (
@@ -102,6 +103,40 @@ class ScriptTests(unittest.TestCase):
             data = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(data["pdf_count"], 1)
             self.assertTrue(data["papers"][0]["relative_path"].replace("\\", "/").endswith("corpus/2025/A001.pdf"))
+
+    def test_paper_depth_bounds_and_subproblem_coverage(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            reports = root / "reports"
+            reports.mkdir(parents=True)
+            header = "section,role,planned_pages,actual_pages,required_content,evidence,status\n"
+            rows = [
+                "摘要,abstract,1,1,answers,main.tex:abstract,complete",
+                "重述,restatement,1,1,scope,main.tex:restatement,complete",
+                "分析,analysis,2,2,rationale,main.tex:analysis,complete",
+                "假设符号,assumptions_notation,1,1,definitions,main.tex:notation,complete",
+                "问题一,subproblem,4,4,seven-part-chain,main.tex:q1,complete",
+                "问题二,subproblem,4,4,seven-part-chain,main.tex:q2,complete",
+                "检验,validation,2,2,robustness,main.tex:validation,complete",
+                "结论,conclusion,1,1,direct-answers,main.tex:conclusion,complete",
+                "文献,references,1,1,verified-sources,main.tex:references,complete",
+            ]
+            (reports / "paper_depth_plan.csv").write_text(
+                header + "\n".join(rows) + "\n", encoding="utf-8"
+            )
+            out = reports / "paper_depth.json"
+            common = (
+                "--project-dir", str(root), "--main-text-pages", "28",
+                "--appendix-pages", "12", "--minimum-main-text-pages", "24",
+                "--minimum-total-pages", "30", "--maximum-main-text-pages", "30",
+                "--expected-subproblems", "2", "--out", str(out),
+            )
+            self.run_script("verify_paper_depth.py", *common)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
+            failing = list(common)
+            failing[failing.index("28")] = "20"
+            self.run_script("verify_paper_depth.py", *failing, expect=1)
+            self.assertTrue(any("depth floor" in error for error in json.loads(out.read_text(encoding="utf-8"))["errors"]))
 
     def test_claim_ledger_and_reproduction(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -429,7 +464,8 @@ class ScriptTests(unittest.TestCase):
             main_tex.write_text(
                 main_tex.read_text(encoding="utf-8")
                 + "\n\\setmainfont{Times New Roman}\n"
-                + "\\input{C:\\\\Users\\\\contestant\\\\private}\n",
+                + "\\input{C:\\\\Users\\\\contestant\\\\private}\n"
+                + "\\lstinputlisting{../private.py}\n",
                 encoding="utf-8",
             )
             self.run_script(
@@ -443,6 +479,7 @@ class ScriptTests(unittest.TestCase):
             self.assertEqual(failure["status"], "FAIL")
             self.assertTrue(any("filesystem path" in error for error in failure["errors"]))
             self.assertTrue(any("font name" in error for error in failure["errors"]))
+            self.assertTrue(any("code listing" in error for error in failure["errors"]))
 
     @unittest.skipUnless(
         shutil.which("latexmk") and shutil.which("xelatex") and shutil.which("bibtex"),
@@ -474,6 +511,48 @@ class ScriptTests(unittest.TestCase):
             out = root / "similarity.json"
             self.run_script("similarity_preflight.py", "--draft", str(draft), "--corpus-dir", str(corpus), "--out", str(out), "--min-overlap", "1")
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "REVIEW")
+
+    def test_portable_latex_archive(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            project = root / "project"
+            self.run_script("scaffold_latex_paper.py", "--project-dir", str(project))
+            paper = project / "paper"
+            archive = root / "portable.zip"
+            with zipfile.ZipFile(archive, "w") as bundle:
+                for path in paper.rglob("*"):
+                    if path.is_file() and "build" not in path.relative_to(paper).parts:
+                        bundle.write(path, path.relative_to(paper).as_posix())
+            report = root / "portable.json"
+            self.run_script("verify_portable_latex.py", "--archive", str(archive), "--out", str(report))
+            self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "PASS")
+            if shutil.which("latexmk") and shutil.which("xelatex") and shutil.which("bibtex"):
+                self.run_script(
+                    "verify_portable_latex.py",
+                    "--archive", str(archive),
+                    "--out", str(report),
+                    "--compile",
+                )
+                self.assertTrue(
+                    json.loads(report.read_text(encoding="utf-8"))["details"]["compatibility"]["compile_backed"]
+                )
+
+            main_tex = paper / "main.tex"
+            main_tex.write_text(
+                main_tex.read_text(encoding="utf-8").replace(
+                    "\\begin{document}", "\\input{../escape}\\n\\begin{document}"
+                ),
+                encoding="utf-8",
+            )
+            with zipfile.ZipFile(archive, "w") as bundle:
+                for path in paper.rglob("*"):
+                    if path.is_file() and "build" not in path.relative_to(paper).parts:
+                        bundle.write(path, path.relative_to(paper).as_posix())
+            self.run_script("verify_portable_latex.py", "--archive", str(archive), "--out", str(report), expect=1)
+            self.assertIn(
+                "missing or nonportable TeX input",
+                " ".join(json.loads(report.read_text(encoding="utf-8"))["errors"]),
+            )
 
     def test_cumcm_2026_submission_profile(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

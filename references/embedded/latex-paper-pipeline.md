@@ -17,6 +17,7 @@ The generated contract is:
 ```text
 paper/
 |-- main.tex
+|-- README.md
 |-- references.bib
 |-- .latexmkrc
 |-- .vscode/
@@ -41,6 +42,82 @@ Use UTF-8, XeLaTeX, portable TeX Live/Fandol fonts, BibTeX in
 `references.bib`, and the editor directives already present in `main.tex`. Do not
 hard-code a drive letter, user directory, operating-system font, or generated
 include file that hides figure or section references.
+
+When LaTeX source is delivered to a user, create a second, self-contained source
+tree and ZIP its *contents* rather than its parent directory. The ZIP root must be:
+
+```text
+main.tex
+README.md
+.latexmkrc
+.vscode/settings.json
+.vscode/extensions.json
+sections/*.tex
+figures/<referenced files>
+code/<referenced files>
+references.bib
+<local .cls/.sty/table/data assets when referenced>
+```
+
+`main.tex` is the only entrypoint. Add these first lines:
+
+```latex
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+```
+
+Use `sections/...`, `figures/...`, and `code/...` paths from that root for
+`\input`, `\includegraphics`, and `\lstinputlisting`. Do not use `..`, a drive
+letter, a user directory, or a path outside the archive. Keep the canonical
+workspace layout if useful, but copy every required dependency into the portable
+source tree before packaging.
+
+## VS Code and Overleaf compatibility
+
+Include `.vscode/settings.json` with the canonical latexmk XeLaTeX recipe. It
+must use `%DOC%` rather than a Windows absolute path, pass
+`-outdir=%OUTDIR%`, place output in `%DIR%/build`, and use the internal tab
+viewer:
+
+```json
+{
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.tools": [{
+    "name": "latexmk-xelatex",
+    "command": "latexmk",
+    "args": [
+      "-xelatex",
+      "-synctex=1",
+      "-interaction=nonstopmode",
+      "-halt-on-error",
+      "-file-line-error",
+      "-outdir=%OUTDIR%",
+      "%DOC%"
+    ]
+  }],
+  "latex-workshop.latex.recipes": [{
+    "name": "latexmk (XeLaTeX)",
+    "tools": ["latexmk-xelatex"]
+  }],
+  "latex-workshop.latex.recipe.default": "first",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.view.pdf.tab.editorGroup": "right"
+}
+```
+
+Include `.latexmkrc`:
+
+```perl
+$pdf_mode = 5;
+$xelatex = 'xelatex -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error %O %S';
+$bibtex_use = 2;
+```
+
+README must state: open the whole folder in VS Code, build the root `main.tex`
+with `latexmk (XeLaTeX)`, and use `Ctrl+Alt+V` or **LaTeX Workshop: View LaTeX
+PDF file** to preview `build/main.pdf`. For Overleaf, upload the whole ZIP,
+choose XeLaTeX, and set the root `main.tex` as the main document. Do not claim
+that a remote Overleaf account was used unless it actually was.
 
 ## Minimum paper elements
 
@@ -130,3 +207,14 @@ the support archive only after this check, then run
 `scripts/verify_paper_delivery.py`. If XeLaTeX, latexmk, BibTeX, or a PDF
 rasterizer is unavailable, record the exact limitation in
 `reports/verification_report.md` and do not call the paper complete.
+
+After making the portable ZIP, run:
+
+```powershell
+python scripts/verify_portable_latex.py --archive output/paper-latex-source.zip --out reports/portable_latex_verification.json --compile
+```
+
+The script checks the archive root, VS Code configuration, XeLaTeX declarations,
+relative file references, README instructions, and—when `--compile` is used—a
+fresh-directory two-pass XeLaTeX rebuild. Inspect the produced PDF separately;
+the script validates structure and local compilation, not remote Overleaf UI state.

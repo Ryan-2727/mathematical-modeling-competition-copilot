@@ -31,6 +31,9 @@ The verification loop:
   supported claim, and a source locator. The cited passages have been read.
 - Submission format matches contest requirements.
 - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026`; explicitly record main-text pages, visual abstract-first/no-TOC checks, and the support archive result.
+- Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
+  counts. Confirm every numbered subproblem has its own completed depth-plan row;
+  a long code appendix does not compensate for an abbreviated main argument.
 - For Chinese 2025-format contests, `paper-writing-zh-cn-format2025.md` checks are complete: abstract is first in the electronic paper, commitment and number pages are excluded from the electronic paper, appendix and support-material rules are satisfied, and identity information is absent.
 - Missing plugin/runtime limitations are recorded.
 - The contest rules snapshot is current and all critical fields are verified.
@@ -40,6 +43,17 @@ The verification loop:
 - `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
 - `paper/main.tex` compiles to the inspected `paper/main.pdf`; source and PDF are
   both retained as the first deliverable.
+- `scripts/verify_latex_compatibility.py` produces a fresh, compile-backed
+  `reports/latex_compatibility.json` for both project-root and `build/` output
+  paths; its source fingerprint matches the delivered paper tree.
+- When LaTeX source is delivered, create a portable source ZIP with `main.tex`
+  at its archive root. It must include `README.md`, `.latexmkrc`,
+  `.vscode/settings.json`, all included sections, bibliography, figures, code,
+  styles, and assets. Run `scripts/verify_portable_latex.py --archive <zip>
+  --out <report> --compile`; record its JSON result, archive hash, and any
+  unavailable XeLaTeX limitation. Confirm VS Code can use the packaged
+  `latexmk (XeLaTeX)` recipe and that the root `main.tex` is the stated Overleaf
+  entrypoint.
 - `support.zip` contains the allow-listed code, data or legal retrieval evidence,
   environment, exact commands, results, licenses, and hashes as the second
   deliverable. `scripts/verify_paper_delivery.py` returns `PASS`.
@@ -56,6 +70,10 @@ Create or update `reports/verification_report.md` with:
 - final submission readiness
 - `reports/paper_delivery.json`, including its structural-only scope and the
   separate human checks of source content and rendered PDF layout
+- `reports/latex_compatibility.json`, including both build commands, PDF outputs,
+  source fingerprint, and visual-inspection result
+- portable LaTeX archive path, hash, root-entrypoint check, VS Code recipe check,
+  fresh-directory compile status, PDF page count, and Overleaf configuration note
 
 ## Optional award-focused review
 
