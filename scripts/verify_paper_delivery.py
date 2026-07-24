@@ -12,6 +12,8 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO
 
+from verify_latex_compatibility import reachable_tex_files, source_fingerprint
+
 
 MIN_REFERENCES = 10
 VERIFIED = {"verified", "pass", "complete"}
@@ -100,9 +102,26 @@ def main() -> int:
         if paper_pdf.stat().st_size < 100 or pdf_header != b"%PDF-":
             errors.append("paper/main.pdf is not a non-empty PDF build artifact")
 
+    compatibility_path = root / "reports" / "latex_compatibility.json"
+    compatibility: dict[str, object] = {}
+    if not compatibility_path.is_file():
+        errors.append("reports/latex_compatibility.json is missing; run verify_latex_compatibility.py")
+    else:
+        try:
+            compatibility = json.loads(compatibility_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            errors.append("reports/latex_compatibility.json is not valid readable JSON")
+        else:
+            if compatibility.get("status") != "PASS" or compatibility.get("compile_backed") is not True:
+                errors.append("LaTeX compatibility is not backed by successful Overleaf and VS Code builds")
+            if (root / "paper").is_dir():
+                current_source_hash = source_fingerprint(root / "paper")
+                if compatibility.get("source_sha256") != current_source_hash:
+                    errors.append("LaTeX compatibility report is stale for the current paper source")
+
     tex_text = "\n".join(
         path.read_text(encoding="utf-8", errors="replace")
-        for path in sorted((root / "paper").rglob("*.tex"))
+        for path in reachable_tex_files(root / "paper")
     ) if (root / "paper").is_dir() else ""
     cited_keys = {
         key.strip()
@@ -305,6 +324,9 @@ def main() -> int:
             "support_manifest_rows": len(materials),
             "support_archive_files": len(archive_names),
             "data_inventory_rows": len(data_rows),
+            "latex_compatibility_builds": len(compatibility.get("builds", []))
+            if isinstance(compatibility.get("builds"), list)
+            else 0,
         },
         "errors": errors,
         "warnings": warnings,

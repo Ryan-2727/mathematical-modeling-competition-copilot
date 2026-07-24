@@ -7,6 +7,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from scaffold_latex_paper import paper_files, scaffold_latex_paper
+
 
 def write_if_missing(path: Path, content: str) -> None:
     if not path.exists():
@@ -26,6 +28,10 @@ def main() -> int:
     root = args.project_dir
     for name in ("data/raw", "data/processed", "code", "results", "figures", "paper", "reports", "support", "environment"):
         (root / name).mkdir(parents=True, exist_ok=True)
+    if paper_files(root / "paper"):
+        write_if_missing(root / "paper" / "references.bib", "")
+    else:
+        scaffold_latex_paper(root)
     manifest = {
         "contest": args.contest,
         "year": args.year,
@@ -72,7 +78,6 @@ def main() -> int:
     )
     write_if_missing(root / "reports/ai_usage_log.jsonl", "")
     write_if_missing(root / "reports/verification_report.md", "# Verification report\n\n## Submission state\n\ndraft\n\n## Checks\n\n| Check | Status | Evidence |\n| --- | --- | --- |\n")
-    write_if_missing(root / "paper/references.bib", "")
     write_if_missing(
         root / "support/README.md",
         "# Support materials\n\nDocument the environment, dependency installation, data provenance, exact reproduction commands, expected outputs, and the relationship between code, results, figures, and paper claims. State the execution order, runtime estimate, random seeds, solver status, and any data that cannot legally be redistributed.\n",

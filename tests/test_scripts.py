@@ -14,6 +14,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+
+from verify_latex_compatibility import source_fingerprint
 
 
 class ScriptTests(unittest.TestCase):
@@ -38,7 +41,12 @@ class ScriptTests(unittest.TestCase):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
             for filename in (
                 root / "reports" / "bibliography.csv",
+                root / "paper" / "main.tex",
                 root / "paper" / "references.bib",
+                root / "paper" / ".latexmkrc",
+                root / "paper" / ".vscode" / "settings.json",
+                root / "paper" / ".vscode" / "extensions.json",
+                root / "paper" / "sections" / "abstract.tex",
                 root / "support" / "README.md",
                 root / "support" / "reproduction_commands.txt",
                 root / "support" / "materials_manifest.csv",
@@ -175,6 +183,10 @@ class ScriptTests(unittest.TestCase):
             keys = [f"ref{i}" for i in range(10)]
             main_tex = root / "paper" / "main.tex"
             main_tex.write_text(
+                "% !TeX program = xelatex\n"
+                "% !TeX encoding = UTF-8\n"
+                "% !TeX root = main.tex\n"
+                "% !BIB program = bibtex\n"
                 "\\documentclass{article}\n\\begin{document}\n"
                 f"Evidence \\cite{{{','.join(keys)}}}.\n"
                 "\\bibliographystyle{plain}\n\\bibliography{references}\n"
@@ -280,6 +292,26 @@ class ScriptTests(unittest.TestCase):
                     "retrieval_command": "provided with the contest fixture",
                     "status": "included",
                 })
+            (root / "reports" / "latex_compatibility.json").write_text(
+                json.dumps(
+                    {
+                        "status": "PASS",
+                        "compile_backed": True,
+                        "engine": "xelatex",
+                        "build_driver": "latexmk",
+                        "source_sha256": source_fingerprint(root / "paper"),
+                        "builds": [
+                            {"pdf": "main.pdf", "returncode": 0},
+                            {"pdf": "build/main.pdf", "returncode": 0},
+                        ],
+                        "errors": [],
+                        "warnings": [],
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
 
             self.run_script(
                 "build_support_archive.py",
@@ -364,6 +396,74 @@ class ScriptTests(unittest.TestCase):
             hash_failure = json.loads(report.read_text(encoding="utf-8"))
             self.assertTrue(any("SHA-256 mismatch" in error for error in hash_failure["errors"]))
             self.assertTrue(any("stale or modified copy" in error for error in hash_failure["errors"]))
+
+    def test_latex_scaffold_and_static_validation(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            result = self.run_script("scaffold_latex_paper.py", "--project-dir", str(root))
+            self.assertIn("paper/.latexmkrc", result.stdout)
+            self.assertTrue((root / "paper" / ".vscode" / "settings.json").is_file())
+            self.assertTrue((root / "paper" / "sections" / "model.tex").is_file())
+            self.assertTrue((root / "paper" / "figures").is_dir())
+            self.assertTrue((root / "paper" / "build").is_dir())
+
+            second = self.run_script(
+                "scaffold_latex_paper.py", "--project-dir", str(root), expect=1
+            )
+            self.assertIn("not empty", second.stdout)
+            self.run_script(
+                "scaffold_latex_paper.py", "--project-dir", str(root), "--force"
+            )
+
+            report = root / "static.json"
+            self.run_script(
+                "verify_latex_compatibility.py",
+                "--paper-dir", str(root / "paper"),
+                "--out", str(report),
+                "--static-only",
+                expect=2,
+            )
+            self.assertEqual(json.loads(report.read_text(encoding="utf-8"))["status"], "LIMITED")
+
+            main_tex = root / "paper" / "main.tex"
+            main_tex.write_text(
+                main_tex.read_text(encoding="utf-8")
+                + "\n\\setmainfont{Times New Roman}\n"
+                + "\\input{C:\\\\Users\\\\contestant\\\\private}\n",
+                encoding="utf-8",
+            )
+            self.run_script(
+                "verify_latex_compatibility.py",
+                "--paper-dir", str(root / "paper"),
+                "--out", str(report),
+                "--static-only",
+                expect=1,
+            )
+            failure = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(failure["status"], "FAIL")
+            self.assertTrue(any("filesystem path" in error for error in failure["errors"]))
+            self.assertTrue(any("font name" in error for error in failure["errors"]))
+
+    @unittest.skipUnless(
+        shutil.which("latexmk") and shutil.which("xelatex") and shutil.which("bibtex"),
+        "latexmk, XeLaTeX, and BibTeX are unavailable",
+    )
+    def test_portable_latex_compiles_for_both_build_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            self.run_script("scaffold_latex_paper.py", "--project-dir", str(root))
+            report = root / "latex_compatibility.json"
+            self.run_script(
+                "verify_latex_compatibility.py",
+                "--paper-dir", str(root / "paper"),
+                "--out", str(report),
+            )
+            payload = json.loads(report.read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "PASS")
+            self.assertTrue(payload["compile_backed"])
+            self.assertEqual(len(payload["builds"]), 2)
+            self.assertGreater((root / "paper" / "main.pdf").stat().st_size, 0)
+            self.assertGreater((root / "paper" / "build" / "main.pdf").stat().st_size, 0)
 
     def test_similarity_preflight(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

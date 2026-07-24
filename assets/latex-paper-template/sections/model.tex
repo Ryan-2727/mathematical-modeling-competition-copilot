@@ -1,0 +1,12 @@
+% !TeX root = ../main.tex
+\section{模型建立与求解}
+
+以加权残差最小化为可编译公式示例。正式论文应给出与题目机制一致的
+目标函数、约束条件、参数含义和求解方法：
+\begin{equation}
+  \hat{\theta}
+  = \arg\min_{\theta \in \Omega}
+    \sum_{i=1}^{n} w_i\left[y_i-f(x_i;\theta)\right]^2,
+  \qquad w_i>0.
+\end{equation}
+其中，$\Omega$ 表示由物理、业务或竞赛规则确定的可行域。

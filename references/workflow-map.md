@@ -32,6 +32,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
 - `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
 - `paper-writing-mcm-icm-current.md`: current-rule verification checklist for MCM/ICM submission and AI disclosure.
+- `latex-paper-pipeline.md`: portable XeLaTeX/latexmk source tree, Overleaf and
+  VS Code build/preview workflows, and compile-backed compatibility gate.
 - `latex-tables.md`: LaTeX table and academic table polish.
 - `final-verification.md`: evidence-before-completion and submission readiness checks.
 - `tool-fallbacks.md`: what requires optional Codex plugins and what to do when they are missing.
@@ -61,8 +63,8 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Literature | `reports/bibliography.csv`, `paper/references.bib` | At least 10 uniquely cited works have authoritative metadata, exact-title Scholar queries, and checked source passages |
 | Computation | code/notebooks, `results/`, `reports/stress_tests.csv`, `reports/units.csv` | Executed; units reconciled; decisive claims challenged |
 | Figures/tables | `figures/`, tables | Referenced and consistent |
-| Writing | `paper/main.tex`, `paper/main.pdf`, complete LaTeX source tree | PDF builds, renders correctly, and results match computation |
-| Final check | verification report, argument coverage, claim report, `reports/paper_delivery.json` | Completion claims backed by evidence; paper and support gates pass |
+| Writing | `paper/main.tex`, `paper/main.pdf`, complete portable LaTeX source tree | Overleaf-style root and VS Code `build/` outputs compile with XeLaTeX/latexmk, render correctly, and match computation |
+| Final check | verification report, argument coverage, claim report, `reports/latex_compatibility.json`, `reports/paper_delivery.json` | Compatibility report is fresh and compile-backed; completion claims and paper/support gates pass |
 | Optional review | `reports/post_paper_review.md`, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; four evidence dimensions reviewed and final checks rerun after changes |
 | Submission | PDF plus LaTeX source, `support.zip`, hash manifest, receipt evidence | Both deliverable parts are complete, frozen, verified, and anonymous |
 

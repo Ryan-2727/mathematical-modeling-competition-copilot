@@ -35,6 +35,8 @@ A new computer can install only this repository and still get the full mathemati
 - paper writing router with Chinese 2025 format and English contest baseline branches
 - cross-year exemplar-corpus lessons for structure, visuals, and evidence narrative
 - LaTeX and academic table rules
+- a portable XeLaTeX/latexmk paper scaffold that compiles and previews in both
+  Overleaf and VS Code
 - final verification rules
 - fallback rules for missing tools
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
@@ -63,6 +65,9 @@ confirmed by an observed exact-title Google Scholar result, and read at the pass
 paper's claim. Fabricated metadata or source content is prohibited. Run
 `scripts/verify_paper_delivery.py` before claiming completion; its pass is a
 structural check and does not replace human source reading or PDF inspection.
+First run `scripts/verify_latex_compatibility.py`: it must produce a fresh,
+compile-backed `reports/latex_compatibility.json` after successful
+Overleaf-style and VS Code-style builds.
 
 ## CUMCM Model Routing
 
@@ -102,7 +107,9 @@ This skill acts as the main entry point for a mathematical modeling project. It 
 4. Resolve literature or reproduction-critical details within the contest’s source and communication rules.
 5. Run reproducible code, notebooks, or spreadsheets with environment, data-hash, solver, uncertainty, and failure-oriented stress-test evidence.
 6. Generate figures, flowcharts, and tables that support explicit claims.
-7. Assemble and compile the LaTeX paper with at least 10 verified, actually cited scholarly sources; disclose AI use as required.
+7. Assemble and compile the portable XeLaTeX paper in both Overleaf and VS Code
+   build layouts with at least 10 verified, actually cited scholarly sources;
+   disclose AI use as required.
 8. Build and verify the separate support-material archive with code, data evidence, environment, commands, results, licenses, and hashes.
 9. After the full paper and baseline verification are complete, offer an optional independent review of assumption rationality, model creativity, result correctness, and writing clarity.
 10. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
@@ -174,6 +181,13 @@ Chinese example:
 `-- paper/
     |-- main.tex
     |-- references.bib
+    |-- .latexmkrc
+    |-- .vscode/
+    |   |-- settings.json
+    |   `-- extensions.json
+    |-- sections/
+    |-- figures/
+    |-- build/
     `-- main.pdf
 ```
 
@@ -211,6 +225,11 @@ Windows, preview first and then run:
 |-- README.md
 |-- README.en.md
 |-- DESCRIPTION.md
+|-- assets/
+|   `-- latex-paper-template/
+|-- scripts/
+|   |-- scaffold_latex_paper.py
+|   `-- verify_latex_compatibility.py
 |-- agents/
 |   `-- openai.yaml
 `-- references/

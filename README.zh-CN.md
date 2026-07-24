@@ -36,6 +36,7 @@
 - 从优秀论文语料库学习结构、图表语法、验证叙事和 LaTeX 写作规范
 - 多年份优秀论文库的跨题型写作规律
 - LaTeX 和学术表格规则
+- 可在 Overleaf 与 VS Code 中编译和预览的可移植 XeLaTeX/latexmk 论文脚手架
 - 最终核验规则
 - 工具缺失时的 fallback 规则
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
@@ -62,6 +63,9 @@ OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题�
 确认精确题名结果并记录核验日期，再阅读支持论文论断的原文位置。严禁虚构书目信息、原文内容和定位信息。
 完成前必须运行 `scripts/verify_paper_delivery.py`；脚本通过只代表结构核验
 通过，不能替代人工阅读原文和检查 PDF 版面。
+在此之前必须运行 `scripts/verify_latex_compatibility.py`，通过
+Overleaf 风格和 VS Code 风格的真实编译，并生成与当前源码指纹一致的
+`reports/latex_compatibility.json`。
 
 ## 国赛模型路由增强
 
@@ -191,7 +195,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 7. 论文撰写
 
-把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致，并交付编译后的 `paper/main.pdf` 与完整 LaTeX 源码。
+把模型、结果、图表、假设、文献和验证结论组装成竞赛论文。论文必须让公式、结果、图表和结论互相一致，并交付编译后的 `paper/main.pdf` 与完整 LaTeX 源码。源码使用可移植 XeLaTeX/latexmk 工程，必须能在 Overleaf 和 VS Code 中正常编译与预览。
 
 参考：
 
@@ -211,7 +215,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 
 ### 9. 最终核验
 
-提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。构建 `support.zip` 后运行 `scripts/verify_paper_delivery.py`，核验真实文献证据与论文/支撑材料双交付。
+提交前必须检查题目要求、假设、公式、代码执行状态、数据来源、图表一致性、引用、论文格式和最终文件。先运行 `scripts/verify_latex_compatibility.py`，确认项目根目录输出和 `build/` 输出两种编译均成功；再构建 `support.zip` 并运行 `scripts/verify_paper_delivery.py`，核验真实文献证据与论文/支撑材料双交付。
 
 参考：
 
@@ -262,6 +266,13 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 `-- paper/
     |-- main.tex
     |-- references.bib
+    |-- .latexmkrc
+    |-- .vscode/
+    |   |-- settings.json
+    |   `-- extensions.json
+    |-- sections/
+    |-- figures/
+    |-- build/
     `-- main.pdf
 ```
 

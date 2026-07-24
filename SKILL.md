@@ -94,12 +94,18 @@ It does not promise an award. It maximizes award probability through disciplined
      `references/embedded/multi-year-corpus-observations.md`.
    - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
      LaTeX or the contest submission is a Chinese national-format paper.
+   - `scripts/init_contest.py` scaffolds the portable LaTeX tree when `paper/` is
+     empty. For an existing project, run `scripts/scaffold_latex_paper.py` without
+     `--force`; preserve a nonempty paper directory instead of overwriting it.
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
    - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper.
    - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
      LaTeX source, including `paper/main.tex`, every included source file,
-     `paper/references.bib`, and required figures, tables, styles, and assets.
+     `paper/references.bib`, `.latexmkrc`, `.vscode/`, `sections/`, `figures/`,
+     and required tables, styles, and assets. It must compile and preview with
+     XeLaTeX/latexmk in both Overleaf and VS Code using only relative paths and
+     portable fonts.
      Do not substitute DOCX, Markdown, Typst, or source-only output for this
      deliverable unless the user explicitly changes the requirement.
 
@@ -112,6 +118,9 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
+   - Run `scripts/verify_latex_compatibility.py` to create a fresh, compile-backed
+     `reports/latex_compatibility.json`. Require successful project-root and
+     `build/` output builds before the paper-delivery gate.
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.
@@ -191,6 +200,13 @@ Create or preserve this layout unless the user provides an existing project stru
 `-- paper/
     |-- main.tex
     |-- references.bib
+    |-- .latexmkrc
+    |-- .vscode/
+    |   |-- settings.json
+    |   `-- extensions.json
+    |-- sections/
+    |-- figures/
+    |-- build/
     `-- main.pdf
 ```
 

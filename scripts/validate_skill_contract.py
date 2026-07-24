@@ -41,10 +41,26 @@ def main() -> int:
         if phrase not in (ROOT / relative).read_text(encoding="utf-8"):
             fail(f"{relative} does not preserve the explicit invocation contract")
     delivery_checks = {
-        "SKILL.md": ("at least 10", "paper/main.pdf", "support.zip", "scripts/verify_paper_delivery.py"),
-        "README.md": ("at least 10", "paper/main.pdf", "support.zip"),
-        "README.en.md": ("at least 10", "paper/main.pdf", "support.zip"),
-        "README.zh-CN.md": ("至少 10", "paper/main.pdf", "support.zip"),
+        "SKILL.md": (
+            "at least 10", "paper/main.pdf", "support.zip",
+            "scripts/verify_paper_delivery.py", "scripts/verify_latex_compatibility.py",
+            "Overleaf", "VS Code", "latexmk",
+        ),
+        "README.md": (
+            "at least 10", "paper/main.pdf", "support.zip",
+            "scripts/verify_latex_compatibility.py", "Overleaf", "VS Code", "latexmk",
+        ),
+        "README.en.md": (
+            "at least 10", "paper/main.pdf", "support.zip",
+            "scripts/verify_latex_compatibility.py", "Overleaf", "VS Code", "latexmk",
+        ),
+        "README.zh-CN.md": (
+            "至少 10", "paper/main.pdf", "support.zip",
+            "scripts/verify_latex_compatibility.py", "Overleaf", "VS Code", "latexmk",
+        ),
+        "references/embedded/latex-paper-pipeline.md": (
+            "Overleaf", "VS Code", "latexmk", "reports/latex_compatibility.json",
+        ),
         "references/embedded/verified-literature-and-two-part-delivery.md": (
             "Google Scholar", "reports/bibliography.csv", "support/materials_manifest.csv"
         ),
@@ -56,7 +72,16 @@ def main() -> int:
         missing_delivery = [phrase for phrase in phrases if phrase not in contents]
         if missing_delivery:
             fail(f"{relative} missing delivery contract: " + ", ".join(missing_delivery))
-    for relative in ("scripts/build_support_archive.py", "scripts/verify_paper_delivery.py"):
+    for relative in (
+        "scripts/build_support_archive.py",
+        "scripts/scaffold_latex_paper.py",
+        "scripts/verify_latex_compatibility.py",
+        "scripts/verify_paper_delivery.py",
+        "assets/latex-paper-template/main.tex",
+        "assets/latex-paper-template/.latexmkrc",
+        "assets/latex-paper-template/.vscode/settings.json",
+        "assets/latex-paper-template/.vscode/extensions.json",
+    ):
         if not (ROOT / relative).is_file(): fail(f"missing delivery script: {relative}")
     references = set(re.findall(r"`(references/embedded/[^`]+\.md)`", text))
     for relative in references:

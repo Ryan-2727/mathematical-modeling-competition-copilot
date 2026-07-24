@@ -1,0 +1,46 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% !TeX root = main.tex
+% !BIB program = bibtex
+\documentclass[UTF8,fontset=fandol,zihao=-4]{ctexart}
+
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\graphicspath{{figures/}}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue
+}
+\newcommand{\keywords}[1]{\par\noindent\textbf{关键词：}#1}
+
+\title{数学建模竞赛论文}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\input{sections/abstract}
+\input{sections/problem}
+\input{sections/assumptions}
+\input{sections/model}
+\input{sections/results}
+\input{sections/evaluation}
+\input{sections/conclusion}
+
+\IfFileExists{gbt7714-numerical.bst}
+  {\bibliographystyle{gbt7714-numerical}}
+  {\bibliographystyle{unsrt}}
+\bibliography{references}
+
+\appendix
+\section{代码与支撑材料说明}
+完整代码、数据来源、运行环境、复现命令和结果文件随支撑材料一并提交。
+
+\end{document}
