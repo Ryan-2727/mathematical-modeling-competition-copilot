@@ -11,11 +11,20 @@ draft, not verified evidence.
 ## Reproduction
 
 Run the final pipeline through `scripts/run_reproduction.py`. Record the exact
-command, seed, input/output hashes, exit status, and environment snapshot.
-Expected files must exist after a successful run. Report unavailable solvers or
-manual software steps rather than claiming full reproduction.
+argv command, seed, input/output hashes, exit status, and environment snapshot.
+Run in a clean copied project and request at least two runs for the frozen
+pipeline. Compare deterministic outputs by SHA-256 and declared numeric outputs
+by a preselected tolerance. Expected files must exist after every successful
+run. Shell syntax requires explicit `--allow-shell`; never treat a line of text
+as trusted shell input by default. Report unavailable solvers or manual software
+steps rather than claiming full reproduction.
 
 ## Numerical quality
+
+Generate paper-facing values from `results/verified_values.csv` and run
+`scripts/verify_verified_values.py`. Then run the applicable adapters in
+`scripts/verify_model_validation.py`; their pass confirms that declared
+evidence exists and satisfies the recorded threshold, not that the model is true.
 
 Choose the applicable gate and record it in `reports/argument_coverage.csv`:
 

@@ -42,8 +42,14 @@
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
 - CUMCM 2026 规则配置、AI 使用详情 PDF、证据账本、可复现运行清单与论证覆盖检查
+- CUMCM 与 MCM/ICM 可执行规则配置，以及初始化时自动选择的独立可移植
+  LaTeX 模板
+- 由计算结果哈希驱动的关键数值唯一真源、LaTeX 宏生成器和模型族验证适配器
+- 不默认调用 shell 的干净副本重复复现
+- PDF 渲染与元数据质检、图像/OCR 匿名检查和真实 TeX CI
 - 论文完成后的可选冲奖评审：三类模拟评委、四维证据评分卡与获奖准备度结构验收，仅在用户确认后执行
-- 隐藏优秀论文的独立基线回归：学习可迁移优点，但不依赖配对答案
+- 盲化独立评委聚合与隐藏基准回归：学习可迁移优点，但不依赖配对答案，
+  也不会自动改写基线
 - 双交付硬门槛：编译后的 PDF 与完整 LaTeX 源码，以及包含代码、
   数据证据、环境、命令和结果哈希的支撑材料包
 
@@ -66,6 +72,30 @@ OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题�
 在此之前必须运行 `scripts/verify_latex_compatibility.py`，通过
 Overleaf 风格和 VS Code 风格的真实编译，并生成与当前源码指纹一致的
 `reports/latex_compatibility.json`。
+
+## 可执行证据门禁
+
+初始化会自动选择竞赛模板和提交配置：
+
+```bash
+python scripts/init_contest.py --project-dir <project> --contest CUMCM --year 2026 --mode training
+python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 2027 --mode training
+```
+
+论文与 Skill 发布流程使用以下确定性检查：
+
+- `results/verified_values.csv` 是关键计算数值的唯一真源；
+  `generate_verified_values.py` 生成 `paper/generated/results.tex`，
+  `verify_verified_values.py` 检查哈希、类型、单位、LaTeX 可达性和过期状态。
+- `verify_model_validation.py` 检查回归/预测、分类、优化、随机仿真、
+  网络/排序和机理/动力学模型声明的验证证据，但不宣称证明数学正确性。
+- `run_reproduction.py` 在干净副本中执行 argv 命令，保存每次运行日志，
+  并按哈希或声明的数值容差比较重复运行；shell 执行必须显式启用。
+- `verify_pdf_visual.py`、`anonymity_scan.py` 和 `verify_submission.py`
+  区分 `PASS`、`LIMITED` 与 `FAIL`；强制视觉规则不会因为渲染器或 OCR
+  缺失而被误判为通过。
+- `run_benchmark_regression.py` 评估盲化工件/评分清单。超出容差的回归会
+  阻止 Skill 发布，脚本不会自动改写基线。
 
 ## 国赛模型路由增强
 

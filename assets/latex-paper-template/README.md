@@ -12,5 +12,7 @@
 
 Upload the contents of this folder so that `main.tex` is at the project root.
 Select `main.tex` as the main document and XeLaTeX as the compiler. Keep
-`.latexmkrc`, `.vscode/`, `sections/`, `figures/`, and `references.bib` in the
-uploaded project.
+`.latexmkrc`, `.vscode/`, `sections/`, `figures/`, `code/`, and
+`references.bib` in the uploaded project. Replace the baseline
+`code/main.py` and the appendix support-material manifest with the complete
+contest program and actual relative file list before submission.

@@ -1,0 +1,50 @@
+% !TeX program = xelatex
+% !TeX encoding = UTF-8
+% !TeX root = main.tex
+% !BIB program = bibtex
+\documentclass[12pt]{article}
+
+\usepackage[letterpaper,margin=1in,headheight=15pt]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\TeamControlNumber}{0000000}
+\newcommand{\ProblemChoice}{A}
+\newif\ifincludeaireport
+\includeaireportfalse
+
+\graphicspath{{figures/}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{Team \# \TeamControlNumber}
+\fancyhead[R]{Page \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+\begin{document}
+\pagenumbering{arabic}
+\input{sections/summary}
+\clearpage
+
+\tableofcontents
+\clearpage
+
+\input{sections/problem}
+\input{sections/assumptions}
+\input{sections/model}
+\input{sections/results}
+\input{sections/validation}
+\input{sections/conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\ifincludeaireport
+  \clearpage
+  \input{sections/ai_report}
+\fi
+\end{document}

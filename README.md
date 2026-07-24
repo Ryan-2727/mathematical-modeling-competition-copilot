@@ -42,8 +42,15 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - data audit, traceability, environment capture, anonymity scanning, and hashing
 - CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
+- executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
+  templates selected automatically at project initialization
+- a decisive-value registry that generates LaTeX macros from hashed computation
+  outputs, plus model-family validation adapters
+- clean-copy, repeated-run reproduction without implicit shell execution
+- PDF rendering/metadata QA, image/OCR-aware anonymity checks, and real TeX CI
 - optional post-paper award review: three reviewer lenses, a four-dimension evidence scorecard, and structural award-readiness verification, only after user confirmation
-- hidden-exemplar regression for learning reusable strengths from excellent papers without depending on a paired solution
+- blinded independent-review aggregation and hidden benchmark regression for
+  learning reusable strengths without paired solutions or automatic baseline changes
 - a hard two-part delivery gate: compiled PDF plus complete LaTeX source, and a
   hashed support archive containing code, data evidence, environment, commands,
   and results
@@ -68,6 +75,34 @@ structural check and does not replace human source reading or PDF inspection.
 First run `scripts/verify_latex_compatibility.py`: it must produce a fresh,
 compile-backed `reports/latex_compatibility.json` after successful
 Overleaf-style and VS Code-style builds.
+
+## Executable Evidence Gates
+
+Initialization selects the contest template and submission profile:
+
+```bash
+python scripts/init_contest.py --project-dir <project> --contest CUMCM --year 2026 --mode training
+python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 2027 --mode training
+```
+
+The release and paper workflow then uses deterministic checks:
+
+- `results/verified_values.csv` is the single source of truth for decisive
+  computed values; `generate_verified_values.py` creates
+  `paper/generated/results.tex`, and `verify_verified_values.py` checks hashes,
+  types, units, reachability, and staleness.
+- `verify_model_validation.py` checks declared evidence for forecast/regression,
+  classification, optimization, stochastic simulation, network/ranking, and
+  mechanism/dynamics models. It does not certify mathematical truth.
+- `run_reproduction.py` runs argv-based commands in a clean copy, retains
+  per-run logs, and compares repeated outputs by hashes or declared numeric
+  tolerances. Shell execution requires explicit opt-in.
+- `verify_pdf_visual.py`, `anonymity_scan.py`, and `verify_submission.py`
+  distinguish `PASS`, `LIMITED`, and `FAIL`; a mandatory visual rule cannot pass
+  merely because a renderer or OCR tool is absent.
+- `run_benchmark_regression.py` evaluates blinded artifact/rubric manifests.
+  Regressions beyond tolerance block a skill release, and baselines are never
+  rewritten automatically.
 
 ## CUMCM Model Routing
 

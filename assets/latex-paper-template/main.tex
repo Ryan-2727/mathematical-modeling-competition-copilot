@@ -9,6 +9,7 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
 
 \graphicspath{{figures/}}
 \hypersetup{
@@ -40,7 +41,34 @@
 \bibliography{references}
 
 \appendix
-\section{代码与支撑材料说明}
-完整代码、数据来源、运行环境、复现命令和结果文件随支撑材料一并提交。
+\section{附录：代码与支撑材料说明}
+
+支撑材料文件清单见表~\ref{tab:support-manifest}；正式提交前应以实际文件、
+用途和哈希替换示例内容，并确保与支撑材料压缩包一致。
+
+\begin{table}[htbp]
+  \centering
+  \caption{支撑材料文件清单}
+  \label{tab:support-manifest}
+  \begin{tabular}{lll}
+    \toprule
+    相对路径 & 类型 & 用途 \\
+    \midrule
+    \texttt{code/main.py} & 完整源程序代码 & 生成可核验结果 \\
+    \texttt{support/materials\_manifest.csv} & 清单 & 记录许可与 SHA-256 \\
+    \texttt{support/reproduction\_commands.txt} & 命令 & 从项目根目录复现 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{完整源程序代码}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false
+}
+\lstinputlisting[language=Python]{code/main.py}
 
 \end{document}

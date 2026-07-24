@@ -22,6 +22,9 @@ It does not promise an award. It maximizes award probability through disciplined
 
 0. **Contest mode, rules, and compliance**
    - Read `references/embedded/contest-modes-and-compliance.md` before viewing or researching a live problem.
+   - Read `references/embedded/executable-contest-profiles.md`. Select an
+     executable profile from a fresh official rules snapshot; do not infer
+     current requirements from a template or an excellent-paper corpus.
    - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
    - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
    - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and select the `cumcm-2026` verification profile.
@@ -72,6 +75,14 @@ It does not promise an award. It maximizes award probability through disciplined
    - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
    - Maintain `reports/claims.csv` and run `scripts/run_reproduction.py` for the frozen pipeline.
+   - Put every decisive computed value in `results/verified_values.csv`, generate
+     `paper/generated/results.tex` with `scripts/generate_verified_values.py`,
+     and run `scripts/verify_verified_values.py`. Do not retype those values in
+     reachable LaTeX.
+   - Declare each primary model family and its required validation artifacts in
+     a validation manifest, then run `scripts/verify_model_validation.py`.
+     Treat a pass as evidence-presence and threshold verification, not proof
+     that the selected model is mathematically correct.
    - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
 
 5. **Tabular analysis and scenario sheets**
@@ -98,9 +109,11 @@ It does not promise an award. It maximizes award probability through disciplined
      `references/embedded/multi-year-corpus-observations.md`.
    - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
      LaTeX or the contest submission is a Chinese national-format paper.
-   - `scripts/init_contest.py` scaffolds the portable LaTeX tree when `paper/` is
-     empty. For an existing project, run `scripts/scaffold_latex_paper.py` without
-     `--force`; preserve a nonempty paper directory instead of overwriting it.
+   - `scripts/init_contest.py` scaffolds the contest-specific portable LaTeX tree
+     when `paper/` is empty: `cumcm` for CUMCM and `mcm-icm` for MCM/ICM. For an
+     existing project, run `scripts/scaffold_latex_paper.py --template <name>`
+     without `--force`; preserve a nonempty paper directory instead of
+     overwriting it.
    - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
    - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
    - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper. For every numbered
@@ -151,6 +164,16 @@ It does not promise an award. It maximizes award probability through disciplined
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.
+   - Run `scripts/verify_pdf_visual.py` against the compiled PDF. Inspect its
+     rendered pages, first-page markers, sparse-page findings, metadata,
+     figure/table references, and any `LIMITED` items. A mandatory visual rule
+     cannot pass when its required renderer or evidence is unavailable.
+   - Run `scripts/anonymity_scan.py` on the complete delivery tree and archive;
+     enable image metadata and OCR checks when the runtime is available.
+   - Rerun `scripts/verify_verified_values.py`,
+     `scripts/verify_model_validation.py`, and the frozen reproduction from a
+     clean copied project. Require repeated-run hashes or declared
+     tolerance-aware values to agree.
    - When a portable LaTeX source ZIP is delivered, run
      `scripts/verify_portable_latex.py --archive <zip> --out <report> --compile`
      after final packaging. Treat a pass as evidence that the archive rebuilds
@@ -160,9 +183,12 @@ It does not promise an award. It maximizes award probability through disciplined
    - Only after modeling and the complete paper are finished and phase 9 has run,
      ask whether the user wants this optional phase. Do not run it by default.
    - If the user opts in, read `references/embedded/post-paper-award-review.md`
-     and `references/embedded/reviewer-scorecard-and-presentation.md`. Produce
-     prioritized reviewer findings and `reports/reviewer_scorecard.csv`; do not
-     use current-problem answer sources or paired exemplars.
+     and `references/embedded/reviewer-scorecard-and-presentation.md`, then read
+     `references/embedded/independent-review-and-regression.md`. Give independent
+     reviewers a blinded artifact packet, aggregate their evidence-located
+     objections with `scripts/aggregate_reviewer_reports.py`, and produce
+     prioritized findings plus `reports/reviewer_scorecard.csv`. Do not use
+     current-problem answer sources or paired exemplars.
    - Run `scripts/verify_award_readiness.py`. Treat a pass as evidence-structure
      completeness only, never as proof of mathematical truth or an award prediction.
    - After any accepted revision, rerun phase 9 before freezing.
@@ -183,13 +209,18 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/training-evaluation-loop.md` before using an
      excellent-paper corpus to improve this skill.
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
-     visual inspection; convert recurring strengths into reusable writing rules.
+     visual inspection; use a portable corpus manifest with relative identifiers,
+     hashes, inspection dates, page metrics, and limitations. Convert only
+     recurring, non-copyrightable strengths into reusable writing rules.
    - Solve each test problem independently and freeze the baseline source,
      results, figures, and LaTeX paper before any post-hoc comparison.
    - Compare the baseline with the corpus profile, revise no more than three
      generalizable gaps, then re-solve from the statement and data. Never require a
      current-problem paper as an input and never copy exemplar wording, numbers,
      models, or figures.
+   - Run `scripts/run_benchmark_regression.py` on the blinded benchmark manifest
+     before releasing a skill revision. A regression beyond the declared
+     tolerance blocks release; never update baselines automatically.
 
 ## Default Artifact Layout
 
@@ -205,6 +236,7 @@ Create or preserve this layout unless the user provides an existing project stru
 |-- notebooks/
 |-- code/
 |-- results/
+|   `-- verified_values.csv
 |-- figures/
 |-- reports/
 |   |-- problem_analysis.md
@@ -220,6 +252,10 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
+|   |-- model_validation.json
+|   |-- model_validation_report.json
+|   |-- pdf_visual_verification.json
+|   |-- verified_values_verification.json
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
 |   |-- ai_usage_log.jsonl
@@ -244,6 +280,10 @@ Create or preserve this layout unless the user provides an existing project stru
     |   |-- settings.json
     |   `-- extensions.json
     |-- sections/
+    |-- generated/
+    |   `-- results.tex
+    |-- code/
+    |   `-- main.py
     |-- figures/
     |-- build/
     `-- main.pdf
@@ -268,6 +308,12 @@ Create or preserve this layout unless the user provides an existing project stru
 - Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
 - A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
 - A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
+- Decisive computed values have one machine-readable source of truth. A generated
+  LaTeX macro may format a value, but neither prose nor a table may silently
+  redefine it.
+- Reproduction commands are argv arrays by default. Shell syntax is permitted
+  only through an explicit, recorded opt-in and must not be inferred from a text
+  command file.
 - Every decisive conclusion needs a proportionate failure-oriented test. Choose
   the test before seeing its outcome and preserve the result even when it weakens
   the preferred model.
@@ -288,6 +334,7 @@ Use these files as phase playbooks:
 - `references/embedded/contest-operations-72h.md`
 - `references/embedded/contest-modes-and-compliance.md`
 - `references/embedded/cumcm-2026-rules.md`
+- `references/embedded/executable-contest-profiles.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/problem-structure-playbooks.md`
 - `references/embedded/mathmodel-six-phase.md`
@@ -302,6 +349,7 @@ Use these files as phase playbooks:
 - `references/embedded/stress-testing-and-uncertainty.md`
 - `references/embedded/post-paper-award-review.md`
 - `references/embedded/reviewer-scorecard-and-presentation.md`
+- `references/embedded/independent-review-and-regression.md`
 - `references/embedded/diagrams.md`
 - `references/embedded/paper-writing.md`
 - `references/embedded/paper-learning-from-exemplars.md`

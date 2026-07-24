@@ -1,16 +1,47 @@
 # Observations from the 2025 national competition paper corpus
 
-This file records transferable observations extracted from the local corpus
-`F:\2025zjhychn\2025年高教社全国大学生数学建模竞赛优秀论文`. The PDFs are reference
-evidence, not contest-time inputs and not templates to copy verbatim.
+This file records transferable observations from the external corpus identified
+by manifest ID `cumcm-2025-excellent-papers`. The manifest stores portable
+relative paper IDs, inspection dates, PDF hashes, page metrics, and limitations;
+it does not store a machine-specific corpus root. The PDFs remain outside this
+repository. They are training reference evidence, not contest-time inputs and
+not templates to copy verbatim.
+
+Generate a local manifest without copying papers into the repository:
+
+```bash
+python scripts/paper_corpus_metrics.py \
+  --pdf-dir <local-corpus-root> \
+  --recursive \
+  --corpus-id cumcm-2025-excellent-papers \
+  --source-category official-excellent-paper \
+  --inspection-date <YYYY-MM-DD> \
+  --out <local-corpus-root>/corpus-manifest.json
+```
+
+Validate it after moving or refreshing the corpus:
+
+```bash
+python scripts/paper_corpus_metrics.py \
+  --mode validate \
+  --pdf-dir <local-corpus-root> \
+  --manifest <local-corpus-root>/corpus-manifest.json \
+  --out <local-corpus-root>/corpus-validation.json
+```
 
 ## Corpus profile
 
-The corpus contains seven papers: A196, B060, B157, C023, C132, D037, and E030.
-Measured page counts are 98, 72, 67, 122, 65, 37, and 36 respectively; the
-range is 36--122 pages. All inspected PDFs report the same compact page size of
-252 x 356.04 pt. The variation in length is evidence against imposing a universal
-page, figure, table, or equation quota.
+The inspected manifest entries are `cumcm-2025-excellent-papers/A196`,
+`cumcm-2025-excellent-papers/B060`, `cumcm-2025-excellent-papers/B157`,
+`cumcm-2025-excellent-papers/C023`, `cumcm-2025-excellent-papers/C132`,
+`cumcm-2025-excellent-papers/D037`, and
+`cumcm-2025-excellent-papers/E030`. Their recorded page counts are 98, 72, 67,
+122, 65, 37, and 36; the range is 36--122 pages. At the recorded inspection
+date, all seven entries reported a compact page size of 252 x 356.04 pt.
+Revalidate the hashes and metrics before relying on them. Tool unavailability,
+unreadable PDFs, or missing metadata must remain visible in each manifest
+entry's `limitations` field. The variation in length is evidence against
+imposing a universal page, figure, table, or equation quota.
 
 ## Repeated structure
 
@@ -55,4 +86,3 @@ after the visual explains its implication.
 - Make the abstract and conclusion answer the original numbered questions.
 - Preserve the contest format, anonymity, and reproducibility requirements before
   imitating any soft style preference.
-

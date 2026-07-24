@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  fast-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,3 +19,101 @@ jobs:
         run: python scripts/validate_skill_contract.py
       - name: Run tests
         run: python -m unittest discover -s tests -v
+
+  latex-artifact-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install XeLaTeX, latexmk, Chinese support, and Poppler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk \
+            poppler-utils \
+            texlive-bibtex-extra \
+            texlive-fonts-recommended \
+            texlive-lang-chinese \
+            texlive-latex-extra \
+            texlive-xetex \
+            zip
+      - name: Run artifact QA tests with Poppler available
+        run: python -m unittest discover -s tests -p "test_artifact_qa.py" -v
+      - name: Scaffold both bundled paper templates
+        run: |
+          python scripts/scaffold_latex_paper.py \
+            --project-dir "$RUNNER_TEMP/latex-cumcm" \
+            --template cumcm \
+            --force
+          python scripts/scaffold_latex_paper.py \
+            --project-dir "$RUNNER_TEMP/latex-mcm-icm" \
+            --template mcm-icm \
+            --force
+      - name: Create source-only portable ZIPs
+        run: |
+          (cd "$RUNNER_TEMP/latex-cumcm/paper" && \
+            zip -qr "$RUNNER_TEMP/cumcm-portable.zip" .)
+          (cd "$RUNNER_TEMP/latex-mcm-icm/paper" && \
+            zip -qr "$RUNNER_TEMP/mcm-icm-portable.zip" .)
+      - name: Compile both templates in project-root and VS Code build layouts
+        run: |
+          python scripts/verify_latex_compatibility.py \
+            --paper-dir "$RUNNER_TEMP/latex-cumcm/paper" \
+            --out "$RUNNER_TEMP/latex-cumcm/latex-compatibility.json"
+          python scripts/verify_latex_compatibility.py \
+            --paper-dir "$RUNNER_TEMP/latex-mcm-icm/paper" \
+            --out "$RUNNER_TEMP/latex-mcm-icm/latex-compatibility.json"
+      - name: Compile both portable ZIPs after fresh extraction
+        run: |
+          python scripts/verify_portable_latex.py \
+            --archive "$RUNNER_TEMP/cumcm-portable.zip" \
+            --out "$RUNNER_TEMP/cumcm-portable.json" \
+            --compile
+          python scripts/verify_portable_latex.py \
+            --archive "$RUNNER_TEMP/mcm-icm-portable.zip" \
+            --out "$RUNNER_TEMP/mcm-icm-portable.json" \
+            --compile
+      - name: Run PDF visual QA on the compiled CUMCM template
+        run: |
+          python scripts/verify_pdf_visual.py \
+            --pdf "$RUNNER_TEMP/latex-cumcm/paper/main.pdf" \
+            --out "$RUNNER_TEMP/latex-cumcm/pdf-visual.json" \
+            --min-pages 1 \
+            --page-size A4 \
+            --first-page-marker "数学建模竞赛论文" \
+            --strict-tools
+      - name: Run PDF visual QA on the compiled MCM/ICM template
+        run: |
+          python scripts/verify_pdf_visual.py \
+            --pdf "$RUNNER_TEMP/latex-mcm-icm/paper/main.pdf" \
+            --out "$RUNNER_TEMP/latex-mcm-icm/pdf-visual.json" \
+            --min-pages 1 \
+            --page-size letter \
+            --first-page-marker "Summary Sheet" \
+            --allow-contents \
+            --strict-tools
+      - name: Upload QA reports and build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-artifact-qa
+          path: |
+            ${{ runner.temp }}/latex-cumcm/latex-compatibility.json
+            ${{ runner.temp }}/latex-cumcm/pdf-visual.json
+            ${{ runner.temp }}/latex-cumcm/paper/main.log
+            ${{ runner.temp }}/latex-cumcm/paper/main.pdf
+            ${{ runner.temp }}/latex-cumcm/paper/build/main.log
+            ${{ runner.temp }}/latex-cumcm/paper/build/main.pdf
+            ${{ runner.temp }}/latex-mcm-icm/latex-compatibility.json
+            ${{ runner.temp }}/latex-mcm-icm/pdf-visual.json
+            ${{ runner.temp }}/latex-mcm-icm/paper/main.log
+            ${{ runner.temp }}/latex-mcm-icm/paper/main.pdf
+            ${{ runner.temp }}/latex-mcm-icm/paper/build/main.log
+            ${{ runner.temp }}/latex-mcm-icm/paper/build/main.pdf
+            ${{ runner.temp }}/cumcm-portable.zip
+            ${{ runner.temp }}/cumcm-portable.json
+            ${{ runner.temp }}/mcm-icm-portable.zip
+            ${{ runner.temp }}/mcm-icm-portable.json
+          if-no-files-found: warn

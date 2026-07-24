@@ -42,11 +42,14 @@ class ScriptTests(unittest.TestCase):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
             for filename in (
                 root / "reports" / "bibliography.csv",
+                root / "reports" / "model_validation.json",
+                root / "results" / "verified_values.csv",
                 root / "paper" / "main.tex",
                 root / "paper" / "references.bib",
                 root / "paper" / ".latexmkrc",
                 root / "paper" / ".vscode" / "settings.json",
                 root / "paper" / ".vscode" / "extensions.json",
+                root / "paper" / "code" / "main.py",
                 root / "paper" / "sections" / "abstract.tex",
                 root / "support" / "README.md",
                 root / "support" / "reproduction_commands.txt",
@@ -58,6 +61,25 @@ class ScriptTests(unittest.TestCase):
             log = root / "reports" / "ai_usage_log.jsonl"
             self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "reviewed")
             self.assertIn("TestAI", log.read_text(encoding="utf-8"))
+
+    def test_init_selects_mcm_icm_template_and_profile(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            self.run_script(
+                "init_contest.py",
+                "--project-dir",
+                str(root),
+                "--contest",
+                "MCM/ICM",
+                "--year",
+                "2027",
+                "--mode",
+                "training",
+            )
+            manifest = json.loads((root / "contest_manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["latex_template"], "mcm-icm")
+            self.assertEqual(manifest["submission_profile"], "mcm-icm-current")
+            self.assertTrue((root / "paper" / "main.tex").is_file())
 
     def test_skill_contract_and_invocation_gate(self) -> None:
         result = self.run_script("validate_skill_contract.py")

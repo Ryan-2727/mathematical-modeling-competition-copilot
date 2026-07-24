@@ -1,0 +1,68 @@
+{
+  "$schema": "./quality-benchmark-schema.json",
+  "schema_version": 1,
+  "description": "Metadata-only synthetic example. It contains no contest statement, paired paper, expected answer, or hidden solution.",
+  "cases": [
+    {
+      "id": "synthetic-evaluation-smoke",
+      "enabled": false,
+      "problem_family": "evaluation",
+      "allowed_inputs": [],
+      "required_subproblems": [
+        "synthetic-subproblem-1"
+      ],
+      "expected_artifacts": [
+        {
+          "class": "analysis_report",
+          "path": "benchmark-output/synthetic-evaluation-smoke/analysis.md"
+        }
+      ],
+      "command": [
+        "python",
+        "benchmark_runner.py",
+        "--case",
+        "synthetic-evaluation-smoke"
+      ],
+      "runtime_budget_seconds": 60,
+      "result_file": "benchmark-output/synthetic-evaluation-smoke/result.json",
+      "rubric": {
+        "correctness_evidence": {
+          "weight": 0.25,
+          "criterion": "Claims point to independently inspectable synthetic calculations."
+        },
+        "validation": {
+          "weight": 0.25,
+          "criterion": "Declared checks include a baseline and a failure-oriented test."
+        },
+        "reproducibility": {
+          "weight": 0.2,
+          "criterion": "A clean run command and generated artifacts are recorded."
+        },
+        "writing": {
+          "weight": 0.15,
+          "criterion": "The report distinguishes evidence, interpretation, and limitations."
+        },
+        "visual_communication": {
+          "weight": 0.15,
+          "criterion": "Any visual has a stated analytical purpose and traceable source."
+        }
+      },
+      "baseline_scores": {
+        "correctness_evidence": 0,
+        "validation": 0,
+        "reproducibility": 0,
+        "writing": 0,
+        "visual_communication": 0
+      },
+      "regression_tolerance": {
+        "correctness_evidence": 0,
+        "validation": 0,
+        "reproducibility": 0,
+        "writing": 0,
+        "visual_communication": 0,
+        "overall": 0
+      },
+      "notes": "Disabled publication-safe template only; replace it with private benchmark metadata outside the solving context."
+    }
+  ]
+}

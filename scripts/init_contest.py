@@ -16,6 +16,15 @@ def write_if_missing(path: Path, content: str) -> None:
         path.write_text(content, encoding="utf-8")
 
 
+def contest_defaults(contest: str, year: int) -> tuple[str, str]:
+    normalized = "".join(character for character in contest.lower() if character.isalnum())
+    if normalized in {"mcm", "icm", "mcmicm", "comap"}:
+        return "mcm-icm", "mcm-icm-current"
+    if normalized in {"cumcm", "高教社杯", "全国大学生数学建模竞赛"}:
+        return "cumcm", f"cumcm-{year}"
+    return "cumcm", "generic"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-dir", type=Path, required=True)
@@ -24,14 +33,19 @@ def main() -> int:
     parser.add_argument("--mode", choices=["training", "live", "posthoc"], required=True)
     parser.add_argument("--rules-url", action="append", default=[])
     parser.add_argument("--deadline", default="unknown")
+    parser.add_argument("--template", choices=["auto", "cumcm", "mcm-icm"], default="auto")
+    parser.add_argument("--submission-profile")
     args = parser.parse_args()
+    default_template, default_profile = contest_defaults(args.contest, args.year)
+    selected_template = default_template if args.template == "auto" else args.template
+    selected_profile = args.submission_profile or default_profile
     root = args.project_dir
     for name in ("data/raw", "data/processed", "code", "results", "figures", "paper", "reports", "support", "environment"):
         (root / name).mkdir(parents=True, exist_ok=True)
     if paper_files(root / "paper"):
         write_if_missing(root / "paper" / "references.bib", "")
     else:
-        scaffold_latex_paper(root)
+        scaffold_latex_paper(root, template=selected_template)
     manifest = {
         "contest": args.contest,
         "year": args.year,
@@ -40,6 +54,8 @@ def main() -> int:
         "rules_urls": args.rules_url,
         "rules_verified_at": None,
         "rules_snapshot_file": "reports/contest_rules_snapshot.md",
+        "submission_profile": selected_profile,
+        "latex_template": selected_template,
         "live_mode_policy": "static-authoritative-sources-only" if args.mode == "live" else "not-applicable",
         "submission_state": "draft",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -49,6 +65,14 @@ def main() -> int:
     write_if_missing(root / "reports/data_audit.md", "# Data audit\n\n| Dataset | Source | License/permission | Rows/columns | Units | Missing/outlier handling | Leakage risk | Hash |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/claims.csv", "claim_id,subproblem,claim,source_file,source_locator,command,figure_or_table,paper_location,human_verification,status\n")
+    write_if_missing(
+        root / "results/verified_values.csv",
+        "key,value,value_type,unit,source_file,source_sha256,source_locator,source_kind,justification\n",
+    )
+    write_if_missing(
+        root / "reports/model_validation.json",
+        '{\n  "models": []\n}\n',
+    )
     write_if_missing(root / "reports/argument_coverage.csv", "subproblem,need_or_mechanism,model,solution,quantified_result,interpretation,validation,status\n")
     write_if_missing(
         root / "reports/paper_depth_plan.csv",

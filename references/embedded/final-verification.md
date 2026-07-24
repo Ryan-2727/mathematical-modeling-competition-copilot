@@ -23,6 +23,12 @@ The verification loop:
 - Formulas match the model explanation.
 - Code, notebook, or spreadsheet execution status is recorded.
 - Result tables match paper values.
+- `results/verified_values.csv` is the single source for decisive computed
+  values. Generate `paper/generated/results.tex`, then run
+  `scripts/verify_verified_values.py`; reject stale hashes, duplicate keys,
+  invalid types or units, unused decisive macros, and conflicting manual values.
+- Run `scripts/verify_model_validation.py` for every declared primary model
+  family. Preserve the actual diagnostic artifacts and predeclared thresholds.
 - Every decisive subproblem claim has a completed, failure-oriented entry in `reports/stress_tests.csv` and a preserved result file.
 - Figures match source data and are referenced.
 - At least 10 unique, relevant scholarly works are cited in the LaTeX body; each
@@ -43,6 +49,18 @@ The verification loop:
 - `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
 - `paper/main.tex` compiles to the inspected `paper/main.pdf`; source and PDF are
   both retained as the first deliverable.
+- Run `scripts/verify_pdf_visual.py` on `paper/main.pdf`. Review the rendered
+  pages and its page count, page size, first-page markers, forbidden TOC
+  markers, sparse pages, figure/table references, raster warnings, and metadata
+  findings. `LIMITED` is acceptable only for optional checks; a missing tool or
+  visual-evidence file for a mandatory rule is `FAIL`. The default forbids a
+  table-of-contents heading for CUMCM; use `--allow-contents` only when the
+  selected official profile permits or encourages one, such as the current
+  MCM/ICM profile.
+- Run `scripts/anonymity_scan.py` over source, PDF, images, and archives.
+  Inspect image metadata and rendered-page OCR when available; record OCR
+  absence as a limitation unless the selected profile makes that check
+  mandatory.
 - `scripts/verify_latex_compatibility.py` produces a fresh, compile-backed
   `reports/latex_compatibility.json` for both project-root and `build/` output
   paths; its source fingerprint matches the delivered paper tree.
@@ -57,6 +75,10 @@ The verification loop:
 - `support.zip` contains the allow-listed code, data or legal retrieval evidence,
   environment, exact commands, results, licenses, and hashes as the second
   deliverable. `scripts/verify_paper_delivery.py` returns `PASS`.
+- The frozen reproduction runs from a clean copied project without an implicit
+  shell. Commands are argv arrays unless `--allow-shell` is explicitly recorded.
+  Repeated runs agree by output hashes or declared tolerance-aware CSV
+  comparisons, and each run retains its own log and environment evidence.
 
 ## Verification Report
 
@@ -72,6 +94,12 @@ Create or update `reports/verification_report.md` with:
   separate human checks of source content and rendered PDF layout
 - `reports/latex_compatibility.json`, including both build commands, PDF outputs,
   source fingerprint, and visual-inspection result
+- `reports/pdf_visual_verification.json`, including tool availability, rendered
+  pages, findings, limitations, and the selected profile
+- verified-value and model-validation report paths, fingerprints, statuses, and
+  unresolved evidence limitations
+- clean-reproduction run directories, commands, input/output hashes, comparison
+  policy, and repeated-run verdict
 - portable LaTeX archive path, hash, root-entrypoint check, VS Code recipe check,
   fresh-directory compile status, PDF page count, and Overleaf configuration note
 

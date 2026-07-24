@@ -1,16 +1,23 @@
 # LaTeX Paper Pipeline
 
-This is the executable contract for Chinese competition papers.
+This is the executable portable-paper contract for CUMCM and MCM/ICM. The
+selected current official contest profile overrides all template defaults.
 
 ## Source layout
 
-Initialize the contest project with `scripts/init_contest.py`; it scaffolds the
-portable paper tree when `paper/` is empty. To add the tree to an existing project,
-run:
+Initialize the contest project with `scripts/init_contest.py`; it chooses the
+`cumcm` or `mcm-icm` portable tree from the contest name when `paper/` is empty.
+To add a selected tree to an existing project, run:
 
 ```powershell
-python scripts/scaffold_latex_paper.py --project-dir <contest-project>
+python scripts/scaffold_latex_paper.py --project-dir <contest-project> --template cumcm
+python scripts/scaffold_latex_paper.py --project-dir <contest-project> --template mcm-icm
 ```
+
+Never use `--force` on a nonempty paper tree unless the user explicitly intends
+to replace those files. The CUMCM template and MCM/ICM template encode different
+first-page, header, appendix, support-file, and AI-report structures; they are
+not interchangeable formatting themes.
 
 The generated contract is:
 

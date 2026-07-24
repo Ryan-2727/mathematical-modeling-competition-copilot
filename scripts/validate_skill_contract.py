@@ -45,6 +45,8 @@ def main() -> int:
             "at least 10", "paper/main.pdf", "support.zip",
             "scripts/verify_paper_delivery.py", "scripts/verify_latex_compatibility.py",
             "scripts/verify_paper_depth.py", "scripts/verify_portable_latex.py",
+            "scripts/verify_pdf_visual.py", "scripts/verify_verified_values.py",
+            "scripts/verify_model_validation.py", "scripts/run_benchmark_regression.py",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -65,6 +67,29 @@ def main() -> int:
         "references/embedded/verified-literature-and-two-part-delivery.md": (
             "Google Scholar", "reports/bibliography.csv", "support/materials_manifest.csv"
         ),
+        "references/embedded/computation-and-visualization.md": (
+            "results/verified_values.csv", "paper/generated/results.tex",
+            "verify_model_validation.py",
+        ),
+        "references/embedded/final-verification.md": (
+            "verify_pdf_visual.py", "anonymity_scan.py", "clean copied project",
+        ),
+        "references/embedded/independent-review-and-regression.md": (
+            "aggregate_reviewer_reports.py", "run_benchmark_regression.py",
+        ),
+        "references/embedded/executable-contest-profiles.md": (
+            "cumcm-2026", "mcm-icm-current",
+        ),
+        "assets/latex-paper-template/main.tex": (
+            "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
+        ),
+        "assets/latex-paper-template-mcm/main.tex": (
+            r"\documentclass[12pt]", r"\TeamControlNumber",
+            r"\includeaireport", "sections/summary",
+        ),
+        "assets/latex-paper-template-mcm/sections/summary.tex": (
+            "Summary Sheet", r"\TeamControlNumber", r"\ProblemChoice",
+        ),
     }
     for relative, phrases in delivery_checks.items():
         path = ROOT / relative
@@ -80,11 +105,24 @@ def main() -> int:
         "scripts/verify_paper_delivery.py",
         "scripts/verify_paper_depth.py",
         "scripts/verify_portable_latex.py",
+        "scripts/generate_verified_values.py",
+        "scripts/verify_verified_values.py",
+        "scripts/verify_model_validation.py",
+        "scripts/verify_pdf_visual.py",
+        "scripts/run_benchmark_regression.py",
+        "scripts/aggregate_reviewer_reports.py",
         "assets/latex-paper-template/main.tex",
         "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",
         "assets/latex-paper-template/.vscode/settings.json",
         "assets/latex-paper-template/.vscode/extensions.json",
+        "assets/latex-paper-template/code/main.py",
+        "assets/latex-paper-template-mcm/main.tex",
+        "assets/latex-paper-template-mcm/README.md",
+        "assets/latex-paper-template-mcm/.latexmkrc",
+        "assets/latex-paper-template-mcm/.vscode/settings.json",
+        "assets/latex-paper-template-mcm/.vscode/extensions.json",
+        "evals/quality-benchmark-schema.json",
     ):
         if not (ROOT / relative).is_file(): fail(f"missing delivery script: {relative}")
     portable_reference = ROOT / "references" / "embedded" / "latex-paper-pipeline.md"

@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "manifest_type": "paper-corpus",
+  "status": "LIMITED",
+  "corpus_id": "example-corpus",
+  "source_category": "user-provided-reference",
+  "inspection_date": "2026-07-24",
+  "tooling": {
+    "pdfinfo": {
+      "available": true
+    }
+  },
+  "limitations": [
+    "Illustrative schema only; generate a fresh local manifest before use."
+  ],
+  "pdf_count": 1,
+  "papers": [
+    {
+      "id": "example-corpus/2025/sample-paper-01",
+      "relative_path": "2025/sample-paper-01.pdf",
+      "file": "sample-paper-01.pdf",
+      "source_category": "user-provided-reference",
+      "inspection_date": "2026-07-24",
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+      "pages": 42,
+      "page_size_pt": {
+        "width_pt": 595.28,
+        "height_pt": 841.89
+      },
+      "limitations": [
+        "Fictitious example record; the digest and metrics do not assert a real paper."
+      ],
+      "returncode": "0",
+      "Pages": "42",
+      "Page size": "595.28 x 841.89 pts"
+    }
+  ],
+  "page_count_min": 42,
+  "page_count_max": 42,
+  "year_summary": {
+    "2025": {
+      "count": 1,
+      "page_min": 42,
+      "page_median": 42,
+      "page_max": 42
+    }
+  }
+}

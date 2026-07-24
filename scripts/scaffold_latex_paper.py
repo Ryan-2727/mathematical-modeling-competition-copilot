@@ -8,7 +8,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT / "assets" / "latex-paper-template"
+TEMPLATES = {
+    "cumcm": ROOT / "assets" / "latex-paper-template",
+    "mcm-icm": ROOT / "assets" / "latex-paper-template-mcm",
+}
 
 
 class ScaffoldError(RuntimeError):
@@ -21,7 +24,7 @@ def paper_files(paper_dir: Path) -> list[Path]:
     return sorted(path for path in paper_dir.rglob("*") if path.is_file())
 
 
-def scaffold_latex_paper(project_dir: Path, force: bool = False) -> list[Path]:
+def scaffold_latex_paper(project_dir: Path, force: bool = False, template: str = "cumcm") -> list[Path]:
     project_dir = project_dir.resolve()
     paper_dir = project_dir / "paper"
     existing = paper_files(paper_dir)
@@ -29,14 +32,15 @@ def scaffold_latex_paper(project_dir: Path, force: bool = False) -> list[Path]:
         names = ", ".join(path.relative_to(project_dir).as_posix() for path in existing[:5])
         suffix = " ..." if len(existing) > 5 else ""
         raise ScaffoldError(f"paper directory is not empty; use --force to overwrite template files: {names}{suffix}")
-    if not TEMPLATE.is_dir():
-        raise ScaffoldError(f"template directory is missing: {TEMPLATE}")
+    template_dir = TEMPLATES[template]
+    if not template_dir.is_dir():
+        raise ScaffoldError(f"template directory is missing: {template_dir}")
 
     created: list[Path] = []
-    for source in sorted(TEMPLATE.rglob("*")):
+    for source in sorted(template_dir.rglob("*")):
         if not source.is_file():
             continue
-        relative = source.relative_to(TEMPLATE)
+        relative = source.relative_to(template_dir)
         destination = paper_dir / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
@@ -52,9 +56,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-dir", type=Path, required=True)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--template", choices=sorted(TEMPLATES), default="cumcm")
     args = parser.parse_args()
     try:
-        created = scaffold_latex_paper(args.project_dir, force=args.force)
+        created = scaffold_latex_paper(args.project_dir, force=args.force, template=args.template)
     except (OSError, ScaffoldError) as exc:
         print(f"ERROR: {exc}")
         return 1

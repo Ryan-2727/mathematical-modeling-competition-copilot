@@ -4,6 +4,11 @@ Use this branch only after recording the current official rules snapshot. The
 following is a verification checklist, not a substitute for the current year’s
 official instructions.
 
+As of the repository verification date 2026-07-24, COMAP's official current
+instructions describe the 2027 contest. Use the `mcm-icm-current` executable
+profile and the `mcm-icm` LaTeX template, but refresh the official page before a
+live contest because the alias is intentionally time-sensitive.
+
 ## Paper structure
 
 Start with the official Summary Sheet, then present a concise English solution.
@@ -30,5 +35,9 @@ Verify rather than assume:
 
 The first PDF page is the summary. The summary reports approach and important
 conclusions, not a restatement of the prompt. The final PDF is English, meets the
-verified total-page limit, is anonymous, and is frozen at contest close. Use the
-submission receipt to transition from `submitted` to `receipt_verified`.
+verified total-page limit, is anonymous, and is frozen at contest close. Run
+`verify_submission.py --profile mcm-icm-current` with the PDF's seven-digit
+control number, declared font size, counted solution pages, AI flag, and
+hash-bound visual evidence when required. Do not attach a separate support
+archive. Use the submission receipt to transition from `submitted` to
+`receipt_verified`.

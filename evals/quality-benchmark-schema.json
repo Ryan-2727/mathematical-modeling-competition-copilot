@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Ryan-2727/mathematical-modeling-competition-copilot/evals/quality-benchmark-schema.json",
+  "title": "Mathematical modeling quality benchmark manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "cases"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/case"
+      }
+    }
+  },
+  "$defs": {
+    "scoreMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctness_evidence",
+        "validation",
+        "reproducibility",
+        "writing",
+        "visual_communication"
+      ],
+      "properties": {
+        "correctness_evidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "validation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "reproducibility": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "writing": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "visual_communication": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        }
+      }
+    },
+    "toleranceMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctness_evidence",
+        "validation",
+        "reproducibility",
+        "writing",
+        "visual_communication",
+        "overall"
+      ],
+      "properties": {
+        "correctness_evidence": {
+          "type": "number",
+          "minimum": 0
+        },
+        "validation": {
+          "type": "number",
+          "minimum": 0
+        },
+        "reproducibility": {
+          "type": "number",
+          "minimum": 0
+        },
+        "writing": {
+          "type": "number",
+          "minimum": 0
+        },
+        "visual_communication": {
+          "type": "number",
+          "minimum": 0
+        },
+        "overall": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "rubricItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["weight", "criterion"],
+      "properties": {
+        "weight": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "criterion": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correctness_evidence",
+        "validation",
+        "reproducibility",
+        "writing",
+        "visual_communication"
+      ],
+      "properties": {
+        "correctness_evidence": {
+          "$ref": "#/$defs/rubricItem"
+        },
+        "validation": {
+          "$ref": "#/$defs/rubricItem"
+        },
+        "reproducibility": {
+          "$ref": "#/$defs/rubricItem"
+        },
+        "writing": {
+          "$ref": "#/$defs/rubricItem"
+        },
+        "visual_communication": {
+          "$ref": "#/$defs/rubricItem"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "path"],
+      "properties": {
+        "class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "enabled",
+        "problem_family",
+        "allowed_inputs",
+        "required_subproblems",
+        "expected_artifacts",
+        "command",
+        "runtime_budget_seconds",
+        "result_file",
+        "rubric",
+        "baseline_scores",
+        "regression_tolerance"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "problem_family": {
+          "enum": [
+            "evaluation",
+            "prediction",
+            "optimization",
+            "mechanism",
+            "network",
+            "simulation"
+          ]
+        },
+        "allowed_inputs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required_subproblems": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "expected_artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "command": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "runtime_budget_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "result_file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rubric": {
+          "$ref": "#/$defs/rubric"
+        },
+        "baseline_scores": {
+          "$ref": "#/$defs/scoreMap"
+        },
+        "regression_tolerance": {
+          "$ref": "#/$defs/toleranceMap"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

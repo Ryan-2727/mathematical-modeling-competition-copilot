@@ -25,9 +25,11 @@ output in `environment/runtime_manifest.json`. Record software/solver versions,
 parameters, seeds, command, data hashes, hardware constraints, solver status,
 tolerances, stopping reason, and optimality gap when applicable.
 
-Re-run the project from a clean working directory before freeze when time permits.
-If full rerun is too expensive, re-run the smallest representative pipeline and
-state what remains unverified.
+Re-run the project from a clean copied working directory before freeze. Use argv
+commands by default, retain one log per run, repeat the frozen pipeline, and
+compare declared outputs by hashes or predeclared numeric tolerances. If full
+rerun is too expensive, re-run the smallest representative pipeline and state
+what remains unverified; do not label the entire project reproducible.
 
 ## Validation gates
 

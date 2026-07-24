@@ -4,12 +4,16 @@
 
 Run `scripts/anonymity_scan.py --root <submission-root> --out reports/anonymity_scan.txt`
 with team/school/region/username terms supplied through repeated `--term` flags.
-Review every match; the script is a detector, not proof of anonymity. Check PDF,
-Word, image, spreadsheet, notebook, archive, and source-code metadata manually if
-the relevant tool is available.
+Review every match; the script is a detector, not proof of anonymity. Enable its
+image-metadata and rendered-page OCR paths when their tools are available.
+Check PDF, Word, image, spreadsheet, notebook, archive, and source-code metadata;
+a required but unavailable reader is a limitation or failure according to the
+selected contest profile, never an inferred pass.
 
-Run `scripts/verify_submission.py` on the final PDF and support archive. Preserve
-the generated hash manifest with the submission record.
+Run `scripts/verify_pdf_visual.py` on the compiled PDF, then run
+`scripts/verify_submission.py` with the selected executable profile and its
+official rules snapshot/evidence. Preserve both reports and the generated hash
+manifest with the submission record.
 
 ## Support package
 

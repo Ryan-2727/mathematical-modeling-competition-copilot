@@ -12,6 +12,38 @@ Use this module for code, notebooks, result tables, and data-driven figures.
 - Generate result tables from executed code or formulas.
 - Store important outputs in machine-readable form such as CSV, JSON, or XLSX when possible.
 
+## Decisive-value registry
+
+Use `results/verified_values.csv` as the single source of truth for every
+computed number that materially supports an answer, recommendation, constraint,
+or comparison in the paper.
+
+1. Give every value a stable unique key, declared type and unit, source artifact,
+   source SHA-256, and source locator.
+2. Generate `paper/generated/results.tex` with
+   `scripts/generate_verified_values.py`.
+3. Reference the generated macros from reachable LaTeX instead of retyping the
+   values.
+4. Run `scripts/verify_verified_values.py` after every result or paper change.
+   A source-hash mismatch, duplicate key, invalid type, missing unit, unused
+   decisive macro, or manually duplicated decisive value blocks completion.
+
+Formatting precision belongs in the registry or generator metadata; it must not
+quietly alter the scientific value.
+
+## Model-family evidence adapters
+
+Declare the primary model family for each decisive subproblem and run
+`scripts/verify_model_validation.py`. Supported evidence contracts cover
+regression/forecast, classification, optimization, stochastic simulation,
+network/ranking, and mechanism/dynamics models. The manifest must point to the
+actual diagnostics and state numeric acceptance thresholds selected before
+interpreting the outcome.
+
+The adapter checks declared evidence and thresholds. It cannot certify model
+choice, causal validity, global optimality, or mathematical truth; those remain
+part of the paper argument and independent review.
+
 ## Notebook Rules
 
 If a notebook is used:
@@ -49,3 +81,6 @@ Before writing numeric claims:
 - Units and scales are clear.
 - The data-audit and traceability rows are complete.
 - The validation method and acceptance criterion were selected before interpreting results; unsupported accuracy claims are absent.
+- The verified-value registry matches its hashed source artifacts and all
+  decisive LaTeX values are generated from it.
+- The selected model-family validation adapter passes with locatable evidence.
