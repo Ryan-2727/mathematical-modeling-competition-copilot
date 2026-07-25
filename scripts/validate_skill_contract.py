@@ -55,6 +55,7 @@ def main() -> int:
             "scripts/verify_delivery_profiles.py",
             "joint feasibility report", "independent node-by-node",
             "attachment-to-subproblem coverage audit",
+            "zero/blank-value semantics",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -95,6 +96,7 @@ def main() -> int:
             "verify_delivery_profiles.py", "official-submission",
             "Coupled feasibility gate", "reports/feasibility_audit.json",
             "attachment-to-subproblem coverage",
+            "zero/blank-value semantics", "censored/not-detected",
         ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",

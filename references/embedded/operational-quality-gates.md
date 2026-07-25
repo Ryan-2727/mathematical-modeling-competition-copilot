@@ -9,10 +9,15 @@ an award.
 Before presenting a solution for a system with shared geometry, flows, resources,
 or network links:
 
-1. Verify input encoding, units, identifiers, row counts, one-to-one joins, and
-   attachment-to-subproblem coverage; record the checks in
+1. Verify input encoding, units, identifiers, row counts, one-to-one joins,
+   zero/blank-value semantics, and attachment-to-subproblem coverage; record the checks in
    `reports/input_audit.json`. Every supplied attachment must map to at least
    one subproblem or be explicitly marked unused with a reason.
+
+   Classify each zero or blank as structural, no-opportunity/not-observed,
+   censored/not-detected, or missing. Use the classification in capacity,
+   imputation, and compositional-data decisions; record a sensitivity check when
+   more than one treatment is credible.
 2. Classify constraints as local bounds/equalities or coupled constraints, and
    record the decision-variable and constraint graph in `reports/constraint_map.md`.
 3. Use an independent projection only to diagnose scale and initialization. If
