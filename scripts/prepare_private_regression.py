@@ -81,10 +81,21 @@ def discover_cases(
     corpus_root: Path, hash_candidates: bool, inspect_cases: bool
 ) -> list[dict[str, Any]]:
     discovered: list[dict[str, Any]] = []
-    for year_dir in sorted(path for path in corpus_root.iterdir() if path.is_dir()):
-        if not YEAR_RE.fullmatch(year_dir.name):
-            continue
-        for child in sorted(year_dir.iterdir()):
+    with os.scandir(corpus_root) as root_entries:
+        year_directories = [
+            Path(entry.path)
+            for entry in root_entries
+            if entry.is_dir() and YEAR_RE.fullmatch(entry.name)
+        ]
+    for year_dir in sorted(year_directories):
+        with os.scandir(year_dir) as case_entries:
+            children = []
+            for _ in range(INVENTORY_ENTRY_LIMIT):
+                entry = next(case_entries, None)
+                if entry is None:
+                    break
+                children.append(Path(entry.path))
+        for child in children:
             key = case_key(child.name)
             if key is None:
                 continue
