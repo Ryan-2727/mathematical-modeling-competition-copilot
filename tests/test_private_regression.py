@@ -39,7 +39,10 @@ class PrivateRegressionTests(unittest.TestCase):
             (case / "attachment.csv").write_text("x\n1\n", encoding="utf-8")
             (case / "code" / "solve.py").write_text("print(1)\n", encoding="utf-8")
             out = root / "inventory.json"
-            self.run_script("inventory", "--corpus-root", str(corpus), "--out", str(out))
+            self.run_script(
+                "inventory", "--corpus-root", str(corpus), "--out", str(out),
+                "--hash-candidates",
+            )
             payload = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(payload["schema_version"], 1)
             self.assertEqual(payload["cases"][0]["id"], "historical-2021-a")
@@ -47,6 +50,11 @@ class PrivateRegressionTests(unittest.TestCase):
                 item for item in payload["cases"][0]["candidates"] if item["path"] == "code/solve.py"
             )
             self.assertIn("generated_or_solution_directory", candidate["risk_tags"])
+            self.assertEqual(candidate["sha256"], sha256(case / "code" / "solve.py"))
+            safe_candidate = next(
+                item for item in payload["cases"][0]["candidates"] if item["path"] == "attachment.csv"
+            )
+            self.assertEqual(safe_candidate["sha256"], sha256(case / "attachment.csv"))
 
     def test_prepare_copies_only_explicit_safe_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

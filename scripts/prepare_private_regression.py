@@ -75,7 +75,7 @@ def case_key(name: str) -> str | None:
     return match.group(1).lower() if match else None
 
 
-def discover_cases(corpus_root: Path) -> list[dict[str, Any]]:
+def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, Any]]:
     discovered: list[dict[str, Any]] = []
     for year_dir in sorted(path for path in corpus_root.iterdir() if path.is_dir()):
         if not YEAR_RE.fullmatch(year_dir.name):
@@ -101,7 +101,7 @@ def discover_cases(corpus_root: Path) -> list[dict[str, Any]]:
                 candidates.append(
                     {
                         "path": relative.as_posix(),
-                        "sha256": sha256_file(path),
+                        "sha256": sha256_file(path) if hash_candidates else None,
                         "bytes": path.stat().st_size,
                         "risk_tags": tags,
                     }
@@ -261,6 +261,11 @@ def main() -> int:
     inventory = subparsers.add_parser("inventory")
     inventory.add_argument("--corpus-root", type=Path, required=True)
     inventory.add_argument("--out", type=Path, required=True)
+    inventory.add_argument(
+        "--hash-candidates",
+        action="store_true",
+        help="Hash inventory candidates; leave off for fast contamination preflight.",
+    )
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--corpus-root", type=Path, required=True)
     prepare_parser.add_argument("--private-root", type=Path, required=True)
@@ -277,7 +282,7 @@ def main() -> int:
         payload = {
             "schema_version": 1,
             "scope": "private historical corpus inventory; do not commit this file",
-            "cases": discover_cases(corpus_root),
+            "cases": discover_cases(corpus_root, args.hash_candidates),
         }
         write_json(out, payload)
         print(f"cases={len(payload['cases'])}")
