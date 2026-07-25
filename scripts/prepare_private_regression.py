@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -86,14 +87,30 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                 continue
             if child.is_dir():
                 source_dir = child
-                files = sorted(path for path in child.rglob("*") if path.is_file())
+                files: list[Path] = []
+                skipped_directories: list[str] = []
+                for directory, directory_names, file_names in os.walk(child):
+                    directory_path = Path(directory)
+                    safe_directories = []
+                    for directory_name in directory_names:
+                        relative_directory = (directory_path / directory_name).relative_to(child)
+                        if "generated_or_solution_directory" in risk_tags(relative_directory):
+                            skipped_directories.append(relative_directory.as_posix())
+                        else:
+                            safe_directories.append(directory_name)
+                    directory_names[:] = safe_directories
+                    files.extend(directory_path / name for name in file_names)
+                files.sort()
             elif child.is_file() and child.suffix.casefold() == ".pdf":
                 source_dir = year_dir
                 files = [child]
+                skipped_directories = []
             else:
                 continue
             candidates = []
             all_tags: set[str] = set()
+            if skipped_directories:
+                all_tags.add("generated_or_solution_directory")
             for path in files:
                 relative = path.relative_to(source_dir)
                 tags = risk_tags(relative)
@@ -116,6 +133,7 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                     "allowed_inputs": [],
                     "acknowledged_risks": [],
                     "source_tree_risks": sorted(all_tags),
+                    "skipped_risk_directories": skipped_directories,
                     "candidates": candidates,
                     "status": "needs_allowlist",
                 }
