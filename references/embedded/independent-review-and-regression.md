@@ -85,6 +85,28 @@ artifacts outside the solving context. The repository may contain the
 metadata-only schema and a disabled synthetic example, but not copyrighted
 statements, paired excellent papers, hidden expected answers, or solutions.
 
+For a user-owned historical corpus, create the private manifest and input copy
+before any solving run:
+
+```powershell
+python scripts/prepare_private_regression.py inventory `
+  --corpus-root <historical-corpus> `
+  --out <private-root>/inventory.json
+
+# Review inventory.json, keep cases disabled until their statement and original
+# attachments are explicitly allow-listed, then run:
+python scripts/prepare_private_regression.py prepare `
+  --corpus-root <historical-corpus> `
+  --private-root <private-root> `
+  --manifest <private-root>/manifest.json `
+  --out <private-root>/prepare-report.json
+```
+
+The private root must not overlap the source corpus or the public Git
+repository. The preparer rejects path escapes and generated/solution directories;
+result-named inputs and contaminated source trees require explicit reviewed
+acknowledgement. Do not use a case until preparation passes.
+
 Run:
 
 ```bash

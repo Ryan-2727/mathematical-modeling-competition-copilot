@@ -230,6 +230,14 @@ It does not promise an award. It maximizes award probability through disciplined
 12. **Paper-learning regression loop**
    - Read `references/embedded/training-evaluation-loop.md` before using an
      excellent-paper corpus to improve this skill.
+   - For user-owned historical problems, first run
+     `scripts/prepare_private_regression.py inventory`, then prepare an
+     explicit private allow-list outside both the source corpus and this Git
+     repository. Do not copy or expose prior code, papers, result files, build
+     products, scores, or benchmark manifests to the solving context.
+   - Keep private manifests, copied inputs, execution artifacts, and scores out
+     of Git. A contaminated source tree needs an explicit reviewed
+     acknowledgement; otherwise mark that case blocked rather than guessing.
    - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
      visual inspection; use a portable corpus manifest with relative identifiers,
      hashes, inspection dates, page metrics, and limitations. Convert only

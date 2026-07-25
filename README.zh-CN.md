@@ -112,6 +112,9 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
   缺失而被误判为通过。
 - `run_benchmark_regression.py` 评估盲化工件/评分清单。超出容差的回归会
   阻止 Skill 发布，脚本不会自动改写基线。
+- `prepare_private_regression.py` 盘点用户自有历史题库，并只将显式白名单
+  文件复制到与题库、公开仓库均不重叠的私有回归目录。它拒绝路径逃逸和已生成
+  的解答工件；私有清单、题面、数据、输出和评分均不得提交到 Git。
 
 ## 国赛模型路由增强
 

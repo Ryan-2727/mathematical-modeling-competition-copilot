@@ -47,6 +47,7 @@ def main() -> int:
             "scripts/verify_paper_depth.py", "scripts/verify_portable_latex.py",
             "scripts/verify_pdf_visual.py", "scripts/verify_verified_values.py",
             "scripts/verify_model_validation.py", "scripts/run_benchmark_regression.py",
+            "scripts/prepare_private_regression.py",
             "scripts/contestctl.py", "scripts/lock_contest_rules.py",
             "scripts/verify_abstract_quality.py",
             "scripts/verify_bibliography_metadata.py",
@@ -81,6 +82,7 @@ def main() -> int:
         ),
         "references/embedded/independent-review-and-regression.md": (
             "aggregate_reviewer_reports.py", "run_benchmark_regression.py",
+            "prepare_private_regression.py",
         ),
         "references/embedded/executable-contest-profiles.md": (
             "cumcm-2026", "mcm-icm-current",
@@ -120,6 +122,7 @@ def main() -> int:
         "scripts/verify_model_validation.py",
         "scripts/verify_pdf_visual.py",
         "scripts/run_benchmark_regression.py",
+        "scripts/prepare_private_regression.py",
         "scripts/aggregate_reviewer_reports.py",
         "scripts/contestctl.py",
         "scripts/lock_contest_rules.py",

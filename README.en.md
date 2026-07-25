@@ -122,6 +122,10 @@ The release and paper workflow then uses deterministic checks:
 - `run_benchmark_regression.py` evaluates blinded artifact/rubric manifests.
   Regressions beyond tolerance block a skill release, and baselines are never
   rewritten automatically.
+- `prepare_private_regression.py` inventories a user-owned historical corpus and
+  copies only an explicit allow-list into a private, non-overlapping benchmark
+  root. It rejects path escapes and generated solution artifacts; private
+  manifests, statements, data, outputs, and scores must never be committed.
 
 ## CUMCM Model Routing
 
