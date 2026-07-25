@@ -15,7 +15,7 @@ if ($resolvedTarget -eq $repoRoot) {
     throw 'InstallDir must differ from the repository root.'
 }
 
-$files = git -C $repoRoot ls-files
+$files = git -c "safe.directory=$repoRoot" -C $repoRoot ls-files
 if ($LASTEXITCODE -ne 0 -or -not $files) {
     throw 'Unable to enumerate tracked repository files.'
 }
