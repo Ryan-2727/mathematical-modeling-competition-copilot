@@ -95,7 +95,13 @@ python scripts/prepare_private_regression.py inventory `
 
 # The default inventory only discovers cases. For a small, selected calibration
 # set, add --inspect-cases (and --hash-candidates only when hashes are needed).
-# Review inventory.json, keep cases disabled until their statement and original
+# Create an all-disabled manifest, then review cases individually:
+python scripts/prepare_private_regression.py initialize-manifest `
+  --private-root <private-root> `
+  --inventory <private-root>/inventory.json `
+  --out <private-root>/manifest.json
+
+# Keep cases disabled until their statement and original
 # attachments are explicitly allow-listed, then run:
 python scripts/prepare_private_regression.py prepare `
   --corpus-root <historical-corpus> `

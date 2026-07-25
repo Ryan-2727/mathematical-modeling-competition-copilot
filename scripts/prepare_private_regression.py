@@ -78,7 +78,10 @@ def case_key(name: str) -> str | None:
 
 
 def discover_cases(
-    corpus_root: Path, hash_candidates: bool, inspect_cases: bool
+    corpus_root: Path,
+    hash_candidates: bool,
+    inspect_cases: bool,
+    selected_case_ids: set[str],
 ) -> list[dict[str, Any]]:
     discovered: list[dict[str, Any]] = []
     with os.scandir(corpus_root) as root_entries:
@@ -98,6 +101,9 @@ def discover_cases(
         for child in children:
             key = case_key(child.name)
             if key is None:
+                continue
+            case_id = f"historical-{year_dir.name}-{key}"
+            if selected_case_ids and case_id not in selected_case_ids:
                 continue
             if child.is_dir():
                 source_dir = child
@@ -148,7 +154,7 @@ def discover_cases(
                 )
             discovered.append(
                 {
-                    "id": f"historical-{year_dir.name}-{key}",
+                    "id": case_id,
                     "year": int(year_dir.name),
                     "case": key.upper(),
                     "enabled": False,
@@ -181,6 +187,34 @@ def load_manifest(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     if not isinstance(payload.get("cases"), list):
         return None, ["manifest cases must be an array"]
     return payload, []
+
+
+def initialize_manifest(inventory: dict[str, Any]) -> dict[str, Any]:
+    cases = inventory.get("cases")
+    if not isinstance(cases, list):
+        raise ValueError("inventory cases must be an array")
+    manifest_cases = []
+    for raw_case in cases:
+        if not isinstance(raw_case, dict):
+            raise ValueError("inventory cases must contain objects")
+        case_id = raw_case.get("id")
+        source_dir = raw_case.get("source_dir")
+        if not isinstance(case_id, str) or not isinstance(source_dir, str):
+            raise ValueError("inventory case is missing id or source_dir")
+        manifest_cases.append(
+            {
+                "id": case_id,
+                "enabled": False,
+                "source_dir": source_dir,
+                "allowed_inputs": [],
+                "acknowledged_risks": [],
+            }
+        )
+    return {
+        "schema_version": 1,
+        "scope": "private historical regression manifest; do not commit",
+        "cases": manifest_cases,
+    }
 
 
 def prepare(
@@ -314,12 +348,40 @@ def main() -> int:
         action="store_true",
         help="Inspect up to 256 top-level entries per case; use only for a selected case set.",
     )
+    inventory.add_argument(
+        "--case-id",
+        action="append",
+        default=[],
+        help="Restrict inventory to one historical case id; repeat for a small calibration set.",
+    )
+    init_manifest = subparsers.add_parser("initialize-manifest")
+    init_manifest.add_argument("--private-root", type=Path, required=True)
+    init_manifest.add_argument("--inventory", type=Path, required=True)
+    init_manifest.add_argument("--out", type=Path, required=True)
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--corpus-root", type=Path, required=True)
     prepare_parser.add_argument("--private-root", type=Path, required=True)
     prepare_parser.add_argument("--manifest", type=Path, required=True)
     prepare_parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
+    if args.command == "initialize-manifest":
+        private_root = args.private_root.resolve()
+        inventory_path = args.inventory.resolve()
+        out = args.out.resolve()
+        if not private_root.is_dir() or not inside(inventory_path, private_root) or not inside(out, private_root):
+            raise SystemExit("private root, inventory, and output must stay in the private root")
+        if out.exists():
+            raise SystemExit("refusing to overwrite an existing private manifest")
+        inventory, errors = load_manifest(inventory_path)
+        if errors or inventory is None:
+            raise SystemExit("cannot initialize from inventory: " + "; ".join(errors))
+        try:
+            payload = initialize_manifest(inventory)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
+        write_json(out, payload)
+        print(f"cases={len(payload['cases'])}")
+        return 0
     corpus_root = args.corpus_root.resolve()
     if not corpus_root.is_dir():
         raise SystemExit("corpus root is missing")
@@ -330,7 +392,12 @@ def main() -> int:
         payload = {
             "schema_version": 1,
             "scope": "private historical corpus inventory; do not commit this file",
-            "cases": discover_cases(corpus_root, args.hash_candidates, args.inspect_cases),
+            "cases": discover_cases(
+                corpus_root,
+                args.hash_candidates,
+                args.inspect_cases,
+                set(args.case_id),
+            ),
         }
         write_json(out, payload)
         print(f"cases={len(payload['cases'])}")

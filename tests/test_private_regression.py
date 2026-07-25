@@ -54,6 +54,29 @@ class PrivateRegressionTests(unittest.TestCase):
             )
             self.assertEqual(safe_candidate["sha256"], sha256(case / "attachment.csv"))
 
+    def test_initialize_manifest_keeps_every_case_disabled(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            private = Path(raw) / "private"
+            private.mkdir()
+            inventory = private / "inventory.json"
+            inventory.write_text(
+                json.dumps({
+                    "schema_version": 1,
+                    "cases": [{"id": "historical-2021-a", "source_dir": "2021/A"}],
+                }),
+                encoding="utf-8",
+            )
+            manifest = private / "manifest.json"
+            self.run_script(
+                "initialize-manifest",
+                "--private-root", str(private),
+                "--inventory", str(inventory),
+                "--out", str(manifest),
+            )
+            payload = json.loads(manifest.read_text(encoding="utf-8"))
+            self.assertFalse(payload["cases"][0]["enabled"])
+            self.assertEqual(payload["cases"][0]["allowed_inputs"], [])
+
     def test_prepare_copies_only_explicit_safe_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
