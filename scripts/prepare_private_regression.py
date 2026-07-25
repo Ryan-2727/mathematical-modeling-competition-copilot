@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import shutil
 from pathlib import Path
@@ -87,24 +86,23 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                 continue
             if child.is_dir():
                 source_dir = child
-                files: list[Path] = []
+                files = []
                 skipped_directories: list[str] = []
-                for directory, directory_names, file_names in os.walk(child):
-                    directory_path = Path(directory)
-                    safe_directories = []
-                    for directory_name in directory_names:
-                        relative_directory = (directory_path / directory_name).relative_to(child)
+                uninspected_directories: list[str] = []
+                for entry in sorted(child.iterdir()):
+                    if entry.is_file():
+                        files.append(entry)
+                    elif entry.is_dir():
+                        relative_directory = entry.relative_to(child)
                         if "generated_or_solution_directory" in risk_tags(relative_directory):
                             skipped_directories.append(relative_directory.as_posix())
                         else:
-                            safe_directories.append(directory_name)
-                    directory_names[:] = safe_directories
-                    files.extend(directory_path / name for name in file_names)
-                files.sort()
+                            uninspected_directories.append(relative_directory.as_posix())
             elif child.is_file() and child.suffix.casefold() == ".pdf":
                 source_dir = year_dir
                 files = [child]
                 skipped_directories = []
+                uninspected_directories = []
             else:
                 continue
             candidates = []
@@ -134,6 +132,7 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                     "acknowledged_risks": [],
                     "source_tree_risks": sorted(all_tags),
                     "skipped_risk_directories": skipped_directories,
+                    "uninspected_directories": uninspected_directories,
                     "candidates": candidates,
                     "status": "needs_allowlist",
                 }
@@ -282,7 +281,7 @@ def main() -> int:
     inventory.add_argument(
         "--hash-candidates",
         action="store_true",
-        help="Hash inventory candidates; leave off for fast contamination preflight.",
+        help="Hash top-level inventory candidates; leave off for fast contamination preflight.",
     )
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--corpus-root", type=Path, required=True)
