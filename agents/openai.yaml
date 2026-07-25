@@ -1,4 +1,4 @@
 interface:
   display_name: "Mathematical Modeling Competition Copilot"
-  short_description: "Explicit-only contest modeling with verified LaTeX delivery."
-  default_prompt: "Use $mathematical-modeling-competition-copilot to solve this contest problem, snapshot current rules, keep AI/data/source evidence, and deliver a verified LaTeX PDF/source plus support package."
+  short_description: "Explicit-only contest modeling with rule and evidence gates."
+  default_prompt: "Use $mathematical-modeling-competition-copilot to solve this contest problem, lock current official rules, keep AI/data/source evidence, run phase and paper-quality gates, and deliver verified LaTeX plus a profile-safe submission."

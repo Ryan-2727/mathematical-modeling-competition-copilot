@@ -328,6 +328,15 @@ def main() -> int:
             if isinstance(compatibility.get("builds"), list)
             else 0,
         },
+        "paper_source_sha256": source_fingerprint(root / "paper")
+        if (root / "paper").is_dir()
+        else "",
+        "bibliography_sha256": sha256(root / "reports" / "bibliography.csv")
+        if (root / "reports" / "bibliography.csv").is_file()
+        else "",
+        "support_archive_sha256": sha256(support_zip)
+        if support_zip.is_file()
+        else "",
         "errors": errors,
         "warnings": warnings,
     }

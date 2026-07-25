@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import os
 import re
 import shutil
@@ -19,6 +20,25 @@ TEXT_SUFFIXES = {
     ".yaml", ".yml", ".ipynb",
 }
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp"}
+
+
+def tree_fingerprint(root: Path, report_path: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(root.rglob("*")):
+        if not path.is_file() or ".git" in path.relative_to(root).parts:
+            continue
+        relative = path.relative_to(root).as_posix()
+        if path.resolve() == report_path.resolve() or (
+            relative.startswith("reports/phase_") and relative.endswith(".json")
+        ):
+            continue
+        digest.update(relative.encode("utf-8"))
+        digest.update(b"\0")
+        with path.open("rb") as handle:
+            for block in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(block)
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def command_text(command: list[str]) -> tuple[str, str, int]:
@@ -150,14 +170,19 @@ def main() -> int:
                 findings.append(f"{label}:{number}: {line[:240]}")
 
     root = args.root.resolve()
+    report_path = args.out.resolve()
     image_paths: list[Path] = []
     pdf_paths: list[Path] = []
+    files_scanned = 0
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
         if any(pattern.search(str(relative)) for pattern in patterns):
             findings.append(f"PATH {relative}")
         if not path.is_file():
             continue
+        if path.resolve() == report_path:
+            continue
+        files_scanned += 1
         suffix = path.suffix.lower()
         if suffix in TEXT_SUFFIXES:
             scan(
@@ -277,6 +302,15 @@ def main() -> int:
     lines = [
         f"STATUS {status}",
         "SCOPE scoped automated anonymity scan; not a full guarantee",
+        f"ROOT {root}",
+        f"INPUT_FINGERPRINT {tree_fingerprint(root, report_path)}",
+        "SCANNER anonymity_scan.py/v2",
+        f"FILES_SCANNED {files_scanned}",
+        f"OCR_REQUESTED {str(args.ocr).lower()}",
+        "PATTERNS_SHA256 "
+        + hashlib.sha256(
+            "\0".join(defaults + args.term).encode("utf-8")
+        ).hexdigest(),
     ]
     lines.extend(f"NOTE {note}" for note in notes)
     lines.extend(f"LIMITATION {item}" for item in limitations)

@@ -35,11 +35,21 @@ The verification loop:
   key is present in `paper/references.bib` and `reports/bibliography.csv`, with
   authoritative metadata verification, an exact-title Google Scholar query, a
   supported claim, and a source locator. The cited passages have been read.
+- Run `scripts/verify_bibliography_metadata.py` against hash-bound authoritative
+  metadata snapshots, retraction-check records, and supporting-passage evidence.
+- Run `scripts/verify_abstract_quality.py`; confirm every numbered task is
+  represented by its method, decisive result, validation, and answer or
+  recommendation.
+- Run `scripts/verify_manuscript_quality.py`; resolve missing captions/labels,
+  unreferenced figures, undefined citations/references, figure-manifest gaps, and
+  material LaTeX log warnings.
 - Submission format matches contest requirements.
 - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026`; explicitly record main-text pages, visual abstract-first/no-TOC checks, and the support archive result.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
   counts. Confirm every numbered subproblem has its own completed depth-plan row;
   a long code appendix does not compensate for an abbreviated main argument.
+  Treat empirical minimum page targets as advisory unless the official rules
+  impose a minimum; always enforce the official maximum.
 - For Chinese 2025-format contests, `paper-writing-zh-cn-format2025.md` checks are complete: abstract is first in the electronic paper, commitment and number pages are excluded from the electronic paper, appendix and support-material rules are satisfied, and identity information is absent.
 - Missing plugin/runtime limitations are recorded.
 - The contest rules snapshot is current and all critical fields are verified.
@@ -75,10 +85,15 @@ The verification loop:
 - `support.zip` contains the allow-listed code, data or legal retrieval evidence,
   environment, exact commands, results, licenses, and hashes as the second
   deliverable. `scripts/verify_paper_delivery.py` returns `PASS`.
+- Run `scripts/verify_delivery_profiles.py`; preserve the full user delivery
+  under `delivery/` and only profile-permitted files under
+  `official-submission/`.
 - The frozen reproduction runs from a clean copied project without an implicit
   shell. Commands are argv arrays unless `--allow-shell` is explicitly recorded.
   Repeated runs agree by output hashes or declared tolerance-aware CSV
   comparisons, and each run retains its own log and environment evidence.
+- Run `scripts/contestctl.py check` for `setup`, `modeling`, `paper`, `delivery`,
+  and `freeze`; do not edit its reports to bypass a failed specialist gate.
 
 ## Verification Report
 

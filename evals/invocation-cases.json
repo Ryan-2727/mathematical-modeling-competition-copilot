@@ -18,14 +18,49 @@
       "prompt": "Please improve the clarity of this mathematical modeling paragraph."
     },
     {
+      "id": "negative-name-only",
+      "expected": "do_not_invoke",
+      "prompt": "What does mathematical-modeling-competition-copilot do?"
+    },
+    {
+      "id": "negative-chinese-ordinary-contest",
+      "expected": "do_not_invoke",
+      "prompt": "帮我解释数学建模竞赛里的层次分析法。"
+    },
+    {
+      "id": "negative-generic-skill-word",
+      "expected": "do_not_invoke",
+      "prompt": "这个 skill 还有什么常见设计原则？"
+    },
+    {
       "id": "positive-dollar-invocation",
       "expected": "invoke",
       "prompt": "Use $mathematical-modeling-competition-copilot for this CUMCM problem."
     },
     {
+      "id": "positive-chinese-dollar-invocation",
+      "expected": "invoke",
+      "prompt": "请使用 $mathematical-modeling-competition-copilot 完成这道国赛题。"
+    },
+    {
       "id": "positive-direct-link",
       "expected": "invoke",
       "prompt": "Use the skill at C:\\Users\\user\\.codex\\skills\\mathematical-modeling-competition-copilot\\SKILL.md."
+    },
+    {
+      "id": "positive-d-drive-link",
+      "expected": "invoke",
+      "prompt": "使用 D:\\Codex\\.codex\\skills\\mathematical-modeling-competition-copilot\\SKILL.md 这个技能。"
+    },
+    {
+      "id": "positive-forward-slash-link",
+      "expected": "invoke",
+      "prompt": "Use D:/Codex/.codex/skills/mathematical-modeling-competition-copilot/SKILL.md."
+    },
+    {
+      "id": "positive-markdown-link",
+      "expected": "invoke",
+      "prompt": "Use [the skill](D:\\Codex\\.codex\\skills\\mathematical-modeling-competition-copilot\\SKILL.md) now."
     }
   ]
 }

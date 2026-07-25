@@ -25,13 +25,25 @@ It is a hard completion gate, not a suggestion.
 Maintain `reports/bibliography.csv` with these fields:
 
 ```text
-citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,claim_supported,source_locator,status
+citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,metadata_snapshot,metadata_sha256,retraction_status,retraction_checked_at,claim_supported,source_locator,supporting_passage,supporting_passage_sha256,status
 ```
 
 Set `scholar_status` to `found` only after the exact-title result has been observed,
 and record the check date. Only mark the row `verified` after the metadata check,
 Scholar result, and source-content check are complete. Keep citation keys identical
 in the ledger, the LaTeX citation commands, and `paper/references.bib`.
+
+Save authoritative metadata responses under `reports/bibliography_metadata/` and
+short copyright-compliant claim-supporting excerpts or precise evidence notes
+under `reports/source_passages/`.
+Set `verification_source` to the record-specific HTTPS Crossref, DOI, or OpenAlex
+URL that matches the saved metadata; labels such as `official` are not evidence.
+Use the canonical `https://scholar.google.com/scholar?q=...` URL for the exact-title
+Scholar check. Record all evidence SHA-256 values. Run
+`scripts/verify_bibliography_metadata.py --project-dir . --out
+reports/bibliography_verification.json`. Its pass verifies saved evidence
+integrity and metadata agreement; it does not establish that a source was
+interpreted correctly.
 
 ## Paper deliverable
 
@@ -74,6 +86,12 @@ The second final deliverable is `support.zip`. It must contain:
 Every included artifact needs a source, license/permission, SHA-256 value, category,
 and purpose. Never package credentials, private paths, caches, virtual environments,
 copyrighted data without permission, or identity-revealing metadata.
+
+This is a user delivery artifact, not automatically an official submission
+artifact. Put the portable paper source and support archive under `delivery/`.
+Put only files allowed by the selected official profile under
+`official-submission/`, then run `scripts/verify_delivery_profiles.py`. In
+particular, do not submit a separate support archive to MCM/ICM.
 
 Build the archive from its allow-list rather than archiving the whole project:
 

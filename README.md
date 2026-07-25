@@ -40,12 +40,15 @@ A new computer can install only this repository and still get the full mathemati
 - final verification rules
 - fallback rules for missing tools
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
+- hash-bound official-rule locks and cumulative setup/modeling/paper/delivery/freeze phase gates
 - data audit, traceability, environment capture, anonymity scanning, and hashing
 - CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
 - executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
   templates selected automatically at project initialization
 - a decisive-value registry that generates LaTeX macros from hashed computation
-  outputs, plus model-family validation adapters
+  outputs, plus 11 model-family validation adapters
+- answer-oriented abstract, authoritative bibliography snapshot, supporting-passage,
+  LaTeX-log, caption/label, and figure-manifest checks
 - clean-copy, repeated-run reproduction without implicit shell execution
 - PDF rendering/metadata QA, image/OCR-aware anonymity checks, and real TeX CI
 - optional post-paper award review: three reviewer lenses, a four-dimension evidence scorecard, and structural award-readiness verification, only after user confirmation
@@ -54,6 +57,8 @@ A new computer can install only this repository and still get the full mathemati
 - a hard two-part delivery gate: compiled PDF plus complete LaTeX source, and a
   hashed support archive containing code, data evidence, environment, commands,
   and results
+- separate `delivery/` and `official-submission/` roots so user-side source and
+  support files cannot leak into a contest profile that forbids them
 
 ## Hard Completion Contract
 
@@ -69,7 +74,11 @@ A completed paper must satisfy both conditions:
 The LaTeX body must cite at least 10 unique, relevant scholarly works. Each source
 is recorded in `reports/bibliography.csv`, checked against authoritative metadata,
 confirmed by an observed exact-title Google Scholar result, and read at the passage supporting the
-paper's claim. Fabricated metadata or source content is prohibited. Run
+paper's claim. `verification_source` must be a record-specific HTTPS Crossref,
+DOI, or OpenAlex URL, and Scholar queries use the canonical
+`https://scholar.google.com/scholar?q=...` endpoint. Fabricated metadata or source content is prohibited. Run
+`scripts/verify_bibliography_metadata.py` against saved authoritative metadata
+and supporting-passage hashes, then run
 `scripts/verify_paper_delivery.py` before claiming completion; its pass is a
 structural check and does not replace human source reading or PDF inspection.
 First run `scripts/verify_latex_compatibility.py`: it must produce a fresh,
@@ -87,13 +96,23 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
 
 The release and paper workflow then uses deterministic checks:
 
+- `lock_contest_rules.py` binds saved official rule snapshots to URLs, hashes,
+  structured fields, and a validity date. `contestctl.py check` coordinates
+  cumulative phase gates without replacing specialist verifiers.
 - `results/verified_values.csv` is the single source of truth for decisive
   computed values; `generate_verified_values.py` creates
   `paper/generated/results.tex`, and `verify_verified_values.py` checks hashes,
   types, units, reachability, and staleness.
 - `verify_model_validation.py` checks declared evidence for forecast/regression,
-  classification, optimization, stochastic simulation, network/ranking, and
-  mechanism/dynamics models. It does not certify mathematical truth.
+  classification, optimization, stochastic simulation, network/ranking,
+  mechanism/dynamics, causal/econometric, unsupervised, queueing/reliability,
+  spatial/spatiotemporal, and multi-objective/dynamic optimization models. It
+  does not certify mathematical truth.
+- `verify_abstract_quality.py`, `verify_bibliography_metadata.py`, and
+  `verify_manuscript_quality.py` check answer coverage, saved source evidence,
+  references, captions, labels, figure manifests, and LaTeX logs.
+- `verify_delivery_profiles.py` verifies the full user handoff separately from
+  the files allowed in the official contest submission.
 - `run_reproduction.py` runs argv-based commands in a clean copy, retains
   per-run logs, and compares repeated outputs by hashes or declared numeric
   tolerances. Shell execution requires explicit opt-in.
@@ -145,9 +164,10 @@ This skill acts as the main entry point for a mathematical modeling project. It 
 7. Assemble and compile the portable XeLaTeX paper in both Overleaf and VS Code
    build layouts with at least 10 verified, actually cited scholarly sources;
    disclose AI use as required.
-8. Build and verify the separate support-material archive with code, data evidence, environment, commands, results, licenses, and hashes.
+8. Build and verify the separate support-material archive with code, data evidence, environment, commands, results, licenses, and hashes; keep it in the user delivery even when the official contest forbids extra files.
 9. After the full paper and baseline verification are complete, offer an optional independent review of assumption rationality, model creativity, result correctness, and writing clarity.
-10. Scan anonymity, freeze hashes, verify submission artifacts, and record receipt evidence.
+10. Scan anonymity, freeze hashes, verify the profile-limited
+    `official-submission/` artifacts, and record receipt evidence.
 
 ## When To Use
 
@@ -188,6 +208,7 @@ Chinese example:
 .
 |-- plan.md
 |-- todo.md
+|-- rules.lock.json
 |-- data/
 |   |-- raw/
 |   `-- processed/
@@ -203,6 +224,9 @@ Chinese example:
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- bibliography.csv
+|   |-- bibliography_metadata/
+|   |-- source_passages/
+|   |-- figure_manifest.csv
 |   |-- paper_depth_plan.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
@@ -217,6 +241,10 @@ Chinese example:
 |   |-- materials_manifest.csv
 |   `-- data_inventory.csv
 |-- support.zip
+|-- delivery/
+|   `-- manifest.csv
+|-- official-submission/
+|   `-- manifest.csv
 `-- paper/
     |-- main.tex
     |-- README.md
@@ -257,6 +285,13 @@ Windows, preview first and then run:
 .\scripts\sync_local_skill.ps1
 ```
 
+On Windows, run Python validation in UTF-8 mode:
+
+```powershell
+python -X utf8 scripts\validate_skill_contract.py
+python -X utf8 -m unittest discover -s tests -v
+```
+
 ## Repository Structure
 
 ```text
@@ -268,7 +303,12 @@ Windows, preview first and then run:
 |-- assets/
 |   `-- latex-paper-template/
 |-- scripts/
+|   |-- contestctl.py
+|   |-- lock_contest_rules.py
 |   |-- scaffold_latex_paper.py
+|   |-- verify_abstract_quality.py
+|   |-- verify_bibliography_metadata.py
+|   |-- verify_delivery_profiles.py
 |   `-- verify_latex_compatibility.py
 |-- agents/
 |   `-- openai.yaml
@@ -282,6 +322,7 @@ Windows, preview first and then run:
         |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
         |-- verified-literature-and-two-part-delivery.md
+        |-- operational-quality-gates.md
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md

@@ -32,19 +32,20 @@ Apply rules in this order:
 3. the profiles below as anti-underwriting guidance;
 4. exemplar length only as a diagnostic comparison, never as a quota.
 
-For a complex CUMCM-style problem with four or more linked subproblems:
+For a complex CUMCM-style problem with four or more linked subproblems, use the
+following as planning diagnostics, never minimum-length requirements:
 
 | Situation | Main-text plan | Complete PDF plan | Gate |
 | --- | ---: | ---: | --- |
-| Verified maximum is 30 main-text pages | prefer 28--30; 24 is the normal depth floor | main text plus required appendices | never exceed 30 |
-| No verified page cap | normally 24--32; use 28--35 only when the reasoning truly requires it | normally 35--60 and at least 30 | no padding |
-| Verified maximum is below 24 | plan near the limit and move reproducibility detail to appendices/support | obey the official rule | record why the normal floor was reduced |
+| Verified maximum is 30 main-text pages | derive the budget from the seven-part argument chain; often 18--30 | main text plus required appendices | never exceed 30; no minimum is inferred |
+| No verified page cap | derive a section budget from task complexity and evidence | task-specific | no padding or empirical floor |
+| Verified maximum is below the initial plan | compress standard detail and move reproducibility material to appendices/support | obey the official rule | preserve decisive reasoning and validation |
 | Smaller or lightly coupled task | derive a task-specific budget | task-specific | do not force the complex profile |
 
-"Floor" is a drafting alarm, not permission to violate a rule. If the main text is
-below the selected floor, either restore missing reasoning or record a concrete
-scope/rules justification. If it reaches the target by repetition, oversized
-screenshots, raw code, or unexplained plots, shorten it.
+Page ranges are drafting alarms only. A paper may be shorter and stronger when
+every subproblem has a complete argument chain and all decisive evidence is
+locatable. If additional pages come from repetition, oversized screenshots, raw
+code, or unexplained plots, shorten the paper.
 
 Before drafting, create `reports/paper_depth_plan.csv`. After compilation, record
 visually confirmed main-text and appendix page counts and run
@@ -128,5 +129,7 @@ of explanation.
 Fail the drafting gate when any numbered task lacks one of the seven argument
 items, when a central conclusion has no result source, when validation exists only
 as a generic final paragraph, or when code appendices are being used to satisfy a
-page target. Passing `verify_paper_depth.py` confirms counts and recorded coverage;
-it does not certify mathematical correctness or prose quality.
+page target. Run `verify_paper_depth.py` in its default advisory-minimum mode;
+use `--minimum-mode enforce` only when a verified official rule truly imposes a
+minimum. Passing confirms counts and recorded coverage; it does not certify
+mathematical correctness or prose quality.

@@ -13,6 +13,9 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `cumcm-2026-rules.md`: executable CUMCM 2026 format, support-package, AI-report, and submission-profile checks.
 - `executable-contest-profiles.md`: versioned CUMCM and MCM/ICM official-rule
   profiles, evidence fields, template selection, and executable submission gates.
+- `operational-quality-gates.md`: hash-bound rule lock, cumulative phase
+  controller, abstract/bibliography/manuscript checks, and separation of user
+  delivery from official submission.
 - `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `problem-structure-playbooks.md`: route selection for evaluation, forecasting, optimization, mechanism, classification, and simulation problems.
@@ -64,18 +67,19 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Phase | Minimum output | Verification |
 | --- | --- | --- |
 | Setup | `plan.md`, `todo.md`, `reports/milestones.csv` | User constraints and timed gates captured |
-| Compliance | `contest_manifest.json`, rules snapshot, AI log, selected template/profile | Current rules and live-mode boundary recorded; executable profile passes |
+| Compliance | `contest_manifest.json`, `rules.lock.json`, saved official snapshots, AI log, selected template/profile | Rule URLs, hashes, validity and structured fields pass; live-mode boundary recorded |
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
 | Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md`, `reports/model_decision_log.csv` | Variables and assumptions defined; route selection justified against a baseline |
-| Literature | `reports/bibliography.csv`, `paper/references.bib` | At least 10 uniquely cited works have authoritative metadata, exact-title Scholar queries, and checked source passages |
+| Literature | `reports/bibliography.csv`, metadata snapshots, passage evidence, `paper/references.bib` | At least 10 uniquely cited works have hash-bound authoritative metadata, exact-title Scholar queries, retraction-check records, and checked source passages |
 | Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, stress/units ledgers | Executed; hashes and units reconcile; model-family evidence and decisive claims are challenged |
-| Figures/tables | `figures/`, tables | Referenced and consistent |
-| Writing | `paper/main.tex`, `paper/main.pdf`, complete portable LaTeX source tree | Overleaf-style root and VS Code `build/` outputs compile with XeLaTeX/latexmk, render correctly, and match computation |
+| Figures/tables | `figures/`, tables, `reports/figure_manifest.csv` | Referenced, source-backed, unit-labelled, and grayscale/color checked |
+| Writing | `paper/main.tex`, `paper/main.pdf`, complete portable LaTeX source tree | Abstract, manuscript, Overleaf-style root and VS Code `build/` outputs pass; official maximum is enforced without an empirical minimum-page quota |
 | Final check | verification report, paper-depth report, argument coverage, claim report, model/value reports, `reports/latex_compatibility.json`, PDF visual report, portable-source ZIP report, `reports/paper_delivery.json` | Depth, compile, visual, anonymity, numeric, reproduction, and delivery gates pass or name scoped limitations |
 | Optional review | blinded reviewer reports, aggregation, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; objections cite artifacts, vetoes are resolved or disclosed, and final checks rerun after changes |
 | Skill release | blinded benchmark manifest and regression report | No score exceeds its accepted regression tolerance; baselines are never changed automatically |
-| Submission | PDF plus LaTeX source, `support.zip`, hash manifest, receipt evidence | Both deliverable parts are complete, frozen, verified, and anonymous |
+| Delivery | `delivery/` PDF/source/support manifests | Complete user handoff is frozen, verified, and anonymous |
+| Submission | profile-permitted files under `official-submission/`, hash manifest, receipt evidence | No forbidden extra files; official artifacts pass the selected profile |
 
 ## Fallback Behavior
 

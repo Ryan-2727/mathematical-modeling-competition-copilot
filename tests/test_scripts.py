@@ -42,8 +42,12 @@ class ScriptTests(unittest.TestCase):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
             for filename in (
                 root / "reports" / "bibliography.csv",
+                root / "reports" / "figure_manifest.csv",
                 root / "reports" / "model_validation.json",
                 root / "results" / "verified_values.csv",
+                root / "plan.md",
+                root / "todo.md",
+                root / "rules.lock.json",
                 root / "paper" / "main.tex",
                 root / "paper" / "references.bib",
                 root / "paper" / ".latexmkrc",
@@ -56,6 +60,8 @@ class ScriptTests(unittest.TestCase):
                 root / "support" / "materials_manifest.csv",
                 root / "support" / "data_inventory.csv",
                 root / "environment" / "README.md",
+                root / "delivery" / "manifest.csv",
+                root / "official-submission" / "manifest.csv",
             ):
                 self.assertTrue(filename.is_file(), str(filename))
             log = root / "reports" / "ai_usage_log.jsonl"
@@ -157,6 +163,11 @@ class ScriptTests(unittest.TestCase):
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
             failing = list(common)
             failing[failing.index("28")] = "20"
+            self.run_script("verify_paper_depth.py", *failing)
+            advisory = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(advisory["status"], "PASS")
+            self.assertTrue(any("depth floor" in item for item in advisory["warnings"]))
+            failing.extend(["--minimum-mode", "enforce"])
             self.run_script("verify_paper_depth.py", *failing, expect=1)
             self.assertTrue(any("depth floor" in error for error in json.loads(out.read_text(encoding="utf-8"))["errors"]))
 

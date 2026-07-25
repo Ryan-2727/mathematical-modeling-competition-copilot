@@ -47,6 +47,11 @@ def main() -> int:
             "scripts/verify_paper_depth.py", "scripts/verify_portable_latex.py",
             "scripts/verify_pdf_visual.py", "scripts/verify_verified_values.py",
             "scripts/verify_model_validation.py", "scripts/run_benchmark_regression.py",
+            "scripts/contestctl.py", "scripts/lock_contest_rules.py",
+            "scripts/verify_abstract_quality.py",
+            "scripts/verify_bibliography_metadata.py",
+            "scripts/verify_manuscript_quality.py",
+            "scripts/verify_delivery_profiles.py",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -80,6 +85,11 @@ def main() -> int:
         "references/embedded/executable-contest-profiles.md": (
             "cumcm-2026", "mcm-icm-current",
         ),
+        "references/embedded/operational-quality-gates.md": (
+            "rules.lock.json", "contestctl.py", "verify_abstract_quality.py",
+            "verify_bibliography_metadata.py", "verify_manuscript_quality.py",
+            "verify_delivery_profiles.py", "official-submission",
+        ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
         ),
@@ -111,6 +121,12 @@ def main() -> int:
         "scripts/verify_pdf_visual.py",
         "scripts/run_benchmark_regression.py",
         "scripts/aggregate_reviewer_reports.py",
+        "scripts/contestctl.py",
+        "scripts/lock_contest_rules.py",
+        "scripts/verify_abstract_quality.py",
+        "scripts/verify_bibliography_metadata.py",
+        "scripts/verify_manuscript_quality.py",
+        "scripts/verify_delivery_profiles.py",
         "assets/latex-paper-template/main.tex",
         "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",
@@ -140,7 +156,15 @@ def main() -> int:
     if not cases or {item.get("expected") for item in cases} != {"invoke", "do_not_invoke"}: fail("invocation evals need positive and negative cases")
     for item in cases:
         prompt = item.get("prompt", "")
-        explicit = "$mathematical-modeling-competition-copilot" in prompt or "mathematical-modeling-competition-copilot\\SKILL.md" in prompt
+        explicit = (
+            "$mathematical-modeling-competition-copilot" in prompt
+            or re.search(
+                r"mathematical-modeling-competition-copilot[\\/]SKILL\.md",
+                prompt,
+                re.IGNORECASE,
+            )
+            is not None
+        )
         if (item.get("expected") == "invoke") != explicit: fail(f"invalid invocation case: {item.get('id')}")
     print(f"PASS references={len(references)} cases={len(cases)}")
     return 0

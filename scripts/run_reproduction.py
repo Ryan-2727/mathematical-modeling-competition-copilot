@@ -387,6 +387,11 @@ def main() -> int:
             "python_executable": os.path.basename(os.sys.executable),
         },
         "input_files": inputs,
+        "reproduction_commands_sha256": sha256(
+            project_dir / "support" / "reproduction_commands.txt"
+        )
+        if (project_dir / "support" / "reproduction_commands.txt").is_file()
+        else "",
         "runs": run_reports,
         "comparisons": comparisons,
         "log_directory": str(log_root),

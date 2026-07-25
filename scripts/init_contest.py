@@ -40,7 +40,21 @@ def main() -> int:
     selected_template = default_template if args.template == "auto" else args.template
     selected_profile = args.submission_profile or default_profile
     root = args.project_dir
-    for name in ("data/raw", "data/processed", "code", "results", "figures", "paper", "reports", "support", "environment"):
+    for name in (
+        "data/raw",
+        "data/processed",
+        "code",
+        "results",
+        "figures",
+        "paper",
+        "reports",
+        "reports/bibliography_metadata",
+        "reports/source_passages",
+        "support",
+        "environment",
+        "delivery",
+        "official-submission",
+    ):
         (root / name).mkdir(parents=True, exist_ok=True)
     if paper_files(root / "paper"):
         write_if_missing(root / "paper" / "references.bib", "")
@@ -54,6 +68,7 @@ def main() -> int:
         "rules_urls": args.rules_url,
         "rules_verified_at": None,
         "rules_snapshot_file": "reports/contest_rules_snapshot.md",
+        "rules_lock_file": "rules.lock.json",
         "submission_profile": selected_profile,
         "latex_template": selected_template,
         "live_mode_policy": "static-authoritative-sources-only" if args.mode == "live" else "not-applicable",
@@ -61,6 +76,33 @@ def main() -> int:
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
     (root / "contest_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_if_missing(
+        root / "rules.lock.json",
+        json.dumps(
+            {
+                "schema_version": 1,
+                "contest": args.contest,
+                "year": args.year,
+                "profile": selected_profile,
+                "created_at_utc": manifest["created_at_utc"],
+                "valid_through": None,
+                "sources": [],
+                "rules": {},
+                "status": "unverified",
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+    )
+    write_if_missing(
+        root / "plan.md",
+        "# Contest plan\n\nRecord the selected problem, subproblem decomposition, model routes, evidence plan, owners, deadlines, and stop-loss decisions.\n",
+    )
+    write_if_missing(
+        root / "todo.md",
+        "# Contest tasks\n\n- [ ] Verify and lock current official rules\n- [ ] Complete data audit and subproblem map\n- [ ] Run baseline models and validations\n- [ ] Freeze figures, tables, and verified values\n- [ ] Compile and verify the paper\n- [ ] Prepare separate delivery and official-submission artifacts\n",
+    )
     write_if_missing(root / "reports/contest_rules_snapshot.md", "# Contest rules snapshot\n\nRecord the official source, access time, rule version, selected profile, page limit, AI policy, submission method, deadline/time zone, and unresolved items. Do not mark this file verified until every field is checked.\n")
     write_if_missing(root / "reports/data_audit.md", "# Data audit\n\n| Dataset | Source | License/permission | Rows/columns | Units | Missing/outlier handling | Leakage risk | Hash |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
@@ -86,7 +128,18 @@ def main() -> int:
         "结论与评价,conclusion,1,,逐题直接回答、优缺点和可实施改进,,pending\n"
         "参考文献,references,1,,正文实际引用且已核验的文献,,pending\n",
     )
-    write_if_missing(root / "reports/bibliography.csv", "citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,claim_supported,source_locator,status\n")
+    write_if_missing(
+        root / "reports/bibliography.csv",
+        "citation_key,title,authors,year,venue,doi_or_url,verification_source,"
+        "verified_at,scholar_query,scholar_checked_at,scholar_status,"
+        "metadata_snapshot,metadata_sha256,retraction_status,retraction_checked_at,"
+        "claim_supported,source_locator,supporting_passage,"
+        "supporting_passage_sha256,status\n",
+    )
+    write_if_missing(
+        root / "reports/figure_manifest.csv",
+        "figure,label,source_data,caption_insight,axes_units,color_accessibility,status\n",
+    )
     write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
     write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
@@ -124,6 +177,14 @@ def main() -> int:
     )
     write_if_missing(root / "support/materials_manifest.csv", "path,category,source,license,sha256,included,notes\n")
     write_if_missing(root / "support/data_inventory.csv", "dataset,included_path,source_url,license,version_or_date,sha256,retrieval_command,status\n")
+    write_if_missing(
+        root / "delivery/manifest.csv",
+        "path,role,source_path,sha256\n",
+    )
+    write_if_missing(
+        root / "official-submission/manifest.csv",
+        "path,role,source_path,sha256\n",
+    )
     write_if_missing(
         root / "environment/README.md",
         "# Environment\n\nRecord operating system, runtime and solver versions, dependency lock or package list, hardware-sensitive settings, locale, seeds, and installation commands.\n",

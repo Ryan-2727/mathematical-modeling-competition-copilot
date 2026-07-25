@@ -20,6 +20,32 @@ jobs:
       - name: Run tests
         run: python -m unittest discover -s tests -v
 
+  windows-utf8-path-qa:
+    runs-on: windows-latest
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate skill contract in UTF-8 mode
+        run: python -X utf8 scripts/validate_skill_contract.py
+      - name: Run tests on Windows
+        run: python -X utf8 -m unittest discover -s tests -v
+      - name: Initialize under a non-ASCII path
+        shell: pwsh
+        run: |
+          $project = Join-Path $env:RUNNER_TEMP "数学建模 Skill"
+          python -X utf8 scripts/init_contest.py `
+            --project-dir $project `
+            --contest CUMCM `
+            --year 2026 `
+            --mode training
+          if (-not (Test-Path (Join-Path $project "paper\main.tex"))) {
+            throw "LaTeX scaffold was not created under the non-ASCII path"
+          }
+
   latex-artifact-qa:
     runs-on: ubuntu-latest
     steps:

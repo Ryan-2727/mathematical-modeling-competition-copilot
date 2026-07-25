@@ -1049,6 +1049,7 @@ def verify_submission(
             {
                 "role": "paper",
                 "file": paper.name,
+                "source_path": str(paper.resolve()),
                 "bytes": size,
                 "sha256": sha256(paper),
                 "pages": inspection.page_count if inspection else None,
@@ -1072,6 +1073,7 @@ def verify_submission(
                 {
                     "role": "support",
                     "file": support.name,
+                    "source_path": str(support.resolve()),
                     "bytes": size,
                     "sha256": sha256(support),
                     "pages": None,

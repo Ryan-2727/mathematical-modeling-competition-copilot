@@ -17,6 +17,9 @@ It does not promise an award. It maximizes award probability through disciplined
 - Read only the embedded reference files needed for the current phase.
 - Use installed plugins when they are available for file-specific work such as notebooks, DOCX, PDF, or spreadsheets.
 - If a plugin or runtime is unavailable, continue with the workflow manually and record the limitation in `reports/verification_report.md`.
+- After a phase's specialist reports exist, run `scripts/contestctl.py check` for
+  that phase. Fix the source artifact behind a failure; never edit a phase report
+  to bypass a gate.
 
 ## Required Workflow Order
 
@@ -25,6 +28,10 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/executable-contest-profiles.md`. Select an
      executable profile from a fresh official rules snapshot; do not infer
      current requirements from a template or an excellent-paper corpus.
+   - Read `references/embedded/operational-quality-gates.md`. Save the official
+     rule pages or PDFs, run `scripts/lock_contest_rules.py`, and require a fresh
+     hash-bound `rules.lock.json` plus
+     `reports/rules_lock_verification.json`.
    - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
    - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
    - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and select the `cumcm-2026` verification profile.
@@ -63,6 +70,9 @@ It does not promise an award. It maximizes award probability through disciplined
      Scholar result, and read at the passage supporting the attributed claim.
    - Record source, claim, source locator, modeling impact, and whether evidence
      is direct or inferred. Never fabricate bibliographic metadata or source content.
+   - Save authoritative metadata snapshots and claim-supporting passage evidence
+     with hashes. Run `scripts/verify_bibliography_metadata.py`; a pass does not
+     replace reading and interpreting the source.
 
 4. **Computation and experiments**
    - Read `references/embedded/computation-and-visualization.md`.
@@ -81,6 +91,10 @@ It does not promise an award. It maximizes award probability through disciplined
      reachable LaTeX.
    - Declare each primary model family and its required validation artifacts in
      a validation manifest, then run `scripts/verify_model_validation.py`.
+     Use the dedicated adapter for regression/forecast, classification,
+     optimization, stochastic simulation, network/ranking, mechanism/dynamics,
+     causal/econometric, unsupervised, queueing/reliability,
+     spatial/spatiotemporal, or multi-objective/dynamic optimization.
      Treat a pass as evidence-presence and threshold verification, not proof
      that the selected model is mathematically correct.
    - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
@@ -94,6 +108,8 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/diagrams.md`.
    - Separate data-driven charts from non-data diagrams.
    - Keep figure captions, labels, and source data traceable.
+   - Maintain `reports/figure_manifest.csv` and run
+     `scripts/verify_manuscript_quality.py` after compiling the paper.
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
@@ -121,13 +137,10 @@ It does not promise an award. It maximizes award probability through disciplined
      -> variables/assumptions -> derivation -> algorithm -> quantified result and
      interpretation -> local validation. Do not replace this chain with a short
      method summary followed by an answer.
-   - For a complex CUMCM-style problem with four or more linked subproblems, use
-     24 main-text pages as a depth floor and 28--30 pages as the preferred range
-     when the verified rules allow 30 pages. If there is no official page cap,
-     normally plan 24--32 pages of main text and at least 30 pages in the complete
-     PDF including required appendices. These are anti-underwriting gates, not
-     permission to pad; reduce them when the official limit or problem scope
-     requires it and record the reason.
+   - Derive the page budget from the seven-part argument chain and verified
+     official maximum. Treat corpus-derived ranges and minimum page targets as
+     advisory only; never add repetition, screenshots, raw code, or unexplained
+     plots to meet a length target.
    - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
      LaTeX source, including `paper/main.tex`, every included source file,
      `paper/references.bib`, `.latexmkrc`, `.vscode/`, `sections/`, `figures/`,
@@ -154,13 +167,17 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
+   - Run `scripts/verify_abstract_quality.py`,
+     `scripts/verify_bibliography_metadata.py`, and
+     `scripts/verify_manuscript_quality.py`. Inspect source passages and rendered
+     pages even when their structural reports pass.
    - Run `scripts/verify_latex_compatibility.py` to create a fresh, compile-backed
      `reports/latex_compatibility.json`. Require successful project-root and
      `build/` output builds before the paper-delivery gate.
    - Run `scripts/verify_paper_depth.py` with the verified main-text count,
-     appendix count, selected minimums, official maximum, and expected subproblem
-     count. Treat its pass as structural evidence only; visually inspect whether
-     the derivations and explanations are substantive.
+     appendix count, advisory planning ranges, official maximum, and expected
+     subproblem count. Use `--minimum-mode enforce` only for a verified official
+     minimum. Treat its pass as structural evidence only.
    - Build `support.zip` from `support/materials_manifest.csv`, then run
      `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
      the rendered PDF and the cited source passages separately.
@@ -195,7 +212,8 @@ It does not promise an award. It maximizes award probability through disciplined
 
 11. **Freeze and submit**
    - Read `references/embedded/submission-and-anonymity.md`.
-   - Deliver two explicit parts: (1) `paper/main.pdf` with the complete LaTeX
+   - In the user-facing `delivery/`, deliver two explicit parts:
+     (1) `paper/main.pdf` with the complete LaTeX
      source tree, and (2) `support.zip` with runnable code, legally distributable
      data or reproducible retrieval evidence, environment, exact commands, results,
      licenses, and hashes.
@@ -203,6 +221,10 @@ It does not promise an award. It maximizes award probability through disciplined
      in part (1), retain its hash, and state the exact VS Code and Overleaf
      entrypoint (`main.tex`) in the delivery note.
    - Run anonymity scan, environment capture, paper-delivery verification, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
+   - Keep the complete user handoff under `delivery/` and only
+     contest-permitted files under `official-submission/`. Run
+     `scripts/verify_delivery_profiles.py`; never place the user-side support
+     archive in an MCM/ICM official submission.
    - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
 
 12. **Paper-learning regression loop**
@@ -230,6 +252,7 @@ Create or preserve this layout unless the user provides an existing project stru
 .
 |-- plan.md
 |-- todo.md
+|-- rules.lock.json
 |-- data/
 |   |-- raw/
 |   `-- processed/
@@ -248,6 +271,9 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- claims.csv
 |   |-- argument_coverage.csv
 |   |-- bibliography.csv
+|   |-- bibliography_metadata/
+|   |-- source_passages/
+|   |-- figure_manifest.csv
 |   |-- paper_depth_plan.csv
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
@@ -271,6 +297,10 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- materials_manifest.csv
 |   `-- data_inventory.csv
 |-- support.zip
+|-- delivery/
+|   `-- manifest.csv
+|-- official-submission/
+|   `-- manifest.csv
 `-- paper/
     |-- main.tex
     |-- references.bib
@@ -305,6 +335,8 @@ Create or preserve this layout unless the user provides an existing project stru
   record OCR/text-extraction limitations; do not claim semantic comparison from
   empty or incomplete extracted text.
 - Do not silently reuse prior-year rules. A current official rule snapshot is required before a live contest can become submission-ready.
+- An initializer-created rules skeleton is not evidence. Lock saved official
+  sources with URLs, hashes, structured fields, and a validity date.
 - Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
 - A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
 - A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
@@ -324,6 +356,8 @@ Create or preserve this layout unless the user provides an existing project stru
 - Do not call the work complete until both the compiled PDF plus rebuildable
   LaTeX source and the verified support-material archive are present.
 - Treat PDF page sequence, appendix boundaries, OCR output, and Office metadata as visual or tool-dependent checks; record an unresolved limitation instead of inferring success.
+- Separate the complete user delivery from the official submission. Apply the
+  selected profile to the latter and reject extra files that the contest forbids.
 
 ## Embedded References
 
@@ -335,6 +369,7 @@ Use these files as phase playbooks:
 - `references/embedded/contest-modes-and-compliance.md`
 - `references/embedded/cumcm-2026-rules.md`
 - `references/embedded/executable-contest-profiles.md`
+- `references/embedded/operational-quality-gates.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/problem-structure-playbooks.md`
 - `references/embedded/mathmodel-six-phase.md`

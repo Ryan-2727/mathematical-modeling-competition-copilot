@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Verify recorded paper depth coverage and explicit page-budget bounds."""
+"""Verify argument coverage and page-budget bounds without rewarding padding."""
 from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -28,6 +29,12 @@ def main() -> int:
     parser.add_argument("--minimum-total-pages", type=int, default=0)
     parser.add_argument("--maximum-main-text-pages", type=int)
     parser.add_argument("--expected-subproblems", type=int, required=True)
+    parser.add_argument(
+        "--minimum-mode",
+        choices=["advisory", "enforce"],
+        default="advisory",
+        help="Treat selected minimum page counts as warnings or hard errors.",
+    )
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
@@ -67,10 +74,11 @@ def main() -> int:
             errors.append(f"paper_depth_plan.csv:{index} is not complete")
 
     if args.main_text_pages < args.minimum_main_text_pages:
-        errors.append(
+        message = (
             f"main text has {args.main_text_pages} pages; selected depth floor is "
             f"{args.minimum_main_text_pages}"
         )
+        (errors if args.minimum_mode == "enforce" else warnings).append(message)
     if args.maximum_main_text_pages is not None and args.main_text_pages > args.maximum_main_text_pages:
         errors.append(
             f"main text has {args.main_text_pages} pages; official maximum is "
@@ -78,16 +86,20 @@ def main() -> int:
         )
     total_pages = args.main_text_pages + args.appendix_pages
     if total_pages < args.minimum_total_pages:
-        errors.append(
+        message = (
             f"complete PDF has {total_pages} recorded pages; selected minimum is "
             f"{args.minimum_total_pages}"
         )
+        (errors if args.minimum_mode == "enforce" else warnings).append(message)
     if args.appendix_pages > args.main_text_pages:
         warnings.append("appendix is longer than main text; visually confirm that the main argument is self-contained")
 
     payload = {
         "status": "PASS" if not errors else "FAIL",
-        "scope": "recorded page bounds and section coverage; not mathematical or prose-quality certification",
+        "scope": (
+            "hard official maximum and argument-section coverage; minimum page "
+            "targets are advisory unless --minimum-mode enforce is explicitly selected"
+        ),
         "counts": {
             "main_text_pages": args.main_text_pages,
             "appendix_pages": args.appendix_pages,
@@ -98,7 +110,11 @@ def main() -> int:
             "minimum_main_text_pages": args.minimum_main_text_pages,
             "minimum_total_pages": args.minimum_total_pages,
             "maximum_main_text_pages": args.maximum_main_text_pages,
+            "minimum_mode": args.minimum_mode,
         },
+        "paper_depth_plan_sha256": hashlib.sha256(plan.read_bytes()).hexdigest()
+        if plan.is_file()
+        else "",
         "errors": errors,
         "warnings": warnings,
     }

@@ -40,11 +40,13 @@
 - 最终核验规则
 - 工具缺失时的 fallback 规则
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
+- 绑定官方来源 URL、快照哈希、有效期和结构化字段的规则锁，以及累计阶段门
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
 - CUMCM 2026 规则配置、AI 使用详情 PDF、证据账本、可复现运行清单与论证覆盖检查
 - CUMCM 与 MCM/ICM 可执行规则配置，以及初始化时自动选择的独立可移植
   LaTeX 模板
-- 由计算结果哈希驱动的关键数值唯一真源、LaTeX 宏生成器和模型族验证适配器
+- 由计算结果哈希驱动的关键数值唯一真源、LaTeX 宏生成器和 11 类模型族验证适配器
+- 面向答案的摘要、权威书目快照、支持性原文、LaTeX 日志、图表题注/标签和图表清单检查
 - 不默认调用 shell 的干净副本重复复现
 - PDF 渲染与元数据质检、图像/OCR 匿名检查和真实 TeX CI
 - 论文完成后的可选冲奖评审：三类模拟评委、四维证据评分卡与获奖准备度结构验收，仅在用户确认后执行
@@ -52,6 +54,8 @@
   也不会自动改写基线
 - 双交付硬门槛：编译后的 PDF 与完整 LaTeX 源码，以及包含代码、
   数据证据、环境、命令和结果哈希的支撑材料包
+- 分离 `delivery/` 与 `official-submission/`，避免把用户侧源码或支撑包
+  误传到禁止附加文件的比赛
 
 ## 完成硬标准
 
@@ -66,7 +70,12 @@
 LaTeX 正文必须实际引用至少 10 篇互不重复、真实且相关的学术文献。
 每篇文献都要写入 `reports/bibliography.csv`，核对出版社、DOI/Crossref、
 OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题名检索，
-确认精确题名结果并记录核验日期，再阅读支持论文论断的原文位置。严禁虚构书目信息、原文内容和定位信息。
+确认精确题名结果并记录核验日期，再阅读支持论文论断的原文位置。
+`verification_source` 必须填写与元数据快照一致的 Crossref、DOI 或 OpenAlex
+具体 HTTPS 记录 URL；Scholar 查询统一使用
+`https://scholar.google.com/scholar?q=...`。严禁虚构书目信息、原文内容和定位信息。
+还必须使用 `scripts/verify_bibliography_metadata.py` 核对保存的权威元数据
+快照、撤稿检查记录和支持性原文哈希。
 完成前必须运行 `scripts/verify_paper_delivery.py`；脚本通过只代表结构核验
 通过，不能替代人工阅读原文和检查 PDF 版面。
 在此之前必须运行 `scripts/verify_latex_compatibility.py`，通过
@@ -84,11 +93,18 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
 
 论文与 Skill 发布流程使用以下确定性检查：
 
+- `lock_contest_rules.py` 将保存的官方规则快照与 URL、哈希、结构化字段
+  和有效期绑定；`contestctl.py check` 累计协调各阶段门，但不替代专项检查器。
 - `results/verified_values.csv` 是关键计算数值的唯一真源；
   `generate_verified_values.py` 生成 `paper/generated/results.tex`，
   `verify_verified_values.py` 检查哈希、类型、单位、LaTeX 可达性和过期状态。
 - `verify_model_validation.py` 检查回归/预测、分类、优化、随机仿真、
-  网络/排序和机理/动力学模型声明的验证证据，但不宣称证明数学正确性。
+  网络/排序、机理/动力学、因果/计量、无监督、排队/可靠性、空间/时空及
+  多目标/动态优化模型声明的验证证据，但不宣称证明数学正确性。
+- `verify_abstract_quality.py`、`verify_bibliography_metadata.py` 和
+  `verify_manuscript_quality.py` 检查摘要逐问答案、保存的来源证据、引用、
+  题注、标签、图表清单和 LaTeX 日志。
+- `verify_delivery_profiles.py` 将完整用户交付与比赛官方允许提交的文件分开核验。
 - `run_reproduction.py` 在干净副本中执行 argv 命令，保存每次运行日志，
   并按哈希或声明的数值容差比较重复运行；shell 执行必须显式启用。
 - `verify_pdf_visual.py`、`anonymity_scan.py` 和 `verify_submission.py`
@@ -268,6 +284,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 .
 |-- plan.md
 |-- todo.md
+|-- rules.lock.json
 |-- data/
 |   |-- raw/
 |   `-- processed/
@@ -283,6 +300,9 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- bibliography.csv
+|   |-- bibliography_metadata/
+|   |-- source_passages/
+|   |-- figure_manifest.csv
 |   |-- paper_depth_plan.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
@@ -297,6 +317,10 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- materials_manifest.csv
 |   `-- data_inventory.csv
 |-- support.zip
+|-- delivery/
+|   `-- manifest.csv
+|-- official-submission/
+|   `-- manifest.csv
 `-- paper/
     |-- main.tex
     |-- README.md
@@ -336,6 +360,13 @@ Windows 上更新已有本地安装时，先预览再执行：
 .\scripts\sync_local_skill.ps1
 ```
 
+Windows 上运行 Python 验证时显式启用 UTF-8：
+
+```powershell
+python -X utf8 scripts\validate_skill_contract.py
+python -X utf8 -m unittest discover -s tests -v
+```
+
 ## 仓库结构
 
 ```text
@@ -344,6 +375,14 @@ Windows 上更新已有本地安装时，先预览再执行：
 |-- README.md
 |-- README.en.md
 |-- DESCRIPTION.md
+|-- scripts/
+|   |-- contestctl.py
+|   |-- lock_contest_rules.py
+|   |-- scaffold_latex_paper.py
+|   |-- verify_abstract_quality.py
+|   |-- verify_bibliography_metadata.py
+|   |-- verify_delivery_profiles.py
+|   `-- verify_latex_compatibility.py
 |-- agents/
 |   `-- openai.yaml
 `-- references/
@@ -356,6 +395,7 @@ Windows 上更新已有本地安装时，先预览再执行：
         |-- literature-fetch-and-explain.md
         |-- paper-context-resolver.md
         |-- verified-literature-and-two-part-delivery.md
+        |-- operational-quality-gates.md
         |-- computation-and-visualization.md
         |-- diagrams.md
         |-- paper-writing.md

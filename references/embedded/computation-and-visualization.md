@@ -36,9 +36,10 @@ quietly alter the scientific value.
 Declare the primary model family for each decisive subproblem and run
 `scripts/verify_model_validation.py`. Supported evidence contracts cover
 regression/forecast, classification, optimization, stochastic simulation,
-network/ranking, and mechanism/dynamics models. The manifest must point to the
-actual diagnostics and state numeric acceptance thresholds selected before
-interpreting the outcome.
+network/ranking, mechanism/dynamics, causal/econometric, unsupervised,
+queueing/reliability, spatial/spatiotemporal, and multi-objective/dynamic
+optimization models. The manifest must point to the actual diagnostics and state
+numeric acceptance thresholds selected before interpreting the outcome.
 
 The adapter checks declared evidence and thresholds. It cannot certify model
 choice, causal validity, global optimality, or mathematical truth; those remain
@@ -59,6 +60,11 @@ If a notebook is used:
 - Figure captions should say what the reader should learn.
 - Save source data or scripts for each figure.
 - Avoid decorative plots that do not support an argument.
+- Maintain `reports/figure_manifest.csv` with the source data or team-generated
+  diagram note, LaTeX label, caption insight, axis units, grayscale/color
+  accessibility check, and verification status.
+- Run `scripts/verify_manuscript_quality.py` after compilation; inspect rendered
+  pages even when its deterministic checks pass.
 
 ## Experiment Log
 

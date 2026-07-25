@@ -15,6 +15,18 @@ Run `scripts/verify_pdf_visual.py` on the compiled PDF, then run
 official rules snapshot/evidence. Preserve both reports and the generated hash
 manifest with the submission record.
 
+Keep two explicit artifact roots:
+
+- `delivery/`: the paper PDF, portable LaTeX source, and reproducibility support
+  archive delivered to the user;
+- `official-submission/`: only files permitted by the locked contest profile.
+
+Complete both manifest files and run
+`scripts/verify_delivery_profiles.py --project-dir . --out
+reports/delivery_profiles.json`. For MCM/ICM, the official root must contain only
+the single solution PDF; its user delivery may still retain source and support
+materials.
+
 ## Support package
 
 The paper appendix, archive contents, and `submission_manifest.json` must agree.

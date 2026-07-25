@@ -297,6 +297,55 @@ class QualityEvidenceTests(unittest.TestCase):
                 "numerical_stability_checked": True,
                 "time_step_refinement_error": 0.01,
             },
+            "causal_econometric": {
+                "identification_strategy": "difference in differences",
+                "identification_assumptions_checked": True,
+                "overlap_or_support_checked": True,
+                "falsification_checked": True,
+                "robust_inference_checked": True,
+                "sample_size": 500,
+                "effect_estimate": 0.2,
+                "standard_error": 0.03,
+                "relative_sensitivity_shift": 0.05,
+            },
+            "unsupervised": {
+                "scaling_checked": True,
+                "cluster_or_component_choice_justified": True,
+                "stability_checked": True,
+                "baseline_compared": True,
+                "sample_size": 300,
+                "stability_score": 0.9,
+                "quality_score": 0.65,
+            },
+            "queueing_reliability": {
+                "analysis_type": "queueing",
+                "flow_or_probability_balance_checked": True,
+                "stationarity_or_horizon_justified": True,
+                "analytic_or_simulation_crosscheck": True,
+                "transient_or_warmup_checked": True,
+                "maximum_utilization": 0.8,
+                "crosscheck_relative_error": 0.02,
+            },
+            "spatial_spatiotemporal": {
+                "crs_checked": True,
+                "spatial_leakage_checked": True,
+                "spatial_holdout_checked": True,
+                "residual_spatial_dependence_checked": True,
+                "holdout_regions": 8,
+                "model_metric": 0.7,
+                "baseline_metric": 1.0,
+                "metric_direction": "lower",
+            },
+            "multiobjective_dynamic_optimization": {
+                "feasible": True,
+                "constraint_audit": True,
+                "pareto_or_recursion_checked": True,
+                "baseline_compared": True,
+                "solution_stability_checked": True,
+                "tradeoff_or_state_interpretation": "cost-risk Pareto frontier",
+                "relative_gap": 0.01,
+                "solution_instability": 0.05,
+            },
         }
         thresholds = {
             "regression_forecast": {
@@ -324,6 +373,27 @@ class QualityEvidenceTests(unittest.TestCase):
             },
             "mechanism_dynamics": {
                 "maximum_time_step_refinement_error": 0.05,
+            },
+            "causal_econometric": {
+                "minimum_sample_size": 100,
+                "maximum_relative_sensitivity_shift": 0.1,
+            },
+            "unsupervised": {
+                "minimum_sample_size": 100,
+                "minimum_stability_score": 0.8,
+                "minimum_quality_score": 0.5,
+            },
+            "queueing_reliability": {
+                "maximum_utilization": 0.9,
+                "maximum_crosscheck_relative_error": 0.05,
+            },
+            "spatial_spatiotemporal": {
+                "minimum_holdout_regions": 5,
+                "minimum_relative_improvement": 0.1,
+            },
+            "multiobjective_dynamic_optimization": {
+                "maximum_relative_gap": 0.05,
+                "maximum_solution_instability": 0.1,
             },
         }
         models = [
@@ -359,7 +429,7 @@ class QualityEvidenceTests(unittest.TestCase):
             )
             passed = json.loads(report.read_text(encoding="utf-8"))
             self.assertEqual(passed["status"], "PASS")
-            self.assertEqual(passed["counts"]["families"], 6)
+            self.assertEqual(passed["counts"]["families"], 11)
             self.assertIn("does not prove mathematical correctness", passed["scope"])
 
             failures = {
@@ -369,6 +439,11 @@ class QualityEvidenceTests(unittest.TestCase):
                 "simulation_stochastic": ("replications", 2),
                 "network_ranking": ("rank_instability", 0.9),
                 "mechanism_dynamics": ("units_checked", False),
+                "causal_econometric": ("falsification_checked", False),
+                "unsupervised": ("stability_score", 0.1),
+                "queueing_reliability": ("maximum_utilization", 1.2),
+                "spatial_spatiotemporal": ("spatial_leakage_checked", False),
+                "multiobjective_dynamic_optimization": ("relative_gap", 0.5),
             }
             for family, (field, bad_value) in failures.items():
                 with self.subTest(family=family):
@@ -426,6 +501,78 @@ class QualityEvidenceTests(unittest.TestCase):
                 str(manifest),
                 "--out",
                 str(root / "reports" / "csv-report.json"),
+            )
+
+    def test_queueing_reliability_accepts_reliability_branch(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "reports").mkdir()
+            manifest = {
+                "models": [
+                    {
+                        "id": "reliability-model",
+                        "family": "queueing_reliability",
+                        "thresholds": {
+                            "minimum_system_reliability": 0.9,
+                            "maximum_crosscheck_relative_error": 0.05,
+                        },
+                        "evidence": {
+                            "analysis_type": "reliability",
+                            "flow_or_probability_balance_checked": True,
+                            "stationarity_or_horizon_justified": True,
+                            "analytic_or_simulation_crosscheck": True,
+                            "transient_or_warmup_checked": True,
+                            "component_monotonicity_checked": True,
+                            "system_reliability": 0.97,
+                            "crosscheck_relative_error": 0.01,
+                        },
+                    }
+                ]
+            }
+            (root / "reports" / "model_validation.json").write_text(
+                json.dumps(manifest) + "\n", encoding="utf-8"
+            )
+            self.run_script(
+                "verify_model_validation.py",
+                "--project-dir",
+                str(root),
+                "--out",
+                str(root / "reports" / "model_validation_report.json"),
+            )
+
+    def test_queueing_accepts_explicit_finite_horizon_overload(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "reports").mkdir()
+            manifest = {
+                "models": [{
+                    "id": "finite-horizon-queue",
+                    "family": "queueing_reliability",
+                    "thresholds": {
+                        "maximum_crosscheck_relative_error": 0.05,
+                    },
+                    "evidence": {
+                        "analysis_type": "queueing",
+                        "flow_or_probability_balance_checked": True,
+                        "stationarity_or_horizon_justified": True,
+                        "analytic_or_simulation_crosscheck": True,
+                        "transient_or_warmup_checked": True,
+                        "finite_horizon_only": True,
+                        "finite_horizon_capacity_checked": True,
+                        "maximum_utilization": 1.2,
+                        "crosscheck_relative_error": 0.01,
+                    },
+                }]
+            }
+            (root / "reports" / "model_validation.json").write_text(
+                json.dumps(manifest) + "\n", encoding="utf-8"
+            )
+            self.run_script(
+                "verify_model_validation.py",
+                "--project-dir",
+                str(root),
+                "--out",
+                str(root / "reports" / "model_validation_report.json"),
             )
 
     @staticmethod

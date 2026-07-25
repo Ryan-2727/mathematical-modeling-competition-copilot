@@ -22,6 +22,11 @@ FAMILIES = {
     "simulation_stochastic",
     "network_ranking",
     "mechanism_dynamics",
+    "causal_econometric",
+    "unsupervised",
+    "queueing_reliability",
+    "spatial_spatiotemporal",
+    "multiobjective_dynamic_optimization",
 }
 SUCCESSFUL_SOLVER_STATUSES = {
     "optimal",
@@ -487,6 +492,258 @@ def check_mechanism_dynamics(
     return errors, metrics
 
 
+def check_causal_econometric(
+    evidence: dict[str, Any], thresholds: dict[str, Any]
+) -> tuple[list[str], dict[str, float]]:
+    errors: list[str] = []
+    metrics: dict[str, float] = {}
+    required_text(evidence, "identification_strategy", errors)
+    for field in (
+        "identification_assumptions_checked",
+        "overlap_or_support_checked",
+        "falsification_checked",
+        "robust_inference_checked",
+    ):
+        required_true(evidence, field, errors)
+    sample_size = required_number(evidence, "sample_size", errors, minimum=1)
+    minimum_size = threshold_number(
+        thresholds, "minimum_sample_size", errors, minimum=1
+    )
+    estimate = required_number(evidence, "effect_estimate", errors)
+    standard_error = required_number(evidence, "standard_error", errors, minimum=0)
+    sensitivity_shift = required_number(
+        evidence, "relative_sensitivity_shift", errors, minimum=0
+    )
+    maximum_shift = threshold_number(
+        thresholds, "maximum_relative_sensitivity_shift", errors, minimum=0
+    )
+    if sample_size is not None:
+        metrics["sample_size"] = sample_size
+        if minimum_size is not None and sample_size < minimum_size:
+            errors.append(
+                f"sample_size={sample_size:g} is below declared threshold "
+                f"{minimum_size:g}"
+            )
+    if estimate is not None:
+        metrics["effect_estimate"] = estimate
+    if standard_error is not None:
+        metrics["standard_error"] = standard_error
+    if sensitivity_shift is not None:
+        metrics["relative_sensitivity_shift"] = sensitivity_shift
+        if maximum_shift is not None and sensitivity_shift > maximum_shift:
+            errors.append(
+                f"relative_sensitivity_shift={sensitivity_shift:g} exceeds "
+                f"declared threshold {maximum_shift:g}"
+            )
+    return errors, metrics
+
+
+def check_unsupervised(
+    evidence: dict[str, Any], thresholds: dict[str, Any]
+) -> tuple[list[str], dict[str, float]]:
+    errors: list[str] = []
+    metrics: dict[str, float] = {}
+    for field in (
+        "scaling_checked",
+        "cluster_or_component_choice_justified",
+        "stability_checked",
+        "baseline_compared",
+    ):
+        required_true(evidence, field, errors)
+    sample_size = required_number(evidence, "sample_size", errors, minimum=2)
+    stability = required_number(
+        evidence, "stability_score", errors, minimum=0, maximum=1
+    )
+    quality = required_number(
+        evidence, "quality_score", errors, minimum=-1, maximum=1
+    )
+    minimum_size = threshold_number(
+        thresholds, "minimum_sample_size", errors, minimum=2
+    )
+    minimum_stability = threshold_number(
+        thresholds, "minimum_stability_score", errors, minimum=0
+    )
+    minimum_quality = threshold_number(
+        thresholds, "minimum_quality_score", errors, minimum=-1
+    )
+    if minimum_stability is not None and minimum_stability > 1:
+        errors.append("thresholds.minimum_stability_score must not exceed 1")
+    if minimum_quality is not None and minimum_quality > 1:
+        errors.append("thresholds.minimum_quality_score must not exceed 1")
+    for name, observed, threshold in (
+        ("sample_size", sample_size, minimum_size),
+        ("stability_score", stability, minimum_stability),
+        ("quality_score", quality, minimum_quality),
+    ):
+        if observed is not None:
+            metrics[name] = observed
+            if threshold is not None and observed < threshold:
+                errors.append(
+                    f"{name}={observed:g} is below declared threshold {threshold:g}"
+                )
+    return errors, metrics
+
+
+def check_queueing_reliability(
+    evidence: dict[str, Any], thresholds: dict[str, Any]
+) -> tuple[list[str], dict[str, float]]:
+    errors: list[str] = []
+    metrics: dict[str, float] = {}
+    for field in (
+        "flow_or_probability_balance_checked",
+        "stationarity_or_horizon_justified",
+        "analytic_or_simulation_crosscheck",
+        "transient_or_warmup_checked",
+    ):
+        required_true(evidence, field, errors)
+    analysis_type = required_text(evidence, "analysis_type", errors).lower()
+    if analysis_type not in {"queueing", "reliability"}:
+        errors.append("analysis_type must be 'queueing' or 'reliability'")
+    relative_error = required_number(
+        evidence, "crosscheck_relative_error", errors, minimum=0
+    )
+    maximum_error = threshold_number(
+        thresholds, "maximum_crosscheck_relative_error", errors, minimum=0
+    )
+    if analysis_type == "queueing":
+        utilization = required_number(
+            evidence, "maximum_utilization", errors, minimum=0
+        )
+        finite_horizon = evidence.get("finite_horizon_only") is True
+        maximum_utilization = None
+        if finite_horizon:
+            required_true(evidence, "finite_horizon_capacity_checked", errors)
+        else:
+            maximum_utilization = threshold_number(
+                thresholds, "maximum_utilization", errors, minimum=0
+            )
+            if maximum_utilization is not None and maximum_utilization > 1:
+                errors.append("thresholds.maximum_utilization must not exceed 1")
+        if utilization is not None:
+            metrics["maximum_utilization"] = utilization
+            if utilization >= 1 and not finite_horizon:
+                errors.append(
+                    "maximum_utilization must be below 1 unless finite_horizon_only is true"
+                )
+            if maximum_utilization is not None and utilization > maximum_utilization:
+                errors.append(
+                    f"maximum_utilization={utilization:g} exceeds declared threshold "
+                    f"{maximum_utilization:g}"
+                )
+    elif analysis_type == "reliability":
+        required_true(evidence, "component_monotonicity_checked", errors)
+        reliability = required_number(
+            evidence, "system_reliability", errors, minimum=0, maximum=1
+        )
+        minimum_reliability = threshold_number(
+            thresholds, "minimum_system_reliability", errors, minimum=0
+        )
+        if minimum_reliability is not None and minimum_reliability > 1:
+            errors.append("thresholds.minimum_system_reliability must not exceed 1")
+        if reliability is not None:
+            metrics["system_reliability"] = reliability
+            if (
+                minimum_reliability is not None
+                and reliability < minimum_reliability
+            ):
+                errors.append(
+                    f"system_reliability={reliability:g} is below declared threshold "
+                    f"{minimum_reliability:g}"
+                )
+    if relative_error is not None:
+        metrics["crosscheck_relative_error"] = relative_error
+        if maximum_error is not None and relative_error > maximum_error:
+            errors.append(
+                f"crosscheck_relative_error={relative_error:g} exceeds declared "
+                f"threshold {maximum_error:g}"
+            )
+    return errors, metrics
+
+
+def check_spatial_spatiotemporal(
+    evidence: dict[str, Any], thresholds: dict[str, Any]
+) -> tuple[list[str], dict[str, float]]:
+    errors: list[str] = []
+    metrics: dict[str, float] = {}
+    for field in (
+        "crs_checked",
+        "spatial_leakage_checked",
+        "spatial_holdout_checked",
+        "residual_spatial_dependence_checked",
+    ):
+        required_true(evidence, field, errors)
+    holdout_regions = required_number(evidence, "holdout_regions", errors, minimum=1)
+    model_metric = required_number(evidence, "model_metric", errors)
+    baseline_metric = required_number(evidence, "baseline_metric", errors)
+    direction = evidence.get("metric_direction")
+    if direction not in {"lower", "higher"}:
+        errors.append("metric_direction must be 'lower' or 'higher'")
+    minimum_regions = threshold_number(
+        thresholds, "minimum_holdout_regions", errors, minimum=1
+    )
+    minimum_improvement = threshold_number(
+        thresholds, "minimum_relative_improvement", errors, minimum=0
+    )
+    if holdout_regions is not None:
+        metrics["holdout_regions"] = holdout_regions
+        if minimum_regions is not None and holdout_regions < minimum_regions:
+            errors.append(
+                f"holdout_regions={holdout_regions:g} is below declared threshold "
+                f"{minimum_regions:g}"
+            )
+    if (
+        model_metric is not None
+        and baseline_metric is not None
+        and direction in {"lower", "higher"}
+    ):
+        improvement = relative_improvement(model_metric, baseline_metric, direction)
+        metrics["relative_improvement"] = improvement
+        if minimum_improvement is not None and improvement < minimum_improvement:
+            errors.append(
+                f"relative improvement {improvement:g} is below declared threshold "
+                f"{minimum_improvement:g}"
+            )
+    return errors, metrics
+
+
+def check_multiobjective_dynamic_optimization(
+    evidence: dict[str, Any], thresholds: dict[str, Any]
+) -> tuple[list[str], dict[str, float]]:
+    errors: list[str] = []
+    metrics: dict[str, float] = {}
+    for field in (
+        "feasible",
+        "constraint_audit",
+        "pareto_or_recursion_checked",
+        "baseline_compared",
+        "solution_stability_checked",
+    ):
+        required_true(evidence, field, errors)
+    required_text(evidence, "tradeoff_or_state_interpretation", errors)
+    gap = required_number(evidence, "relative_gap", errors, minimum=0)
+    instability = required_number(evidence, "solution_instability", errors, minimum=0)
+    maximum_gap = threshold_number(
+        thresholds, "maximum_relative_gap", errors, minimum=0
+    )
+    maximum_instability = threshold_number(
+        thresholds, "maximum_solution_instability", errors, minimum=0
+    )
+    if gap is not None:
+        metrics["relative_gap"] = gap
+        if maximum_gap is not None and gap > maximum_gap:
+            errors.append(
+                f"relative_gap={gap:g} exceeds declared threshold {maximum_gap:g}"
+            )
+    if instability is not None:
+        metrics["solution_instability"] = instability
+        if maximum_instability is not None and instability > maximum_instability:
+            errors.append(
+                f"solution_instability={instability:g} exceeds declared threshold "
+                f"{maximum_instability:g}"
+            )
+    return errors, metrics
+
+
 ADAPTERS: dict[
     str,
     Callable[[dict[str, Any], dict[str, Any]], tuple[list[str], dict[str, float]]],
@@ -497,6 +754,11 @@ ADAPTERS: dict[
     "simulation_stochastic": check_simulation_stochastic,
     "network_ranking": check_network_ranking,
     "mechanism_dynamics": check_mechanism_dynamics,
+    "causal_econometric": check_causal_econometric,
+    "unsupervised": check_unsupervised,
+    "queueing_reliability": check_queueing_reliability,
+    "spatial_spatiotemporal": check_spatial_spatiotemporal,
+    "multiobjective_dynamic_optimization": check_multiobjective_dynamic_optimization,
 }
 
 
@@ -626,6 +888,7 @@ def main() -> int:
         },
         "models": model_reports,
         "errors": errors,
+        "manifest_sha256": sha256_file(manifest) if manifest.is_file() else "",
     }
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
