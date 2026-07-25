@@ -4,6 +4,27 @@ Use this module to coordinate existing specialist verifiers. These gates check
 recorded evidence and artifacts; they do not prove mathematical truth or predict
 an award.
 
+## Coupled feasibility gate
+
+Before presenting a solution for a system with shared geometry, flows, resources,
+or network links:
+
+1. Verify input encoding, units, identifiers, row counts, and one-to-one joins;
+   record the checks in `reports/input_audit.json`.
+2. Classify constraints as local bounds/equalities or coupled constraints, and
+   record the decision-variable and constraint graph in `reports/constraint_map.md`.
+3. Use an independent projection only to diagnose scale and initialization. If
+   coupled constraints exist, jointly solve or repair the affected variables;
+   do not label the independent projection feasible.
+4. Write `reports/feasibility_audit.json` before exporting result tables. Include
+   bound coverage, maximum equality residual, maximum coupled-constraint
+   violation, count of violations, tolerance, and the treatment of infeasible
+   rows. A nonzero unresolved violation is a `FAIL`, not a numerical result.
+
+For large sparse systems, prefer a sparse constrained optimizer, decomposition
+with an explicit coupling repair step, or a documented relaxation-and-repair
+method. Validate the repaired solution against the original constraints.
+
 ## Lock official rules
 
 Save each official rule page or PDF inside the project, then bind its URL,

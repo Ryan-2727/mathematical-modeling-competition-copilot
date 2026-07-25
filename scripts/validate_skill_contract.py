@@ -53,6 +53,7 @@ def main() -> int:
             "scripts/verify_bibliography_metadata.py",
             "scripts/verify_manuscript_quality.py",
             "scripts/verify_delivery_profiles.py",
+            "joint feasibility report", "independent node-by-node",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -91,6 +92,7 @@ def main() -> int:
             "rules.lock.json", "contestctl.py", "verify_abstract_quality.py",
             "verify_bibliography_metadata.py", "verify_manuscript_quality.py",
             "verify_delivery_profiles.py", "official-submission",
+            "Coupled feasibility gate", "reports/feasibility_audit.json",
         ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",

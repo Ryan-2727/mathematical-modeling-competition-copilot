@@ -57,6 +57,11 @@ It does not promise an award. It maximizes award probability through disciplined
      credible baseline with candidate routes, record the failure test and
      validation cost, and explain why the selected model matches the mechanism.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
+   - Before accepting any candidate solution, classify constraints as local or
+     coupled. For coupled systems, record a constraint graph, input decoding and
+     schema checks, and a joint feasibility report. An independent node-by-node
+     projection is a diagnostic baseline only; it cannot be reported as a
+     feasible solution until shared constraints are checked globally.
 
 3. **Literature and reproduction details**
    - Read `references/embedded/verified-literature-and-two-part-delivery.md`
@@ -98,6 +103,11 @@ It does not promise an award. It maximizes award probability through disciplined
      Treat a pass as evidence-presence and threshold verification, not proof
      that the selected model is mathematically correct.
    - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
+   - Read the coupled feasibility gate in
+     `references/embedded/operational-quality-gates.md` whenever controls,
+     networks, geometry, schedules, or shared resources couple decision
+     variables. Record bound coverage, equality residuals, and every coupled
+     constraint violation before writing result tables or numerical claims.
 
 5. **Tabular analysis and scenario sheets**
    - Use spreadsheet-style reasoning for scoring matrices, sensitivity tables, scenario comparison, and dashboards.
