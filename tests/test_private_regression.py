@@ -46,6 +46,7 @@ class PrivateRegressionTests(unittest.TestCase):
             payload = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(payload["schema_version"], 1)
             self.assertEqual(payload["cases"][0]["id"], "historical-2021-a")
+            self.assertFalse(payload["cases"][0]["inventory_truncated"])
             self.assertEqual(payload["cases"][0]["skipped_risk_directories"], ["code"])
             self.assertIn("generated_or_solution_directory", payload["cases"][0]["source_tree_risks"])
             safe_candidate = next(

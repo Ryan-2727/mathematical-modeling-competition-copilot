@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 from pathlib import Path
@@ -32,6 +33,7 @@ HIGH_RISK_PARTS = {
     "__pycache__",
 }
 GENERATED_SUFFIXES = {".aux", ".log", ".out", ".pyc", ".synctex.gz", ".xdv"}
+INVENTORY_ENTRY_LIMIT = 256
 
 
 def sha256_file(path: Path) -> str:
@@ -89,20 +91,27 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                 files = []
                 skipped_directories: list[str] = []
                 uninspected_directories: list[str] = []
-                for entry in sorted(child.iterdir()):
-                    if entry.is_file():
-                        files.append(entry)
-                    elif entry.is_dir():
-                        relative_directory = entry.relative_to(child)
-                        if "generated_or_solution_directory" in risk_tags(relative_directory):
-                            skipped_directories.append(relative_directory.as_posix())
-                        else:
-                            uninspected_directories.append(relative_directory.as_posix())
+                with os.scandir(child) as entries:
+                    for _ in range(INVENTORY_ENTRY_LIMIT):
+                        entry = next(entries, None)
+                        if entry is None:
+                            break
+                        path = Path(entry.path)
+                        if entry.is_file():
+                            files.append(path)
+                        elif entry.is_dir():
+                            relative_directory = path.relative_to(child)
+                            if "generated_or_solution_directory" in risk_tags(relative_directory):
+                                skipped_directories.append(relative_directory.as_posix())
+                            else:
+                                uninspected_directories.append(relative_directory.as_posix())
+                    inventory_truncated = next(entries, None) is not None
             elif child.is_file() and child.suffix.casefold() == ".pdf":
                 source_dir = year_dir
                 files = [child]
                 skipped_directories = []
                 uninspected_directories = []
+                inventory_truncated = False
             else:
                 continue
             candidates = []
@@ -133,6 +142,7 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                     "source_tree_risks": sorted(all_tags),
                     "skipped_risk_directories": skipped_directories,
                     "uninspected_directories": uninspected_directories,
+                    "inventory_truncated": inventory_truncated,
                     "candidates": candidates,
                     "status": "needs_allowlist",
                 }
