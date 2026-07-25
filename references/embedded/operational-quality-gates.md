@@ -32,6 +32,17 @@ For large sparse systems, prefer a sparse constrained optimizer, decomposition
 with an explicit coupling repair step, or a documented relaxation-and-repair
 method. Validate the repaired solution against the original constraints.
 
+## Data-scale and time-split gate
+
+Before exploratory analysis or forecasting, record source row counts, field
+schema, units, target horizon, training cutoff, and expected reuse in
+`reports/data_scale_audit.json`. For large event streams, make one hashed,
+immutable aggregate with a documented aggregation rule and use it for repeated
+model fitting; preserve the raw source binding for audit. For compact planning
+tables, read directly and retain the original entity and constraint granularity.
+Never let a future target period enter a fitted feature, scaling statistic, or
+model-selection metric.
+
 ## Lock official rules
 
 Save each official rule page or PDF inside the project, then bind its URL,

@@ -56,6 +56,7 @@ def main() -> int:
             "joint feasibility report", "independent node-by-node",
             "attachment-to-subproblem coverage audit",
             "zero/blank-value semantics",
+            "hashed, immutable aggregate", "original constraint granularity",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -97,6 +98,7 @@ def main() -> int:
             "Coupled feasibility gate", "reports/feasibility_audit.json",
             "attachment-to-subproblem coverage",
             "zero/blank-value semantics", "censored/not-detected",
+            "Data-scale and time-split gate", "reports/data_scale_audit.json",
         ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",

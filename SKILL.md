@@ -57,6 +57,11 @@ It does not promise an award. It maximizes award probability through disciplined
      credible baseline with candidate routes, record the failure test and
      validation cost, and explain why the selected model matches the mechanism.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
+   - Before selecting a data-reading strategy, record row counts, field schema,
+     units, time cutoff, and expected reuse. For large event data, create one
+     hashed, immutable aggregate and fit only on the declared historical window;
+     for compact planning tables, preserve the original constraint granularity
+     instead of adding unnecessary aggregation.
    - Before accepting any candidate solution, classify constraints as local or
      coupled. For coupled systems, record a constraint graph, input decoding,
      schema checks, zero/blank-value semantics, and an attachment-to-subproblem coverage audit,
