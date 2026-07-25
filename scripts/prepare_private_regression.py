@@ -77,7 +77,9 @@ def case_key(name: str) -> str | None:
     return match.group(1).lower() if match else None
 
 
-def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, Any]]:
+def discover_cases(
+    corpus_root: Path, hash_candidates: bool, inspect_cases: bool
+) -> list[dict[str, Any]]:
     discovered: list[dict[str, Any]] = []
     for year_dir in sorted(path for path in corpus_root.iterdir() if path.is_dir()):
         if not YEAR_RE.fullmatch(year_dir.name):
@@ -90,22 +92,25 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                 source_dir = child
                 files = []
                 skipped_directories: list[str] = []
-                uninspected_directories: list[str] = []
-                with os.scandir(child) as entries:
-                    for _ in range(INVENTORY_ENTRY_LIMIT):
-                        entry = next(entries, None)
-                        if entry is None:
-                            break
-                        path = Path(entry.path)
-                        if entry.is_file():
-                            files.append(path)
-                        elif entry.is_dir():
-                            relative_directory = path.relative_to(child)
-                            if "generated_or_solution_directory" in risk_tags(relative_directory):
-                                skipped_directories.append(relative_directory.as_posix())
-                            else:
-                                uninspected_directories.append(relative_directory.as_posix())
-                    inventory_truncated = next(entries, None) is not None
+                uninspected_directories: list[str] = ["."]
+                inventory_truncated = True
+                if inspect_cases:
+                    uninspected_directories = []
+                    with os.scandir(child) as entries:
+                        for _ in range(INVENTORY_ENTRY_LIMIT):
+                            entry = next(entries, None)
+                            if entry is None:
+                                break
+                            path = Path(entry.path)
+                            if entry.is_file():
+                                files.append(path)
+                            elif entry.is_dir():
+                                relative_directory = path.relative_to(child)
+                                if "generated_or_solution_directory" in risk_tags(relative_directory):
+                                    skipped_directories.append(relative_directory.as_posix())
+                                else:
+                                    uninspected_directories.append(relative_directory.as_posix())
+                        inventory_truncated = next(entries, None) is not None
             elif child.is_file() and child.suffix.casefold() == ".pdf":
                 source_dir = year_dir
                 files = [child]
@@ -293,6 +298,11 @@ def main() -> int:
         action="store_true",
         help="Hash top-level inventory candidates; leave off for fast contamination preflight.",
     )
+    inventory.add_argument(
+        "--inspect-cases",
+        action="store_true",
+        help="Inspect up to 256 top-level entries per case; use only for a selected case set.",
+    )
     prepare_parser = subparsers.add_parser("prepare")
     prepare_parser.add_argument("--corpus-root", type=Path, required=True)
     prepare_parser.add_argument("--private-root", type=Path, required=True)
@@ -309,7 +319,7 @@ def main() -> int:
         payload = {
             "schema_version": 1,
             "scope": "private historical corpus inventory; do not commit this file",
-            "cases": discover_cases(corpus_root, args.hash_candidates),
+            "cases": discover_cases(corpus_root, args.hash_candidates, args.inspect_cases),
         }
         write_json(out, payload)
         print(f"cases={len(payload['cases'])}")

@@ -41,7 +41,7 @@ class PrivateRegressionTests(unittest.TestCase):
             out = root / "inventory.json"
             self.run_script(
                 "inventory", "--corpus-root", str(corpus), "--out", str(out),
-                "--hash-candidates",
+                "--hash-candidates", "--inspect-cases",
             )
             payload = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(payload["schema_version"], 1)
