@@ -126,7 +126,7 @@ def discover_cases(corpus_root: Path, hash_candidates: bool) -> list[dict[str, A
                     {
                         "path": relative.as_posix(),
                         "sha256": sha256_file(path) if hash_candidates else None,
-                        "bytes": path.stat().st_size,
+                        "bytes": path.stat().st_size if hash_candidates else None,
                         "risk_tags": tags,
                     }
                 )
