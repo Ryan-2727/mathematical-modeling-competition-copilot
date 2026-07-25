@@ -58,8 +58,9 @@ It does not promise an award. It maximizes award probability through disciplined
      validation cost, and explain why the selected model matches the mechanism.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
    - Before accepting any candidate solution, classify constraints as local or
-     coupled. For coupled systems, record a constraint graph, input decoding and
-     schema checks, and a joint feasibility report. An independent node-by-node
+     coupled. For coupled systems, record a constraint graph, input decoding,
+     schema checks, and an attachment-to-subproblem coverage audit, then create
+     a joint feasibility report. An independent node-by-node
      projection is a diagnostic baseline only; it cannot be reported as a
      feasible solution until shared constraints are checked globally.
 

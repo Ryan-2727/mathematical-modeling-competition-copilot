@@ -9,8 +9,10 @@ an award.
 Before presenting a solution for a system with shared geometry, flows, resources,
 or network links:
 
-1. Verify input encoding, units, identifiers, row counts, and one-to-one joins;
-   record the checks in `reports/input_audit.json`.
+1. Verify input encoding, units, identifiers, row counts, one-to-one joins, and
+   attachment-to-subproblem coverage; record the checks in
+   `reports/input_audit.json`. Every supplied attachment must map to at least
+   one subproblem or be explicitly marked unused with a reason.
 2. Classify constraints as local bounds/equalities or coupled constraints, and
    record the decision-variable and constraint graph in `reports/constraint_map.md`.
 3. Use an independent projection only to diagnose scale and initialization. If

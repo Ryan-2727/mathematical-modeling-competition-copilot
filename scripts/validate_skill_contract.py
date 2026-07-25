@@ -54,6 +54,7 @@ def main() -> int:
             "scripts/verify_manuscript_quality.py",
             "scripts/verify_delivery_profiles.py",
             "joint feasibility report", "independent node-by-node",
+            "attachment-to-subproblem coverage audit",
             "Overleaf", "VS Code", "latexmk",
         ),
         "README.md": (
@@ -93,6 +94,7 @@ def main() -> int:
             "verify_bibliography_metadata.py", "verify_manuscript_quality.py",
             "verify_delivery_profiles.py", "official-submission",
             "Coupled feasibility gate", "reports/feasibility_audit.json",
+            "attachment-to-subproblem coverage",
         ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
