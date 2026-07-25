@@ -124,7 +124,8 @@ The release and paper workflow then uses deterministic checks:
   rewritten automatically.
 - `prepare_private_regression.py` inventories a user-owned historical corpus and
   copies only an explicit allow-list into a private, non-overlapping benchmark
-  root. It rejects path escapes and generated solution artifacts; private
+  root. Its default inventory is metadata-only; selected calibration cases can
+  be inspected explicitly. It rejects path escapes and generated solution artifacts; private
   manifests, statements, data, outputs, and scores must never be committed.
 
 ## CUMCM Model Routing

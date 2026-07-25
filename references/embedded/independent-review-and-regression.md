@@ -93,6 +93,8 @@ python scripts/prepare_private_regression.py inventory `
   --corpus-root <historical-corpus> `
   --out <private-root>/inventory.json
 
+# The default inventory only discovers cases. For a small, selected calibration
+# set, add --inspect-cases (and --hash-candidates only when hashes are needed).
 # Review inventory.json, keep cases disabled until their statement and original
 # attachments are explicitly allow-listed, then run:
 python scripts/prepare_private_regression.py prepare `
