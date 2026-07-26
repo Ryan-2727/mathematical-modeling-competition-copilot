@@ -122,9 +122,17 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
   防泄漏时间切分绑定；`verify_result_template.py` 只审计已显式声明的结果模板，
   不复制模板，也不把预填值当作证据。
 - `score_private_regression.py` 仅输出私有回归的输入审计、可行性、可复现性、
-  写作与视觉表达五维状态和哈希，不输出历史题面、答案或数据。
+  写作与视觉表达五维状态、哈希和可选私有证据定位；不输出历史题面、答案或数据，
+  并可统计反复出现的缺陷类别。
 - 对价格、政策、处理或干预问题，工作流先区分预测与因果主张；因果结论必须有
   估计量与识别证据。重要决策不确定性必须把稳健、随机或情景方案与期望值基线比较。
+- `verify_evidence_chain.py` 将每条核心结论绑定到可执行命令、数据/结果哈希、
+  LaTeX 数值宏、图表标签和论文位置；结果变更后必须重新生成数值、图表和 PDF。
+- `verify_decision_quality.py` 要求模型反证、重要不确定性比较、算法降级预案、
+  因果边界与可实施性证据；`verify_figure_narrative.py` 清除无法说明问题、主张、
+  读者收获和决策意义的装饰性图表。
+- `verify_page_readability.py` 在冻结提交前核对逐页人工清单：摘要密度、定义、
+  图表可读性、空白、表格断页、附录边界及参考文献一致性。
 
 ## 国赛模型路由增强
 

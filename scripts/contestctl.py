@@ -65,6 +65,10 @@ REPORTS = {
         "reports/reproduction_report.json",
         "reports/anonymity_scan.txt",
         "reports/submission_manifest.json",
+        "reports/evidence_chain_verification.json",
+        "reports/decision_quality.json",
+        "reports/figure_narrative_verification.json",
+        "reports/page_readability_verification.json",
     ),
 }
 CSV_LEDGERS = {

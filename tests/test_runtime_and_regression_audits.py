@@ -87,6 +87,30 @@ class RuntimeAndRegressionAuditTests(unittest.TestCase):
             self.assertNotIn("private_note", json.dumps(report, ensure_ascii=False))
             self.assertEqual(len(report["dimensions"]), 5)
 
+    def test_private_rubric_accepts_evidence_located_defect_log(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            evidence: list[str] = []
+            dimensions = ("input_audit", "feasibility", "reproducibility", "writing", "visual_communication")
+            for dimension in dimensions:
+                path = root / "reports" / f"{dimension}.json"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps({"status": "PASS"}), encoding="utf-8")
+                evidence.extend(["--evidence", f"{dimension}=reports/{dimension}.json"])
+            log = root / "reports" / "defects.csv"
+            log.write_text(
+                "dimension,category,severity,artifact_locator,status\n"
+                "writing,unsupported_figure,major,paper/main.tex:fig-2,open\n",
+                encoding="utf-8",
+            )
+            self.run_script(
+                "score_private_regression.py", "--private-root", str(root),
+                "--case-id", "case-a", *evidence,
+                "--defect-log", "reports/defects.csv",
+            )
+            report = json.loads((root / "regression_rubric.json").read_text(encoding="utf-8"))
+            self.assertEqual(report["defect_category_counts"], {"unsupported_figure": 1})
+
 
 if __name__ == "__main__":
     unittest.main()

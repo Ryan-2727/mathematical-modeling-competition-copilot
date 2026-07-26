@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 from pathlib import Path
@@ -10,6 +11,12 @@ from pathlib import Path
 
 DIMENSIONS = ("input_audit", "feasibility", "reproducibility", "writing", "visual_communication")
 SCORES = {"PASS": 5.0, "LIMITED": 2.0, "FAIL": 0.0}
+DEFECT_FIELDS = {"dimension", "category", "severity", "artifact_locator", "status"}
+DEFECT_CATEGORIES = {
+    "unverifiable_assumption", "unsupported_figure", "decorative_sensitivity",
+    "missing_fallback", "causal_overclaim", "weak_implementation",
+    "broken_evidence_chain", "layout_readability",
+}
 
 
 def sha256(path: Path) -> str:
@@ -21,6 +28,7 @@ def main() -> int:
     parser.add_argument("--private-root", type=Path, required=True)
     parser.add_argument("--case-id", required=True)
     parser.add_argument("--evidence", action="append", default=[], metavar="DIMENSION=RELATIVE_JSON")
+    parser.add_argument("--defect-log", help="optional relative CSV with evidence-located defect categories")
     parser.add_argument("--out", default="regression_rubric.json")
     args = parser.parse_args()
     root = args.private_root.resolve()
@@ -51,6 +59,32 @@ def main() -> int:
             errors.append(f"{dimension} evidence must be JSON with status PASS, LIMITED, or FAIL")
             continue
         rows[dimension] = {"status": status, "score": SCORES[status], "sha256": sha256(path)}
+    defects: list[dict[str, str]] = []
+    if args.defect_log:
+        defect_path = Path(args.defect_log)
+        if defect_path.is_absolute() or ".." in defect_path.parts:
+            errors.append("defect log must stay inside --private-root")
+        else:
+            try:
+                with (root / defect_path).open(encoding="utf-8-sig", newline="") as handle:
+                    reader = csv.DictReader(handle)
+                    fields = set(reader.fieldnames or [])
+                    defects = list(reader)
+                if DEFECT_FIELDS - fields:
+                    errors.append("defect log missing columns: " + ", ".join(sorted(DEFECT_FIELDS - fields)))
+                for index, defect in enumerate(defects, 2):
+                    if any(not str(defect.get(field) or "").strip() for field in DEFECT_FIELDS):
+                        errors.append(f"defect log row {index} has empty required fields")
+                    if defect.get("dimension") not in DIMENSIONS:
+                        errors.append(f"defect log row {index} has invalid dimension")
+                    if defect.get("category") not in DEFECT_CATEGORIES:
+                        errors.append(f"defect log row {index} has invalid category")
+                    if defect.get("severity") not in {"minor", "major", "veto"}:
+                        errors.append(f"defect log row {index} has invalid severity")
+                    if defect.get("status") not in {"open", "resolved", "accepted_limitation"}:
+                        errors.append(f"defect log row {index} has invalid status")
+            except (OSError, UnicodeError, csv.Error) as exc:
+                errors.append(f"cannot read defect log: {exc}")
     status = "FAIL" if errors or any(row["status"] == "FAIL" for row in rows.values()) else ("LIMITED" if any(row["status"] == "LIMITED" for row in rows.values()) else "PASS")
     out = Path(args.out)
     if out.is_absolute() or ".." in out.parts:
@@ -63,6 +97,12 @@ def main() -> int:
         "status": status,
         "scope": "metadata-only evidence rubric; no private statement, data, answer, artifact contents, or award prediction is emitted",
         "dimensions": rows,
+        "defects": defects,
+        "defect_category_counts": {
+            category: sum(item.get("category") == category for item in defects)
+            for category in sorted(DEFECT_CATEGORIES)
+            if any(item.get("category") == category for item in defects)
+        },
         "mean_score": sum(float(row["score"]) for row in rows.values()) / len(rows) if len(rows) == len(DIMENSIONS) else None,
         "errors": errors,
     }

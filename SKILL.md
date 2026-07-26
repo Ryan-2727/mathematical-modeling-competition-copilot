@@ -56,6 +56,13 @@ It does not promise an award. It maximizes award probability through disciplined
    - Maintain `reports/model_decision_log.csv`. For each subproblem compare a
      credible baseline with candidate routes, record the failure test and
      validation cost, and explain why the selected model matches the mechanism.
+     Then preserve the executed comparison and failure-oriented refutation in
+     `reports/model_challenge.json`; a candidate that does not meet its
+     predeclared advantage threshold must be rejected or have its claim narrowed.
+   - Prepare `reports/fallback_plan.csv` before primary execution. For every
+     optimization, forecast, or simulation route record timeout, infeasibility,
+     numerical-instability, and data-insufficiency triggers plus an interpretable
+     fallback and the paper boundary statement.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
    - Before selecting a data-reading strategy, record row counts, field schema,
      units, time cutoff, and expected reuse. For large event data, create one
@@ -96,6 +103,10 @@ It does not promise an award. It maximizes award probability through disciplined
      selecting a solver, run `scripts/probe_runtime_capabilities.py` and lock
      the observed package versions and required solver profile. Do not install
      dependencies or silently substitute a solver in contest mode.
+   - Read `references/embedded/award-oriented-evidence-chain.md`. For every
+     decisive claim, maintain `reports/evidence_chain.csv` linking executable
+     code/command, data hash, result hash, verified-value key, reachable LaTeX
+     macro, figure label, and paper location.
    - Read `references/embedded/data-units-and-source-quality.md` and maintain
      `reports/units.csv` for quantities, conversions, ranges, and source scope.
    - Read `references/embedded/stress-testing-and-uncertainty.md`. Register at
@@ -126,6 +137,15 @@ It does not promise an award. It maximizes award probability through disciplined
      Treat a pass as evidence-presence and threshold verification, not proof
      that the selected model is mathematically correct.
    - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
+   - For each decision recommendation, complete `reports/decision_robustness.csv`
+     and `reports/implementation_readiness.csv`. Report expected and extreme
+     outcomes, feasibility rate, resource/time cost, interpretability, failure
+     mode, and contingency; do not present objective value alone as a final
+     recommendation.
+   - For causal language, complete `reports/causal_claims.csv`. A causal row
+     requires an estimand, causal graph, confounder set, counterfactual,
+     identification strategy, and diagnostic; otherwise mark it predictive or
+     association and state the causal limitation in the paper.
    - Read the coupled feasibility gate in
      `references/embedded/operational-quality-gates.md` whenever controls,
      networks, geometry, schedules, or shared resources couple decision
@@ -143,6 +163,9 @@ It does not promise an award. It maximizes award probability through disciplined
    - Keep figure captions, labels, and source data traceable.
    - Maintain `reports/figure_manifest.csv` and run
      `scripts/verify_manuscript_quality.py` after compiling the paper.
+   - For every figure, record the linked claim, question answered, reader
+     takeaway, and decision relevance. A decorative figure with no claim is not
+     a paper figure; run `scripts/verify_figure_narrative.py` before freeze.
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
@@ -200,6 +223,11 @@ It does not promise an award. It maximizes award probability through disciplined
    - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
    - Do not claim completion without fresh evidence.
    - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
+   - Run `scripts/verify_evidence_chain.py` and
+     `scripts/verify_decision_quality.py`. Their pass binds decisive claims to
+     data/code/results/LaTeX and requires recorded refutation, uncertainty,
+     fallback, causal-boundary, and implementability evidence; it does not prove
+     the selected mathematics is true.
    - Run `scripts/verify_abstract_quality.py`,
      `scripts/verify_bibliography_metadata.py`, and
      `scripts/verify_manuscript_quality.py`. Inspect source passages and rendered
@@ -218,6 +246,11 @@ It does not promise an award. It maximizes award probability through disciplined
      rendered pages, first-page markers, sparse-page findings, metadata,
      figure/table references, and any `LIMITED` items. A mandatory visual rule
      cannot pass when its required renderer or evidence is unavailable.
+   - Complete a page-by-page human review in
+     `reports/page_readability_checklist.csv`, then run
+     `scripts/verify_page_readability.py`. Review abstract density, first formula
+     definitions, figure legibility, blank space, table breaks, appendix
+     boundaries, and reference consistency; a missing page review is not a pass.
    - Run `scripts/anonymity_scan.py` on the complete delivery tree and archive;
      enable image metadata and OCR checks when the runtime is available.
    - Rerun `scripts/verify_verified_values.py`,
@@ -429,6 +462,7 @@ Use these files as phase playbooks:
 - `references/embedded/evidence-and-quality-gates.md`
 - `references/embedded/stress-testing-and-uncertainty.md`
 - `references/embedded/runtime-template-and-decision-audits.md`
+- `references/embedded/award-oriented-evidence-chain.md`
 - `references/embedded/post-paper-award-review.md`
 - `references/embedded/reviewer-scorecard-and-presentation.md`
 - `references/embedded/independent-review-and-regression.md`

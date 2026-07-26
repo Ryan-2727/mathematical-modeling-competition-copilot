@@ -107,6 +107,7 @@ def main() -> int:
     write_if_missing(root / "reports/data_audit.md", "# Data audit\n\n| Dataset | Source | License/permission | Rows/columns | Units | Missing/outlier handling | Leakage risk | Hash |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/traceability.md", "# Traceability\n\n| Subproblem | Data | Model | Validation | Result file | Figure/table | Paper section | Status |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n")
     write_if_missing(root / "reports/claims.csv", "claim_id,subproblem,claim,source_file,source_locator,command,figure_or_table,paper_location,human_verification,status\n")
+    write_if_missing(root / "reports/evidence_chain.csv", "claim_id,code_or_command,source_data,data_sha256,result_file,result_sha256,verified_value_key,latex_macro,figure_label,paper_location,status\n")
     write_if_missing(
         root / "results/verified_values.csv",
         "key,value,value_type,unit,source_file,source_sha256,source_locator,source_kind,justification\n",
@@ -138,9 +139,15 @@ def main() -> int:
     )
     write_if_missing(
         root / "reports/figure_manifest.csv",
-        "figure,label,source_data,caption_insight,axes_units,color_accessibility,status\n",
+        "figure,label,source_data,caption_insight,axes_units,color_accessibility,claim_id,question_answered,reader_takeaway,decision_relevance,status\n",
     )
     write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
+    write_if_missing(root / "reports/model_challenge.json", '{\n  "status": "pending",\n  "subproblems": [],\n  "errors": []\n}\n')
+    write_if_missing(root / "reports/decision_robustness.csv", "decision_id,uncertainty_material,comparison_type,scenario_count,expected_value,worst_case_value,extreme_feasibility_rate,policy_changed,interpretation,status\n")
+    write_if_missing(root / "reports/implementation_readiness.csv", "decision_id,implementation_steps,required_inputs,execution_cost,execution_time,interpretability,extreme_feasibility_rate,failure_mode,contingency,paper_location,status\n")
+    write_if_missing(root / "reports/fallback_plan.csv", "subproblem,model_family,failure_mode,trigger,primary_route,fallback_route,boundary_statement,result_file,paper_location,status\n")
+    write_if_missing(root / "reports/causal_claims.csv", "claim_id,claim_type,estimand,causal_graph,confounders,counterfactual,identification_strategy,diagnostic,limitation,paper_location,status\n")
+    write_if_missing(root / "reports/page_readability_checklist.csv", "page,abstract_density,formula_first_definition,figure_legibility,blank_space,table_break,appendix_boundary,reference_consistency,reviewer,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
     write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
     write_if_missing(

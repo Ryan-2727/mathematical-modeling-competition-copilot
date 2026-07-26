@@ -57,6 +57,18 @@ The verification loop:
 - Data source permissions, transformations, hashes, environment, command, seed, solver status, and validation evidence are recorded.
 - Submission state, final hashes, anonymity scan, artifact size, and receipt are recorded when submission is in scope.
 - `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
+- Run `scripts/verify_evidence_chain.py`; every decisive claim has a locatable
+  code/command, data hash, result hash, verified-value macro, figure label, and
+  paper location. Rebuild the paper after a result-hash change.
+- Run `scripts/verify_decision_quality.py`; confirm every selected route has a
+  baseline/candidate refutation record, uncertainty comparison where material,
+  fallback route, causal-boundary record where applicable, and implementability
+  evidence beyond the objective value.
+- Run `scripts/verify_figure_narrative.py`; each figure identifies its claim,
+  question, takeaway, and decision relevance.
+- Complete `reports/page_readability_checklist.csv` against the compiled PDF and
+  run `scripts/verify_page_readability.py`. A missing renderer is `LIMITED`, not
+  visual proof; unresolved checklist cells are `FAIL`.
 - `paper/main.tex` compiles to the inspected `paper/main.pdf`; source and PDF are
   both retained as the first deliverable.
 - Run `scripts/verify_pdf_visual.py` on `paper/main.pdf`. Review the rendered

@@ -64,7 +64,15 @@ python scripts/score_private_regression.py --private-root <private-root> `
   --evidence visual_communication=reports/visual_audit.json
 ```
 
-The generated rubric contains only statuses and hashes. Do not store the private
-report, statement, data, paper, numerical answer, or score baseline in this
-repository. Use the rubric to locate a generalizable workflow gap, then confirm
-the change on a blinded regression run.
+The generated rubric contains statuses, hashes, and (when supplied) private
+evidence locators/category counts. Do not store the private report, statement,
+data, paper, numerical answer, or score baseline in this repository. Use the
+rubric to locate a generalizable workflow gap, then confirm the change on a
+blinded regression run.
+
+Optionally add a private `defects.csv` with `dimension`, `category`, `severity`,
+`artifact_locator`, and `status`, then pass it through `--defect-log`. Categories
+include unverifiable assumptions, unsupported figures, decorative sensitivity,
+missing fallback, causal overclaim, weak implementation, broken evidence chain,
+and layout readability. The private rubric retains evidence locators and category
+counts so recurrent weaknesses can be fixed without publishing any case content.

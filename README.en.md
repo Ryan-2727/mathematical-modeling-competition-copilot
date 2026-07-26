@@ -136,11 +136,22 @@ The release and paper workflow then uses deterministic checks:
   prefilled values as evidence.
 - `score_private_regression.py` emits a metadata-only private rubric for input
   audit, feasibility, reproducibility, writing, and visual communication. It
-  contains statuses and hashes only, not historical statements, answers, or data.
+  contains statuses, hashes, and optional private evidence locators only—not
+  historical statements, answers, or data—and classifies recurring defects.
 - For price, policy, treatment, or intervention questions, the workflow first
   separates predictive from causal claims; causal conclusions require an
   estimand and identification evidence. Material decision uncertainty requires
   a robust, stochastic, or scenario comparison against the expected-value baseline.
+- `verify_evidence_chain.py` binds each decisive claim to its executable command,
+  data/result hashes, verified-value LaTeX macro, figure label, and paper location;
+  a changed result requires regenerated values, figures, and PDF.
+- `verify_decision_quality.py` requires model refutation against a baseline,
+  material-uncertainty comparison, degradation routes, causal boundaries, and
+  implementation readiness. `verify_figure_narrative.py` removes figures that
+  cannot state their question, claim, reader takeaway, and decision relevance.
+- `verify_page_readability.py` checks a page-by-page human checklist for abstract
+  density, definitions, figure legibility, whitespace, table breaks, appendix
+  boundaries, and reference consistency before submission freeze.
 
 ## CUMCM Model Routing
 
