@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -266,6 +267,23 @@ class OperationalGateTests(unittest.TestCase):
                 root, "reports/anonymity_scan.txt", anonymity
             )
             self.assertEqual(status, "FAIL")
+
+    def test_safe_file_accepts_windows_case_variation_after_resolution(self) -> None:
+        if str(SCRIPTS) not in sys.path:
+            sys.path.insert(0, str(SCRIPTS))
+        spec = importlib.util.spec_from_file_location(
+            "contestctl_case_test", SCRIPTS / "contestctl.py"
+        )
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        root = Path("C:/Users/RUNNER~1/AppData/Local/Temp/tmp65jb7jz")
+        child = Path("c:/users/runner~1/appdata/local/temp/TMP65JB7JZ/support/input.txt")
+        outside = Path("c:/users/runner~1/appdata/local/temp/TMP65JB7JZ-other/input.txt")
+        with mock.patch.object(module.os.path, "normcase", side_effect=str.casefold):
+            self.assertTrue(module.is_within_root(root, child))
+            self.assertFalse(module.is_within_root(root, outside))
 
     def test_abstract_quality_requires_answer_validation_and_task_coverage(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

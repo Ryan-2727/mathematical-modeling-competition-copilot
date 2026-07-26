@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from typing import Any
@@ -129,9 +130,21 @@ REPORT_BINDINGS = {
 }
 
 
+def is_within_root(root: Path, path: Path) -> bool:
+    """Compare resolved paths with Windows' case-insensitive semantics."""
+    root_text = os.path.normcase(str(root))
+    path_text = os.path.normcase(str(path))
+    try:
+        return os.path.commonpath((root_text, path_text)) == root_text
+    except ValueError:
+        return False
+
+
 def safe_file(root: Path, relative: str) -> Path:
-    path = (root / relative).resolve()
-    path.relative_to(root)
+    resolved_root = root.resolve()
+    path = (resolved_root / relative).resolve()
+    if not is_within_root(resolved_root, path):
+        raise ValueError(f"{path!r} is not inside project root {resolved_root!r}")
     return path
 
 
