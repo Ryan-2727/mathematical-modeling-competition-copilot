@@ -49,3 +49,17 @@ computing results:
 
 Do not turn an unavailable validation into a claim of accuracy. Explain its
 limitation and use the conclusion only within the supported scope.
+
+## Runtime and cache locks
+
+Before selecting an optimization, nonlinear, causal, or spreadsheet-dependent
+route, run `scripts/probe_runtime_capabilities.py` with the required profile and
+save `reports/runtime_capabilities.json`. Choose only a recorded available route;
+do not install a dependency mid-run or silently exchange an unavailable solver
+for a different mathematical method.
+
+For a reusable aggregate cache, write a manifest containing the relative raw
+source and cache paths, both SHA-256 values, the aggregation rule, and ISO
+`training_end` / `target_start` dates. Run `scripts/verify_data_cache.py` before
+reuse. The cache verifier binds files and split order; it does not certify that
+the selected aggregation is substantively correct.

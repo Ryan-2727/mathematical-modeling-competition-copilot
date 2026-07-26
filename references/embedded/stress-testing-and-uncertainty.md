@@ -18,6 +18,17 @@ outcome; otherwise the test risks becoming decorative.
 - Mechanistic claim: initial/boundary perturbation, parameter identifiability,
   and step-size or grid refinement.
 
+## Decision uncertainty
+
+When supplies, demand, prices, parameters, or outputs are materially uncertain,
+define their plausible ranges and source before optimization. Compare the
+mean-input or expected-value baseline with a robust, stochastic, or explicitly
+enumerated scenario policy that matches the decision mechanism. Report the
+trade-off (for example expected objective, worst-case loss, feasibility rate, or
+tail risk) and narrow the recommendation if the policy changes. A mean-only
+solution may remain a baseline, but is not the final recommendation when the
+decision reverses across plausible scenarios.
+
 ## Acceptance criteria
 
 State the expected invariant or acceptable degradation before running the test.

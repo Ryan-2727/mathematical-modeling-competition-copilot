@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Use the user-owned `F:\数学建模真题` corpus to improve the mathematical-modeling
+Use a user-owned historical-problem corpus at `<historical-corpus-root>` to improve the mathematical-modeling
 competition Skill without publishing contest statements, attachments, solutions,
 scores, or run artifacts. The corpus contains 15 intended cases: A, B, and C for
 each year from 2021 through 2025.

@@ -48,6 +48,10 @@ def main() -> int:
             "scripts/verify_pdf_visual.py", "scripts/verify_verified_values.py",
             "scripts/verify_model_validation.py", "scripts/run_benchmark_regression.py",
             "scripts/prepare_private_regression.py",
+            "scripts/probe_runtime_capabilities.py",
+            "scripts/verify_data_cache.py",
+            "scripts/verify_result_template.py",
+            "scripts/score_private_regression.py",
             "scripts/contestctl.py", "scripts/lock_contest_rules.py",
             "scripts/verify_abstract_quality.py",
             "scripts/verify_bibliography_metadata.py",
@@ -99,6 +103,11 @@ def main() -> int:
             "attachment-to-subproblem coverage",
             "zero/blank-value semantics", "censored/not-detected",
             "Data-scale and time-split gate", "reports/data_scale_audit.json",
+        ),
+        "references/embedded/runtime-template-and-decision-audits.md": (
+            "probe_runtime_capabilities.py", "verify_data_cache.py",
+            "verify_result_template.py", "score_private_regression.py",
+            "Predictive versus causal claims",
         ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",

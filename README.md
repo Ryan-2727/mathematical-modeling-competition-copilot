@@ -127,6 +127,20 @@ The release and paper workflow then uses deterministic checks:
   root. Its default inventory is metadata-only; selected calibration cases can
   be inspected explicitly. It rejects path escapes and generated solution artifacts; private
   manifests, statements, data, outputs, and scores must never be committed.
+- `probe_runtime_capabilities.py` records the exact available solver/runtime
+  profile before model selection; missing capability is a visible limitation,
+  never a silent algorithm substitution or an automatic package install.
+- `verify_data_cache.py` binds large-data aggregates to raw/cache hashes,
+  aggregation rules, and leakage-safe time splits. `verify_result_template.py`
+  audits an explicitly declared result template without copying it or using its
+  prefilled values as evidence.
+- `score_private_regression.py` emits a metadata-only private rubric for input
+  audit, feasibility, reproducibility, writing, and visual communication. It
+  contains statuses and hashes only, not historical statements, answers, or data.
+- For price, policy, treatment, or intervention questions, the workflow first
+  separates predictive from causal claims; causal conclusions require an
+  estimand and identification evidence. Material decision uncertainty requires
+  a robust, stochastic, or scenario comparison against the expected-value baseline.
 
 ## CUMCM Model Routing
 

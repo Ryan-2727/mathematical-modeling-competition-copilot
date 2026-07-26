@@ -68,6 +68,10 @@ It does not promise an award. It maximizes award probability through disciplined
      then create a joint feasibility report. An independent node-by-node
      projection is a diagnostic baseline only; it cannot be reported as a
      feasible solution until shared constraints are checked globally.
+   - For a question involving policy, price, intervention, or treatment, state
+     whether the target is predictive or causal before choosing the model. A
+     causal conclusion needs an estimand, identification assumptions, and
+     diagnostics; otherwise write the result as association or prediction only.
 
 3. **Literature and reproduction details**
    - Read `references/embedded/verified-literature-and-two-part-delivery.md`
@@ -88,11 +92,24 @@ It does not promise an award. It maximizes award probability through disciplined
 4. **Computation and experiments**
    - Read `references/embedded/computation-and-visualization.md`.
    - Read `references/embedded/data-traceability-and-reproducibility.md` before fitting a data-driven model.
+   - Read `references/embedded/runtime-template-and-decision-audits.md`. Before
+     selecting a solver, run `scripts/probe_runtime_capabilities.py` and lock
+     the observed package versions and required solver profile. Do not install
+     dependencies or silently substitute a solver in contest mode.
    - Read `references/embedded/data-units-and-source-quality.md` and maintain
      `reports/units.csv` for quantities, conversions, ranges, and source scope.
    - Read `references/embedded/stress-testing-and-uncertainty.md`. Register at
      least one proportionate, predeclared stress test for every decisive
      subproblem claim in `reports/stress_tests.csv` and save its result artifact.
+     When input uncertainty materially changes a recommendation, compare the
+     expected-value baseline with a robust or stochastic/scenario policy; a
+     mean-only recommendation is not final evidence.
+   - Before reusing a large-data aggregate, bind source and cache hashes,
+     aggregation rule, and a leakage-safe time split with
+     `scripts/verify_data_cache.py`.
+   - Treat a supplied result-form file as a template only after an explicit
+     declaration and structural audit with `scripts/verify_result_template.py`.
+     Never ingest a result-named file as evidence or copy it automatically.
    - Use notebooks, scripts, or spreadsheets to produce executable evidence.
    - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
    - Maintain `reports/claims.csv` and run `scripts/run_reproduction.py` for the frozen pipeline.
@@ -267,6 +284,11 @@ It does not promise an award. It maximizes award probability through disciplined
    - Run `scripts/run_benchmark_regression.py` on the blinded benchmark manifest
      before releasing a skill revision. A regression beyond the declared
      tolerance blocks release; never update baselines automatically.
+   - For private historical cases, create a metadata-only five-dimension
+     evidence rubric with `scripts/score_private_regression.py` for input audit,
+     feasibility, reproducibility, writing, and visual communication. Keep its
+     evidence and report outside Git; it is a release diagnostic, not an award
+     prediction or a substitute for blinded regression.
 
 ## Default Artifact Layout
 
@@ -406,6 +428,7 @@ Use these files as phase playbooks:
 - `references/embedded/data-units-and-source-quality.md`
 - `references/embedded/evidence-and-quality-gates.md`
 - `references/embedded/stress-testing-and-uncertainty.md`
+- `references/embedded/runtime-template-and-decision-audits.md`
 - `references/embedded/post-paper-award-review.md`
 - `references/embedded/reviewer-scorecard-and-presentation.md`
 - `references/embedded/independent-review-and-regression.md`
