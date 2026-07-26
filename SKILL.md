@@ -53,6 +53,12 @@ It does not promise an award. It maximizes award probability through disciplined
      from problem structure and evidence needs, not from algorithm prestige.
    - For CUMCM, route each subproblem through the task signals and model cards in `references/embedded/cumcm-model-selection.md`. Maintain a trace from subproblem to data, model, implementation, validation, result file, and paper section.
    - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
+   - Read `references/embedded/mechanism-semantics-and-argument.md`. Before
+     choosing a model, complete `reports/semantic_audit.csv` and
+     `reports/mechanism_audit.json`: bind every material field representation
+     (zero, blank, censored, missing, or not-observed) to an operational meaning,
+     decision impact, credible alternative treatment, and a falsifiable mechanism
+     implication. Do not turn an unclassified data encoding into an assumption.
    - Maintain `reports/model_decision_log.csv`. For each subproblem compare a
      credible baseline with candidate routes, record the failure test and
      validation cost, and explain why the selected model matches the mechanism.
@@ -137,6 +143,11 @@ It does not promise an award. It maximizes award probability through disciplined
      Treat a pass as evidence-presence and threshold verification, not proof
      that the selected model is mathematically correct.
    - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
+   - Complete `reports/validation_design.csv` before interpreting results. When
+     external ground truth is absent, require at least two independent checks
+     such as an invariant, small-case enumeration, historical backtest,
+     cross-model agreement, synthetic recovery, or stress test; state the
+     residual limitation instead of inventing accuracy.
    - For each decision recommendation, complete `reports/decision_robustness.csv`
      and `reports/implementation_readiness.csv`. Report expected and extreme
      outcomes, feasibility rate, resource/time cost, interpretability, failure
@@ -193,6 +204,13 @@ It does not promise an award. It maximizes award probability through disciplined
      -> variables/assumptions -> derivation -> algorithm -> quantified result and
      interpretation -> local validation. Do not replace this chain with a short
      method summary followed by an answer.
+   - Maintain `reports/conclusion_map.csv` so every subproblem begins from its
+     question and direct answer/recommendation, then links a decisive verified
+     value, method rationale, validation, limitation, figure/table, and paper
+     location. Use `reports/innovation_ledger.csv` for at most one
+     problem-specific change per subproblem; retain it only when its measured
+     incremental benefit clears the predeclared threshold, otherwise narrow or
+     reject the innovation claim.
    - Derive the page budget from the seven-part argument chain and verified
      official maximum. Treat corpus-derived ranges and minimum page targets as
      advisory only; never add repetition, screenshots, raw code, or unexplained
@@ -228,6 +246,10 @@ It does not promise an award. It maximizes award probability through disciplined
      data/code/results/LaTeX and requires recorded refutation, uncertainty,
      fallback, causal-boundary, and implementability evidence; it does not prove
      the selected mathematics is true.
+   - Run `scripts/verify_modeling_argument_quality.py`. It blocks completion
+     when semantic choices are unbound, no-ground-truth validation lacks
+     independent checks, a subproblem has no conclusion chain, or a claimed
+     innovation lacks a verified incremental benefit.
    - Run `scripts/verify_abstract_quality.py`,
      `scripts/verify_bibliography_metadata.py`, and
      `scripts/verify_manuscript_quality.py`. Inspect source passages and rendered
@@ -463,6 +485,7 @@ Use these files as phase playbooks:
 - `references/embedded/stress-testing-and-uncertainty.md`
 - `references/embedded/runtime-template-and-decision-audits.md`
 - `references/embedded/award-oriented-evidence-chain.md`
+- `references/embedded/mechanism-semantics-and-argument.md`
 - `references/embedded/post-paper-award-review.md`
 - `references/embedded/reviewer-scorecard-and-presentation.md`
 - `references/embedded/independent-review-and-regression.md`

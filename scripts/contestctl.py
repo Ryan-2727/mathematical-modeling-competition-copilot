@@ -69,6 +69,7 @@ REPORTS = {
         "reports/decision_quality.json",
         "reports/figure_narrative_verification.json",
         "reports/page_readability_verification.json",
+        "reports/modeling_argument_quality.json",
     ),
 }
 CSV_LEDGERS = {

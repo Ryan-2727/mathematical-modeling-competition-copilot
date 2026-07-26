@@ -56,6 +56,7 @@ def main() -> int:
             "scripts/verify_decision_quality.py",
             "scripts/verify_figure_narrative.py",
             "scripts/verify_page_readability.py",
+            "scripts/verify_modeling_argument_quality.py",
             "scripts/contestctl.py", "scripts/lock_contest_rules.py",
             "scripts/verify_abstract_quality.py",
             "scripts/verify_bibliography_metadata.py",
@@ -118,6 +119,11 @@ def main() -> int:
             "fallback_plan.csv", "verify_decision_quality.py",
             "verify_figure_narrative.py", "verify_page_readability.py",
         ),
+        "references/embedded/mechanism-semantics-and-argument.md": (
+            "semantic_audit.csv", "mechanism_audit.json", "validation_design.csv",
+            "conclusion_map.csv", "innovation_ledger.csv",
+            "verify_modeling_argument_quality.py",
+        ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
         ),
@@ -160,6 +166,7 @@ def main() -> int:
         "scripts/verify_decision_quality.py",
         "scripts/verify_figure_narrative.py",
         "scripts/verify_page_readability.py",
+        "scripts/verify_modeling_argument_quality.py",
         "assets/latex-paper-template/main.tex",
         "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",

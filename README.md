@@ -152,6 +152,10 @@ The release and paper workflow then uses deterministic checks:
 - `verify_page_readability.py` checks a page-by-page human checklist for abstract
   density, definitions, figure legibility, whitespace, table breaks, appendix
   boundaries, and reference consistency before submission freeze.
+- `verify_modeling_argument_quality.py` binds data semantics to mechanisms,
+  requires two independent checks when ground truth is absent, maps every answer
+  to a decisive value and limitation, and rejects innovation claims without a
+  problem-specific, measured incremental benefit.
 
 ## CUMCM Model Routing
 

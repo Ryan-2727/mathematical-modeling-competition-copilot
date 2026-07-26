@@ -133,6 +133,9 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
   读者收获和决策意义的装饰性图表。
 - `verify_page_readability.py` 在冻结提交前核对逐页人工清单：摘要密度、定义、
   图表可读性、空白、表格断页、附录边界及参考文献一致性。
+- `verify_modeling_argument_quality.py` 将数据语义与题目机制绑定；无真值时要求
+  至少两项独立验证；每个答案必须映射到关键数值与局限，并拒绝没有问题特定、
+  可量化增益的创新主张。
 
 ## 国赛模型路由增强
 
