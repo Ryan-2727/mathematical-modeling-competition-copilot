@@ -137,6 +137,9 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
   局限；`verify_visual_design_system.py` 记录统一的图表风格；
   `verify_paper_presentation.py` 将已编译 PDF 的层级、字体、公式/表格断裂、留白和
   一致性逐页人工清单绑定到报告。它们是证据门，不会伪装成自动审美或获奖评分。
+- `verify_abstract_structure.py` 强制摘要采用简明的“分析—方法—结果”结构；
+  `verify_result_story.py` 要求每个小问有已验证结果，简化模型有用户明确授权，
+  并为每个小问配置结果图、为模型对比配置对比图或表。
 - `verify_modeling_argument_quality.py` 将数据语义与题目机制绑定；无真值时要求
   至少两项独立验证；每个答案必须映射到关键数值与局限，并拒绝没有问题特定、
   可量化增益的创新主张。

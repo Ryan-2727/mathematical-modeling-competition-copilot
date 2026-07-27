@@ -11,6 +11,7 @@ Use this module to select the correct paper-writing branch.
 
 ## Shared Writing Rules
 
+- Read `result-first-paper-convergence.md` before drafting the abstract or committing to a complex primary model.
 - Read `paper-depth-and-page-budget.md` before outlining. Allocate pages by the
   reasoning burden of each claim, not by equal section lengths, and distinguish
   main-text depth from code-appendix volume.

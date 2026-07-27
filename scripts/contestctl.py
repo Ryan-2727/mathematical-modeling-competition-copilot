@@ -74,6 +74,8 @@ REPORTS = {
         "reports/answer_density.json",
         "reports/visual_design_system.json",
         "reports/paper_presentation.json",
+        "reports/abstract_structure.json",
+        "reports/result_story.json",
     ),
 }
 CSV_LEDGERS = {
@@ -122,6 +124,15 @@ REPORT_BINDINGS = {
     "reports/paper_presentation.json": (
         ("paper_sha256", "paper/main.pdf", "file"),
         ("checklist_sha256", "reports/presentation_checklist.csv", "file"),
+    ),
+    "reports/abstract_structure.json": (
+        ("source_sha256", "paper/sections/abstract.tex", "file"),
+    ),
+    "reports/result_story.json": (
+        ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
+        ("verified_values_sha256", "results/verified_values.csv", "file"),
+        ("simplification_log_sha256", "reports/model_simplification_log.csv", "file"),
+        ("visual_storyboard_sha256", "reports/visual_storyboard.csv", "file"),
     ),
     "reports/delivery_profiles.json": (
         ("delivery_manifest_sha256", "delivery/manifest.csv", "file"),

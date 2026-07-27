@@ -74,6 +74,48 @@ class PaperPresentationQualityTests(unittest.TestCase):
             self.assertIn("legibility_evidence", figure_header)
             self.assertTrue((root / "reports/table_manifest.csv").is_file())
             self.assertTrue((root / "reports/presentation_checklist.csv").is_file())
+            self.assertTrue((root / "reports/model_simplification_log.csv").is_file())
+            self.assertTrue((root / "reports/visual_storyboard.csv").is_file())
+
+    def test_abstract_structure_requires_analysis_method_and_result_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "paper/sections").mkdir(parents=True)
+            abstract = root / "paper/sections/abstract.tex"
+            abstract.write_text(
+                "Analysis: identify the decision. Method: use a robust model. Results: 12 units.",
+                encoding="utf-8",
+            )
+            self.run_script("verify_abstract_structure.py", "--project-dir", str(root))
+            abstract.write_text("Analysis: identify the decision. Method: use a robust model.", encoding="utf-8")
+            self.run_script("verify_abstract_structure.py", "--project-dir", str(root), expect=1)
+
+    def test_result_story_requires_authorized_simplification_and_comparison_visual(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "reports").mkdir()
+            (root / "results").mkdir()
+            (root / "results/q1.json").write_text("{}\n", encoding="utf-8")
+            (root / "results/verified_values.csv").write_text("key,value\nanswer,12\n", encoding="utf-8")
+            (root / "reports/conclusion_map.csv").write_text(
+                "subproblem,decisive_value_key,status\nQ1,answer,verified\n", encoding="utf-8"
+            )
+            log_header = "subproblem,primary_route,failure_diagnostic,decision_state,retained_core_factors,removed_noncritical_factors,simplified_route,user_authorization,original_model_treatment,result_file,paper_location,status\n"
+            unauthorized = "Q1,full,timeout,user_authorized_simplification,flow balance,minor feature,simplified,,model_optimization,results/q1.json,main.tex,verified\n"
+            (root / "reports/model_simplification_log.csv").write_text(log_header + unauthorized, encoding="utf-8")
+            storyboard_header = "artifact_id,artifact_type,subproblem,question,claim_id,source_result,selection_rationale,paper_location,status\n"
+            result_row = "fig:q1,result_chart,Q1,what,C1,results/q1.json,answer,main.tex,verified\n"
+            (root / "reports/visual_storyboard.csv").write_text(storyboard_header + result_row, encoding="utf-8")
+            (root / "reports/model_challenge.json").write_text(
+                json.dumps({"subproblems": [{"subproblem": "Q1", "baseline_name": "base", "candidate_name": "candidate"}]}),
+                encoding="utf-8",
+            )
+            self.run_script("verify_result_story.py", "--project-dir", str(root), expect=1)
+            authorized = unauthorized.replace(",simplified,,model_optimization,", ",simplified,user-approved:model-simplification,model_optimization,")
+            comparison = "fig:comparison,model_comparison,Q1,which route,C1,results/q1.json,compare,main.tex,verified\n"
+            (root / "reports/model_simplification_log.csv").write_text(log_header + authorized, encoding="utf-8")
+            (root / "reports/visual_storyboard.csv").write_text(storyboard_header + result_row + comparison, encoding="utf-8")
+            self.run_script("verify_result_story.py", "--project-dir", str(root))
 
 
 if __name__ == "__main__":

@@ -29,6 +29,11 @@ result artifact, and paper boundary statement for timeout, infeasibility,
 numerical instability, or insufficient data. A fallback is not an excuse to hide
 failure: describe the supported scope in the paper.
 
+When a fallback removes noncritical factors, stop and ask the user before
+simplifying. Record the authorization, retained mechanism, removed factors,
+result artifact, and `model_optimization` treatment of the original route in
+`reports/model_simplification_log.csv`.
+
 ## Decision, causality, and figures
 
 `reports/decision_robustness.csv` compares expected-value and robust, stochastic,
@@ -45,6 +50,10 @@ Each figure-manifest row must also contain `claim_id`, `question_answered`,
 `reader_takeaway`, and `decision_relevance`. Keep only figures that advance a
 claim or decision.
 
+Use `reports/visual_storyboard.csv` to ensure every answered subproblem has a
+result chart and every baseline/candidate comparison has a comparison visual or
+table. Add mechanism, path/network, and validation visuals only when relevant.
+
 ## Final commands
 
 ```powershell
@@ -52,6 +61,8 @@ python scripts/verify_evidence_chain.py --project-dir .
 python scripts/verify_decision_quality.py --project-dir .
 python scripts/verify_figure_narrative.py --project-dir .
 python scripts/verify_page_readability.py --project-dir .
+python scripts/verify_abstract_structure.py --project-dir .
+python scripts/verify_result_story.py --project-dir .
 ```
 
 Complete the human page checklist after inspecting the rendered PDF. Its fields

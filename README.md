@@ -158,6 +158,10 @@ The release and paper workflow then uses deterministic checks:
   `verify_paper_presentation.py` binds a rendered-PDF page checklist for
   hierarchy, font readability, formula/table breaks, whitespace, and consistency.
   These are evidence gates, not automated beauty scores.
+- `verify_abstract_structure.py` requires a concise analysis-method-result
+  abstract. `verify_result_story.py` blocks finalization without a verified
+  result decision, explicit user authorization for simplification, a result
+  chart per subproblem, and a comparison visual when models are compared.
 - `verify_modeling_argument_quality.py` binds data semantics to mechanisms,
   requires two independent checks when ground truth is absent, maps every answer
   to a decisive value and limitation, and rejects innovation claims without a

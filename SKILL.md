@@ -65,10 +65,10 @@ It does not promise an award. It maximizes award probability through disciplined
      Then preserve the executed comparison and failure-oriented refutation in
      `reports/model_challenge.json`; a candidate that does not meet its
      predeclared advantage threshold must be rejected or have its claim narrowed.
-   - Prepare `reports/fallback_plan.csv` before primary execution. For every
-     optimization, forecast, or simulation route record timeout, infeasibility,
-     numerical-instability, and data-insufficiency triggers plus an interpretable
-     fallback and the paper boundary statement.
+   - Prepare `reports/fallback_plan.csv` before primary execution. If a route
+     yields no verified result, record its failure and ask the user before
+     removing named noncritical factors; retain the original route only as
+     `model_optimization`, never as an unverified result.
    - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
    - Before selecting a data-reading strategy, record row counts, field schema,
      units, time cutoff, and expected reuse. For large event data, create one
@@ -175,8 +175,9 @@ It does not promise an award. It maximizes award probability through disciplined
    - Maintain `reports/figure_manifest.csv` and run
      `scripts/verify_manuscript_quality.py` after compiling the paper.
    - For every figure, record the linked claim, question answered, reader
-     takeaway, and decision relevance. A decorative figure with no claim is not
-     a paper figure; run `scripts/verify_figure_narrative.py` before freeze.
+     takeaway, and decision relevance. Use a result chart for each subproblem;
+     add mechanism, path/network, comparison, and validation visuals only when
+     they answer a real question; run `scripts/verify_figure_narrative.py`.
    - Read `references/embedded/paper-presentation-and-visual-design.md` after a
      paper can compile. Give figures and tables one shared style profile and
      record their role, units, precision, panel order, and legibility evidence.
@@ -214,9 +215,10 @@ It does not promise an award. It maximizes award probability through disciplined
      problem-specific change per subproblem; retain it only when its measured
      incremental benefit clears the predeclared threshold, otherwise narrow or
      reject the innovation claim.
-   - Make the abstract and conclusion answer-first: each subproblem needs a
-     direct recommendation or result, method/result locator, validation, and
-     explicit boundary. Use `scripts/verify_answer_density.py` after drafting.
+   - Make the abstract concise in three explicit blocks: analysis, method, and
+     quantitative result. Each conclusion needs a direct recommendation,
+     method/result locator, validation, and boundary; run
+     `scripts/verify_abstract_structure.py` and `scripts/verify_answer_density.py`.
    - Derive the page budget from the seven-part argument chain and verified
      official maximum. Treat corpus-derived ranges and minimum page targets as
      advisory only; never add repetition, screenshots, raw code, or unexplained
@@ -258,10 +260,10 @@ It does not promise an award. It maximizes award probability through disciplined
      when semantic choices are unbound, no-ground-truth validation lacks
      independent checks, a subproblem has no conclusion chain, or a claimed
      innovation lacks a verified incremental benefit.
-   - Run `scripts/verify_abstract_quality.py`,
-     `scripts/verify_bibliography_metadata.py`, and
-     `scripts/verify_manuscript_quality.py`. Inspect source passages and rendered
-     pages even when their structural reports pass.
+   - Run `scripts/verify_abstract_quality.py`, `scripts/verify_abstract_structure.py`,
+     `scripts/verify_result_story.py`, `scripts/verify_bibliography_metadata.py`, and
+     `scripts/verify_manuscript_quality.py`. Resolve missing verified results,
+     unauthorized simplification, or missing comparison visuals before freeze.
    - Run `scripts/verify_latex_compatibility.py` to create a fresh, compile-backed
      `reports/latex_compatibility.json`. Require successful project-root and
      `build/` output builds before the paper-delivery gate.

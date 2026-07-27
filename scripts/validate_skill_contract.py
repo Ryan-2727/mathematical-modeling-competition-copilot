@@ -60,6 +60,8 @@ def main() -> int:
             "scripts/verify_answer_density.py",
             "scripts/verify_visual_design_system.py",
             "scripts/verify_paper_presentation.py",
+            "scripts/verify_abstract_structure.py",
+            "scripts/verify_result_story.py",
             "scripts/contestctl.py", "scripts/lock_contest_rules.py",
             "scripts/verify_abstract_quality.py",
             "scripts/verify_bibliography_metadata.py",
@@ -131,6 +133,10 @@ def main() -> int:
             "verify_answer_density.py", "verify_visual_design_system.py",
             "verify_paper_presentation.py", "presentation_checklist.csv",
         ),
+        "references/embedded/result-first-paper-convergence.md": (
+            "analysis-method-result", "model_simplification_log.csv",
+            "visual_storyboard.csv", "verify_result_story.py",
+        ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
         ),
@@ -177,6 +183,8 @@ def main() -> int:
         "scripts/verify_answer_density.py",
         "scripts/verify_visual_design_system.py",
         "scripts/verify_paper_presentation.py",
+        "scripts/verify_abstract_structure.py",
+        "scripts/verify_result_story.py",
         "assets/latex-paper-template/main.tex",
         "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",
