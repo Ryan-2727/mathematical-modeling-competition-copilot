@@ -177,6 +177,9 @@ It does not promise an award. It maximizes award probability through disciplined
    - For every figure, record the linked claim, question answered, reader
      takeaway, and decision relevance. A decorative figure with no claim is not
      a paper figure; run `scripts/verify_figure_narrative.py` before freeze.
+   - Read `references/embedded/paper-presentation-and-visual-design.md` after a
+     paper can compile. Give figures and tables one shared style profile and
+     record their role, units, precision, panel order, and legibility evidence.
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
@@ -211,6 +214,9 @@ It does not promise an award. It maximizes award probability through disciplined
      problem-specific change per subproblem; retain it only when its measured
      incremental benefit clears the predeclared threshold, otherwise narrow or
      reject the innovation claim.
+   - Make the abstract and conclusion answer-first: each subproblem needs a
+     direct recommendation or result, method/result locator, validation, and
+     explicit boundary. Use `scripts/verify_answer_density.py` after drafting.
    - Derive the page budget from the seven-part argument chain and verified
      official maximum. Treat corpus-derived ranges and minimum page targets as
      advisory only; never add repetition, screenshots, raw code, or unexplained
@@ -235,6 +241,8 @@ It does not promise an award. It maximizes award probability through disciplined
 8. **Table polish**
    - Read `references/embedded/latex-tables.md` for LaTeX or academic tables.
    - For general contest tables, enforce captions, units, source notes, aligned numeric columns, reasonable precision, and consistency with result files.
+   - Record `reports/table_manifest.csv`; run
+     `scripts/verify_visual_design_system.py` once figures and tables are frozen.
 
 9. **Final verification**
    - Read `references/embedded/final-verification.md`.
@@ -273,6 +281,11 @@ It does not promise an award. It maximizes award probability through disciplined
      `scripts/verify_page_readability.py`. Review abstract density, first formula
      definitions, figure legibility, blank space, table breaks, appendix
      boundaries, and reference consistency; a missing page review is not a pass.
+   - Complete `reports/presentation_checklist.csv` on the rendered PDF and run
+     `scripts/verify_paper_presentation.py`. Resolve hierarchy, font size,
+     heading/caption orphan, formula-break, table-continuity, whitespace, and
+     visual-consistency findings. Missing optional extractors are `LIMITED`, not
+     visual proof.
    - Run `scripts/anonymity_scan.py` on the complete delivery tree and archive;
      enable image metadata and OCR checks when the runtime is available.
    - Rerun `scripts/verify_verified_values.py`,
@@ -294,6 +307,8 @@ It does not promise an award. It maximizes award probability through disciplined
      objections with `scripts/aggregate_reviewer_reports.py`, and produce
      prioritized findings plus `reports/reviewer_scorecard.csv`. Do not use
      current-problem answer sources or paired exemplars.
+   - Treat the `writing` reviewer as an editorial reviewer. Require page,
+     figure/table, equation, or source-section locators for every observation.
    - Run `scripts/verify_award_readiness.py`. Treat a pass as evidence-structure
      completeness only, never as proof of mathematical truth or an award prediction.
    - After any accepted revision, rerun phase 9 before freezing.
@@ -375,6 +390,8 @@ Create or preserve this layout unless the user provides an existing project stru
 |   |-- bibliography_metadata/
 |   |-- source_passages/
 |   |-- figure_manifest.csv
+|   |-- table_manifest.csv
+|   |-- presentation_checklist.csv
 |   |-- paper_depth_plan.csv
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv

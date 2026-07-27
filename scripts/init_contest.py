@@ -139,7 +139,11 @@ def main() -> int:
     )
     write_if_missing(
         root / "reports/figure_manifest.csv",
-        "figure,label,source_data,caption_insight,axes_units,color_accessibility,claim_id,question_answered,reader_takeaway,decision_relevance,status\n",
+        "figure,label,source_data,caption_insight,axes_units,color_accessibility,claim_id,question_answered,reader_takeaway,decision_relevance,visual_role,style_profile,palette_or_grayscale,typography_precision,panel_order,legibility_evidence,status\n",
+    )
+    write_if_missing(
+        root / "reports/table_manifest.csv",
+        "table,label,source_data,caption_insight,units,precision,emphasis,continuation_check,claim_id,question_answered,reader_takeaway,decision_relevance,style_profile,legibility_evidence,status\n",
     )
     write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
     write_if_missing(root / "reports/semantic_audit.csv", "semantic_id,dataset,field,raw_representation,semantic_type,decision_impact,evidence,alternative_treatment,sensitivity_needed,used_by,status\n")
@@ -153,6 +157,7 @@ def main() -> int:
     write_if_missing(root / "reports/fallback_plan.csv", "subproblem,model_family,failure_mode,trigger,primary_route,fallback_route,boundary_statement,result_file,paper_location,status\n")
     write_if_missing(root / "reports/causal_claims.csv", "claim_id,claim_type,estimand,causal_graph,confounders,counterfactual,identification_strategy,diagnostic,limitation,paper_location,status\n")
     write_if_missing(root / "reports/page_readability_checklist.csv", "page,abstract_density,formula_first_definition,figure_legibility,blank_space,table_break,appendix_boundary,reference_consistency,reviewer,status\n")
+    write_if_missing(root / "reports/presentation_checklist.csv", "page,hierarchy,font_readability,orphaned_headings_captions,formula_breaks,table_continuity,whitespace_balance,visual_consistency,reviewer,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
     write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
     write_if_missing(

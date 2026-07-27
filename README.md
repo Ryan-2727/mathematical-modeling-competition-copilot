@@ -152,6 +152,12 @@ The release and paper workflow then uses deterministic checks:
 - `verify_page_readability.py` checks a page-by-page human checklist for abstract
   density, definitions, figure legibility, whitespace, table breaks, appendix
   boundaries, and reference consistency before submission freeze.
+- `verify_answer_density.py` requires each abstract/conclusion answer to map to
+  a direct result or recommendation, validation, and limitation;
+  `verify_visual_design_system.py` records a shared figure/table style profile;
+  `verify_paper_presentation.py` binds a rendered-PDF page checklist for
+  hierarchy, font readability, formula/table breaks, whitespace, and consistency.
+  These are evidence gates, not automated beauty scores.
 - `verify_modeling_argument_quality.py` binds data semantics to mechanisms,
   requires two independent checks when ground truth is absent, maps every answer
   to a decisive value and limitation, and rejects innovation claims without a

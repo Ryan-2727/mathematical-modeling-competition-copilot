@@ -10,8 +10,10 @@ official judging formula or award prediction.
    problem-specific creativity.
 2. Evidence reviewer: executed provenance, correctness checks, uncertainty,
    stress tests, and whether conclusions exceed the evidence.
-3. Paper reviewer: answer localization, abstract quality, notation, visual
-   legibility, narrative economy, and practical interpretation.
+3. Editorial reviewer (`writing`): answer localization, abstract and conclusion
+   prominence, notation/formula readability, figure/table visual hierarchy,
+   narrative pacing, page balance, and practical interpretation. Every finding
+   names a PDF page, figure/table label, equation, or source-section locator.
 
 Complete `reports/reviewer_scorecard.csv` for four dimensions:
 `assumption_rationality`, `model_creativity`, `result_correctness`, and
@@ -32,3 +34,8 @@ smallest credible fix.
 
 Prefer at most three revisions with the highest expected judging benefit per
 hour. Rebuild and reverify every accepted change.
+
+Run `verify_answer_density.py`, `verify_visual_design_system.py`, and
+`verify_paper_presentation.py` before this optional review. Their reports record
+structural evidence and completed rendered-page checks; they do not replace the
+editorial review or claim to measure beauty.

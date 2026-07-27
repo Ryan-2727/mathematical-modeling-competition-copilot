@@ -71,6 +71,9 @@ REPORTS = {
         "reports/figure_narrative_verification.json",
         "reports/page_readability_verification.json",
         "reports/modeling_argument_quality.json",
+        "reports/answer_density.json",
+        "reports/visual_design_system.json",
+        "reports/paper_presentation.json",
     ),
 }
 CSV_LEDGERS = {
@@ -106,6 +109,19 @@ REPORT_BINDINGS = {
     ),
     "reports/paper_depth.json": (
         ("paper_depth_plan_sha256", "reports/paper_depth_plan.csv", "file"),
+    ),
+    "reports/answer_density.json": (
+        ("abstract_sha256", "paper/sections/abstract.tex", "file"),
+        ("conclusion_sha256", "paper/sections/conclusion.tex", "file"),
+        ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
+    ),
+    "reports/visual_design_system.json": (
+        ("figure_manifest_sha256", "reports/figure_manifest.csv", "file"),
+        ("table_manifest_sha256", "reports/table_manifest.csv", "file"),
+    ),
+    "reports/paper_presentation.json": (
+        ("paper_sha256", "paper/main.pdf", "file"),
+        ("checklist_sha256", "reports/presentation_checklist.csv", "file"),
     ),
     "reports/delivery_profiles.json": (
         ("delivery_manifest_sha256", "delivery/manifest.csv", "file"),

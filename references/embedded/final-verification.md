@@ -69,6 +69,14 @@ The verification loop:
 - Complete `reports/page_readability_checklist.csv` against the compiled PDF and
   run `scripts/verify_page_readability.py`. A missing renderer is `LIMITED`, not
   visual proof; unresolved checklist cells are `FAIL`.
+- Complete `reports/presentation_checklist.csv` against every compiled page, then
+  run `scripts/verify_paper_presentation.py`. Resolve hierarchy, font,
+  heading/caption orphan, formula-break, table-continuity, whitespace, and
+  cross-page consistency findings; optional extractor absence is `LIMITED`, not
+  a visual pass.
+- Run `scripts/verify_visual_design_system.py` and
+  `scripts/verify_answer_density.py`. Require a shared declared visual style,
+  legibility evidence, and a direct, bounded answer chain for every subproblem.
 - `paper/main.tex` compiles to the inspected `paper/main.pdf`; source and PDF are
   both retained as the first deliverable.
 - Run `scripts/verify_pdf_visual.py` on `paper/main.pdf`. Review the rendered
