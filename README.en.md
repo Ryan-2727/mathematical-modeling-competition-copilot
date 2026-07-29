@@ -166,6 +166,13 @@ The release and paper workflow then uses deterministic checks:
   requires two independent checks when ground truth is absent, maps every answer
   to a decisive value and limitation, and rejects innovation claims without a
   problem-specific, measured incremental benefit.
+- `verify_decision_stability.py`, `verify_figure_numeric_contract.py`, and
+  `verify_model_budget.py` require perturbation-aware recommendations, traceable
+  figure numbers, and a baseline-first route that fits the remaining contest time.
+  `verify_three_minute_review.py` makes the abstract-to-limitation reviewer path
+  explicit, while `verify_latex_dependency_lock.py` freezes portable compiler,
+  package, font, and editor-configuration evidence. All five reports are hash-bound
+  during submission freeze; unavailable compilers are `LIMITED`, never a false pass.
 
 ## CUMCM Model Routing
 

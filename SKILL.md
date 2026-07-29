@@ -260,6 +260,9 @@ It does not promise an award. It maximizes award probability through disciplined
      when semantic choices are unbound, no-ground-truth validation lacks
      independent checks, a subproblem has no conclusion chain, or a claimed
      innovation lacks a verified incremental benefit.
+   - Before freeze, read `references/embedded/decision-and-delivery-gates.md`.
+     Record stability disclosures, figure numeric contracts, a time-bounded model
+     budget, the first three-minute review path, and a portable LaTeX dependency lock.
    - Run `scripts/verify_abstract_quality.py`, `scripts/verify_abstract_structure.py`,
      `scripts/verify_result_story.py`, `scripts/verify_bibliography_metadata.py`, and
      `scripts/verify_manuscript_quality.py`. Resolve missing verified results,
@@ -490,6 +493,7 @@ Use these files as phase playbooks:
 - `references/embedded/cumcm-2026-rules.md`
 - `references/embedded/executable-contest-profiles.md`
 - `references/embedded/operational-quality-gates.md`
+- `references/embedded/decision-and-delivery-gates.md`
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
 - `references/embedded/problem-structure-playbooks.md`
 - `references/embedded/mathmodel-six-phase.md`

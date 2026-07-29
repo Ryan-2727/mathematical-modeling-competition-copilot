@@ -76,6 +76,11 @@ REPORTS = {
         "reports/paper_presentation.json",
         "reports/abstract_structure.json",
         "reports/result_story.json",
+        "reports/decision_stability.json",
+        "reports/figure_numeric_contract.json",
+        "reports/model_budget.json",
+        "reports/three_minute_review.json",
+        "reports/latex_dependency_lock.json",
     ),
 }
 CSV_LEDGERS = {
@@ -133,6 +138,30 @@ REPORT_BINDINGS = {
         ("verified_values_sha256", "results/verified_values.csv", "file"),
         ("simplification_log_sha256", "reports/model_simplification_log.csv", "file"),
         ("visual_storyboard_sha256", "reports/visual_storyboard.csv", "file"),
+    ),
+    "reports/decision_stability.json": (
+        ("decision_stability_sha256", "reports/decision_stability.csv", "file"),
+        ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
+    ),
+    "reports/figure_numeric_contract.json": (
+        ("contract_sha256", "reports/figure_numeric_contract.csv", "file"),
+        ("figure_manifest_sha256", "reports/figure_manifest.csv", "file"),
+        ("verified_values_sha256", "results/verified_values.csv", "file"),
+    ),
+    "reports/model_budget.json": (
+        ("model_budget_sha256", "reports/model_budget.csv", "file"),
+    ),
+    "reports/three_minute_review.json": (
+        ("review_sha256", "reports/three_minute_review.csv", "file"),
+        ("figure_manifest_sha256", "reports/figure_manifest.csv", "file"),
+        ("verified_values_sha256", "results/verified_values.csv", "file"),
+        ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
+    ),
+    "reports/latex_dependency_lock.json": (
+        ("source_sha256", "paper", "paper_source"),
+        ("latexmkrc_sha256", "paper/.latexmkrc", "file"),
+        ("vscode_settings_sha256", "paper/.vscode/settings.json", "file"),
+        ("vscode_extensions_sha256", "paper/.vscode/extensions.json", "file"),
     ),
     "reports/delivery_profiles.json": (
         ("delivery_manifest_sha256", "delivery/manifest.csv", "file"),

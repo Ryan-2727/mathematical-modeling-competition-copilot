@@ -143,6 +143,12 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
 - `verify_modeling_argument_quality.py` 将数据语义与题目机制绑定；无真值时要求
   至少两项独立验证；每个答案必须映射到关键数值与局限，并拒绝没有问题特定、
   可量化增益的创新主张。
+- `verify_decision_stability.py`、`verify_figure_numeric_contract.py` 和
+  `verify_model_budget.py` 分别要求披露扰动下的推荐变化、图表数值可追溯性以及
+  基线优先的剩余时间预算。`verify_three_minute_review.py` 将摘要、路线图、核心结果、
+  建议和局限组织为评委首三分钟阅读路径；`verify_latex_dependency_lock.py` 固定跨
+  Overleaf/VS Code 的编译器、宏包、字体和编辑器配置证据。五份报告均在提交冻结时绑定
+  哈希；缺少编译器只能报告 `LIMITED`，不能伪装成编译成功。
 
 ## 国赛模型路由增强
 
