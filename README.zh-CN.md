@@ -91,6 +91,29 @@ python scripts/init_contest.py --project-dir <project> --contest CUMCM --year 20
 python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 2027 --mode training
 ```
 
+统一控制器保留原有的 `check` 命令，并新增项目迁移、环境诊断、依赖图执行和结果汇总：
+
+```bash
+python scripts/contestctl.py migrate --project-dir <project>
+python scripts/contestctl.py migrate --project-dir <project> --apply
+python scripts/contestctl.py doctor --project-dir <project> --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase paper --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase freeze --profile strict
+python scripts/contestctl.py summary --project-dir <project>
+```
+
+`minimal` 用于快速的标准库检查；`standard` 用于日常建模和论文写作，缺少可选工具时如实报告
+`LIMITED`；`strict` 用于最终提交冻结。`custom` 只能选择已登记的检查节点，不能执行任意 shell
+命令。迁移默认只预览，只有提供 `--apply` 才会写入，并保留已有字段和未知证据。
+
+论文质量保障新增三项能力：
+
+- `verify_rendered_figures.py`：绑定图和源数据哈希、生成命令标识、最终插入尺寸下的字号、线宽与
+  DPI，并在工具可用时生成灰度、色觉模拟和整篇论文页面总览；
+- `verify_notation_registry.py`：检查符号首次定义、类型与样式、代码名、图中标签、单位和公式量纲；
+- `generate_paper_artifacts.py`：从已核验账本生成核心结果、模型对比、稳健性、结论摘要和图注来源
+  LaTeX 片段，统一写入 `paper/generated/`，不会覆盖人工撰写的章节。
+
 论文与 Skill 发布流程使用以下确定性检查：
 
 - `lock_contest_rules.py` 将保存的官方规则快照与 URL、哈希、结构化字段

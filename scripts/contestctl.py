@@ -11,6 +11,12 @@ import re
 from pathlib import Path
 from typing import Any
 
+from contest_orchestration import (
+    doctor_project,
+    migrate_project,
+    run_workflow,
+    summarize_run,
+)
 from verify_latex_compatibility import source_fingerprint
 
 PHASE_ORDER = ("setup", "modeling", "paper", "delivery", "freeze")
@@ -499,21 +505,40 @@ def check_phase(root: Path, phase: str) -> dict[str, Any]:
     }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(dest="command", required=True)
-    check = subparsers.add_parser("check")
-    check.add_argument("--project-dir", type=Path, required=True)
-    check.add_argument("--phase", choices=PHASE_ORDER, required=True)
-    check.add_argument("--out", type=Path, required=True)
-    args = parser.parse_args()
-    root = args.project_dir.resolve()
-    payload = check_phase(root, args.phase)
-    out = (args.out if args.out.is_absolute() else root / args.out).resolve()
+def report_output(root: Path, value: Path, default: str) -> Path:
+    out = value if value else Path(default)
+    out = (out if out.is_absolute() else root / out).resolve()
     try:
         out.relative_to(root / "reports")
     except ValueError as exc:
-        raise SystemExit("phase report output must stay inside project reports/") from exc
+        raise SystemExit("command output must stay inside project reports/") from exc
+    return out
+
+
+def write_payload(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+
+def selected_profile(root: Path, requested: str | None) -> str:
+    if requested:
+        return requested
+    try:
+        manifest = json.loads(
+            (root / "contest_manifest.json").read_text(encoding="utf-8-sig")
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return "standard"
+    value = str(manifest.get("quality_profile") or "standard")
+    return value if value in {"minimal", "standard", "strict"} else "standard"
+
+
+def command_check(args: argparse.Namespace) -> int:
+    root = args.project_dir.resolve()
+    payload = check_phase(root, args.phase)
+    out = report_output(root, args.out, f"reports/phase_{args.phase}.json")
     protected = {
         safe_file(root, relative)
         for group in (FILES, REPORTS, CSV_LEDGERS)
@@ -522,12 +547,173 @@ def main() -> int:
     }
     if any(same_file(out, item) for item in protected):
         raise SystemExit("phase report output must not overwrite a required artifact")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    write_payload(out, payload)
+    print(payload["status"])
+    return {"PASS": 0, "FAIL": 1, "LIMITED": 2}[payload["status"]]
+
+
+def command_doctor(args: argparse.Namespace) -> int:
+    root = args.project_dir.resolve()
+    profile = selected_profile(root, args.profile)
+    payload = doctor_project(root, profile)
+    write_payload(
+        report_output(root, args.out, "reports/contestctl_doctor.json"), payload
     )
     print(payload["status"])
     return {"PASS": 0, "FAIL": 1, "LIMITED": 2}[payload["status"]]
+
+
+def command_migrate(args: argparse.Namespace) -> int:
+    root = args.project_dir.resolve()
+    payload = migrate_project(
+        root,
+        args.apply,
+        report_output(root, args.out, "reports/project_migration.json"),
+    )
+    print(payload["status"])
+    return 0 if payload["status"] == "PASS" else 1
+
+
+def command_run(args: argparse.Namespace) -> int:
+    root = args.project_dir.resolve()
+    profile = selected_profile(root, args.profile)
+    custom = args.profile_file.resolve() if args.profile_file else None
+    try:
+        payload = run_workflow(
+            root,
+            args.phase,
+            profile,
+            custom,
+            force=args.force,
+            dry_run=args.dry_run,
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+        payload = {
+            "status": "FAIL",
+            "phase": args.phase,
+            "profile": profile,
+            "nodes": [],
+            "errors": [str(exc)],
+            "warnings": [],
+        }
+    if profile == "strict" and not args.dry_run:
+        coordination = check_phase(root, args.phase)
+        payload["nodes"].append(
+            {
+                "node": f"coordinate-{args.phase}",
+                "phase": args.phase,
+                "status": coordination["status"],
+                "reason": "existing phase artifact and report coordination",
+                "returncode": {
+                    "PASS": 0,
+                    "FAIL": 1,
+                    "LIMITED": 2,
+                }[coordination["status"]],
+                "output_hashes": {},
+            }
+        )
+        payload["errors"].extend(coordination["errors"])
+        payload["warnings"].extend(coordination["warnings"])
+        if coordination["status"] == "FAIL":
+            payload["status"] = "FAIL"
+        elif coordination["status"] == "LIMITED" and payload["status"] == "PASS":
+            payload["status"] = "LIMITED"
+    out = report_output(
+        root, args.out, f"reports/workflow_{args.phase}.json"
+    )
+    write_payload(out, payload)
+    print(payload["status"])
+    return {"PASS": 0, "FAIL": 1, "LIMITED": 2}[payload["status"]]
+
+
+def command_summary(args: argparse.Namespace) -> int:
+    root = args.project_dir.resolve()
+    if args.run_report:
+        report = (
+            args.run_report
+            if args.run_report.is_absolute()
+            else root / args.run_report
+        ).resolve()
+    else:
+        candidates = [
+            root / "reports" / "workflow_freeze.json",
+            root / "reports" / "workflow_paper.json",
+        ]
+        report = next((item for item in candidates if item.is_file()), candidates[0])
+    try:
+        payload = json.loads(report.read_text(encoding="utf-8-sig"))
+        if not isinstance(payload, dict):
+            raise ValueError("workflow report must be a JSON object")
+        summary = summarize_run(payload)
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+        summary = {
+            "status": "FAIL",
+            "phase": None,
+            "profile": None,
+            "counts": {},
+            "errors": [str(exc)],
+            "warnings": [],
+        }
+    if args.out:
+        write_payload(report_output(root, args.out, "reports/workflow_summary.json"), summary)
+    if args.format == "json":
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+    else:
+        counts = " ".join(
+            f"{key}={value}" for key, value in summary.get("counts", {}).items()
+        )
+        print(
+            f"{summary['status']} phase={summary.get('phase') or '-'} "
+            f"profile={summary.get('profile') or '-'} {counts}".rstrip()
+        )
+        for item in summary.get("errors", []):
+            print(f"ERROR {item}")
+        for item in summary.get("warnings", []):
+            print(f"WARNING {item}")
+    return {"PASS": 0, "FAIL": 1, "LIMITED": 2}.get(summary["status"], 1)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    check = subparsers.add_parser("check")
+    check.add_argument("--project-dir", type=Path, required=True)
+    check.add_argument("--phase", choices=PHASE_ORDER, required=True)
+    check.add_argument("--out", type=Path, required=True)
+    check.set_defaults(handler=command_check)
+    doctor = subparsers.add_parser("doctor")
+    doctor.add_argument("--project-dir", type=Path, required=True)
+    doctor.add_argument(
+        "--profile",
+        choices=["minimal", "standard", "strict"],
+    )
+    doctor.add_argument("--out", type=Path)
+    doctor.set_defaults(handler=command_doctor)
+    migrate = subparsers.add_parser("migrate")
+    migrate.add_argument("--project-dir", type=Path, required=True)
+    migrate.add_argument("--apply", action="store_true")
+    migrate.add_argument("--out", type=Path)
+    migrate.set_defaults(handler=command_migrate)
+    run = subparsers.add_parser("run")
+    run.add_argument("--project-dir", type=Path, required=True)
+    run.add_argument("--phase", choices=["paper", "freeze"], required=True)
+    run.add_argument(
+        "--profile",
+        choices=["minimal", "standard", "strict", "custom"],
+    )
+    run.add_argument("--profile-file", type=Path)
+    run.add_argument("--force", action="store_true")
+    run.add_argument("--dry-run", action="store_true")
+    run.add_argument("--out", type=Path)
+    run.set_defaults(handler=command_run)
+    summary = subparsers.add_parser("summary")
+    summary.add_argument("--project-dir", type=Path, required=True)
+    summary.add_argument("--run-report", type=Path)
+    summary.add_argument("--format", choices=["human", "json"], default="human")
+    summary.add_argument("--out", type=Path)
+    summary.set_defaults(handler=command_summary)
+    args = parser.parse_args()
+    return args.handler(args)
 
 
 if __name__ == "__main__":

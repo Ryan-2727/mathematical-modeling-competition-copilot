@@ -1,0 +1,15 @@
+{
+  "name": "custom",
+  "description": "Example explicit allow-list for a custom workflow.",
+  "phases": {
+    "paper": [
+      "generate-paper-artifacts",
+      "verify-notation",
+      "verify-rendered-figures"
+    ],
+    "freeze": [
+      "verify-decision-stability",
+      "verify-figure-contract"
+    ]
+  }
+}

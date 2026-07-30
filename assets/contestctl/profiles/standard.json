@@ -1,0 +1,25 @@
+{
+  "name": "standard",
+  "description": "Normal contest workflow with honest LIMITED results for unavailable optional tools.",
+  "phases": {
+    "paper": [
+      "generate-paper-artifacts",
+      "verify-notation",
+      "verify-rendered-figures",
+      "verify-abstract-structure",
+      "verify-answer-density",
+      "verify-result-story",
+      "verify-visual-design",
+      "verify-figure-narrative"
+    ],
+    "freeze": [
+      "verify-decision-stability",
+      "verify-figure-contract",
+      "verify-model-budget",
+      "verify-three-minute-review",
+      "verify-evidence-chain",
+      "verify-decision-quality",
+      "verify-modeling-argument"
+    ]
+  }
+}

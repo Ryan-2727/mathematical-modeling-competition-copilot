@@ -94,6 +94,35 @@ python scripts/init_contest.py --project-dir <project> --contest CUMCM --year 20
 python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 2027 --mode training
 ```
 
+The unified controller preserves the existing `check` command and adds
+versioned migration, runtime diagnosis, dependency-aware execution, and summaries:
+
+```bash
+python scripts/contestctl.py migrate --project-dir <project>
+python scripts/contestctl.py migrate --project-dir <project> --apply
+python scripts/contestctl.py doctor --project-dir <project> --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase paper --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase freeze --profile strict
+python scripts/contestctl.py summary --project-dir <project>
+```
+
+Use `minimal` for fast standard-library checks, `standard` for normal work with
+honest `LIMITED` results when optional tools are absent, and `strict` before
+submission. `custom` accepts only registered node identifiers, never arbitrary
+shell commands. Migration is preview-only unless `--apply` is supplied and
+preserves existing and unknown evidence fields.
+
+Paper assurance now includes:
+
+- `verify_rendered_figures.py`: output/source hashes, generation identity,
+  insertion-size text/line/DPI checks, grayscale and color-vision previews, and
+  a full-paper page overview when rendering tools are available;
+- `verify_notation_registry.py`: first definitions, symbol/type/style mappings,
+  code and figure names, units, and declared equation dimensions;
+- `generate_paper_artifacts.py`: traceable core-result, model-comparison,
+  robustness, conclusion, and figure-note LaTeX fragments under
+  `paper/generated/`, without overwriting manual sections.
+
 The release and paper workflow then uses deterministic checks:
 
 - `lock_contest_rules.py` binds saved official rule snapshots to URLs, hashes,

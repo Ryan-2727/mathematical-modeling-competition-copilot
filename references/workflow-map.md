@@ -16,6 +16,12 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `operational-quality-gates.md`: hash-bound rule lock, cumulative phase
   controller, abstract/bibliography/manuscript checks, and separation of user
   delivery from official submission.
+- `decision-and-delivery-gates.md`: stability, figure-number, model-budget,
+  three-minute-review, and LaTeX dependency-lock evidence.
+- `orchestration-and-paper-assurance.md`: versioned project migration,
+  `contestctl doctor/run/summary`, minimal/standard/strict/custom profiles,
+  rendered-figure review, notation/dimension checks, and generated LaTeX result
+  artifacts.
 - `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `problem-structure-playbooks.md`: route selection for evaluation, forecasting, optimization, mechanism, classification, and simulation problems.
@@ -73,8 +79,8 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Modeling | `reports/model_design.md`, `reports/model_decision_log.csv` | Variables and assumptions defined; route selection justified against a baseline |
 | Literature | `reports/bibliography.csv`, metadata snapshots, passage evidence, `paper/references.bib` | At least 10 uniquely cited works have hash-bound authoritative metadata, exact-title Scholar queries, retraction-check records, and checked source passages |
 | Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, stress/units ledgers | Executed; hashes and units reconcile; model-family evidence and decisive claims are challenged |
-| Figures/tables | `figures/`, tables, `reports/figure_manifest.csv` | Referenced, source-backed, unit-labelled, and grayscale/color checked |
-| Writing | `paper/main.tex`, `paper/main.pdf`, complete portable LaTeX source tree | Abstract, manuscript, Overleaf-style root and VS Code `build/` outputs pass; official maximum is enforced without an empirical minimum-page quota |
+| Figures/tables | `figures/`, tables, figure manifests, page overview | Hash-bound at insertion size; text, lines, resolution, clipping, hierarchy, grayscale, and color-vision reviews are recorded |
+| Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, notation/dimension registry, complete portable LaTeX source tree | Results remain traceable; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
 | Final check | verification report, paper-depth report, argument coverage, claim report, model/value reports, `reports/latex_compatibility.json`, PDF visual report, portable-source ZIP report, `reports/paper_delivery.json` | Depth, compile, visual, anonymity, numeric, reproduction, and delivery gates pass or name scoped limitations |
 | Optional review | blinded reviewer reports, aggregation, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; objections cite artifacts, vetoes are resolved or disclosed, and final checks rerun after changes |
 | Skill release | blinded benchmark manifest and regression report | No score exceeds its accepted regression tolerance; baselines are never changed automatically |

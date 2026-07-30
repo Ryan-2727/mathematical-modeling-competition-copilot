@@ -17,6 +17,10 @@ It does not promise an award. It maximizes award probability through disciplined
 - Read only the embedded reference files needed for the current phase.
 - Use installed plugins when they are available for file-specific work such as notebooks, DOCX, PDF, or spreadsheets.
 - If a plugin or runtime is unavailable, continue with the workflow manually and record the limitation in `reports/verification_report.md`.
+- Read `references/embedded/orchestration-and-paper-assurance.md` before the
+  paper phase. Use `scripts/contestctl.py doctor`, then select `minimal`,
+  `standard`, `strict`, or an explicit custom profile. Preview project migrations
+  before applying them.
 - After a phase's specialist reports exist, run `scripts/contestctl.py check` for
   that phase. Fix the source artifact behind a failure; never edit a phase report
   to bypass a gate.
@@ -184,6 +188,13 @@ It does not promise an award. It maximizes award probability through disciplined
 
 7. **Paper writing**
    - Read `references/embedded/paper-writing.md`.
+   - Run `scripts/generate_paper_artifacts.py`; use the traceable fragments under
+     `paper/generated/` rather than manually duplicating decisive values.
+   - Complete `reports/notation_registry.csv`,
+     `reports/equation_dimensions.csv`, and
+     `reports/rendered_figure_manifest.csv`; run
+     `scripts/verify_notation_registry.py` and
+     `scripts/verify_rendered_figures.py` at final insertion size.
    - Read `references/embedded/paper-depth-and-page-budget.md` and create
      `reports/paper_depth_plan.csv` before drafting. Count main text and
      appendices separately; current official limits always override corpus-derived
@@ -263,6 +274,10 @@ It does not promise an award. It maximizes award probability through disciplined
    - Before freeze, read `references/embedded/decision-and-delivery-gates.md`.
      Record stability disclosures, figure numeric contracts, a time-bounded model
      budget, the first three-minute review path, and a portable LaTeX dependency lock.
+   - Run `scripts/contestctl.py run --phase paper --profile standard` during
+     writing and `scripts/contestctl.py run --phase freeze --profile strict`
+     before submission. Treat `LIMITED` as unresolved evidence under `strict`;
+     never edit a generated report to bypass its source failure.
    - Run `scripts/verify_abstract_quality.py`, `scripts/verify_abstract_structure.py`,
      `scripts/verify_result_story.py`, `scripts/verify_bibliography_metadata.py`, and
      `scripts/verify_manuscript_quality.py`. Resolve missing verified results,
@@ -383,30 +398,17 @@ Create or preserve this layout unless the user provides an existing project stru
 |   `-- verified_values.csv
 |-- figures/
 |-- reports/
-|   |-- problem_analysis.md
-|   |-- model_design.md
-|   |-- experiment_log.md
 |   |-- contest_rules_snapshot.md
-|   |-- data_audit.md
-|   |-- traceability.md
 |   |-- claims.csv
-|   |-- argument_coverage.csv
 |   |-- bibliography.csv
 |   |-- bibliography_metadata/
 |   |-- source_passages/
 |   |-- figure_manifest.csv
 |   |-- table_manifest.csv
-|   |-- presentation_checklist.csv
-|   |-- paper_depth_plan.csv
 |   |-- model_decision_log.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- model_validation.json
-|   |-- model_validation_report.json
-|   |-- pdf_visual_verification.json
-|   |-- verified_values_verification.json
-|   |-- reviewer_scorecard.csv
-|   |-- milestones.csv
 |   |-- ai_usage_log.jsonl
 |   |-- latex_compatibility.json
 |   |-- portable_latex_verification.json
@@ -484,47 +486,12 @@ Create or preserve this layout unless the user provides an existing project stru
 
 ## Embedded References
 
-Use these files as phase playbooks:
-
-- `references/embedded/contest-setup.md`
-- `references/embedded/award-oriented-workflow.md`
-- `references/embedded/contest-operations-72h.md`
-- `references/embedded/contest-modes-and-compliance.md`
-- `references/embedded/cumcm-2026-rules.md`
-- `references/embedded/executable-contest-profiles.md`
-- `references/embedded/operational-quality-gates.md`
-- `references/embedded/decision-and-delivery-gates.md`
+Use the phase-specific references named above. Keep
+`references/embedded/orchestration-and-paper-assurance.md` as the command,
+profile, migration, rendered-figure, notation, and generated-artifact playbook.
 - `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
-- `references/embedded/problem-structure-playbooks.md`
-- `references/embedded/mathmodel-six-phase.md`
-- `references/embedded/llm-mm-agent-methodology.md`
-- `references/embedded/literature-fetch-and-explain.md`
-- `references/embedded/paper-context-resolver.md`
-- `references/embedded/verified-literature-and-two-part-delivery.md`
-- `references/embedded/computation-and-visualization.md`
-- `references/embedded/data-traceability-and-reproducibility.md`
-- `references/embedded/data-units-and-source-quality.md`
-- `references/embedded/evidence-and-quality-gates.md`
-- `references/embedded/stress-testing-and-uncertainty.md`
-- `references/embedded/runtime-template-and-decision-audits.md`
-- `references/embedded/award-oriented-evidence-chain.md`
-- `references/embedded/mechanism-semantics-and-argument.md`
-- `references/embedded/post-paper-award-review.md`
-- `references/embedded/reviewer-scorecard-and-presentation.md`
-- `references/embedded/independent-review-and-regression.md`
-- `references/embedded/diagrams.md`
-- `references/embedded/paper-writing.md`
-- `references/embedded/paper-learning-from-exemplars.md`
-- `references/embedded/2025-corpus-observations.md`
-- `references/embedded/multi-year-corpus-observations.md`
-- `references/embedded/latex-paper-pipeline.md`
-- `references/embedded/paper-writing-zh-cn-format2025.md`
-- `references/embedded/paper-writing-en-contest-base.md`
-- `references/embedded/paper-writing-mcm-icm-current.md`
-- `references/embedded/latex-tables.md`
-- `references/embedded/final-verification.md`
-- `references/embedded/tool-fallbacks.md`
-- `references/embedded/submission-and-anonymity.md`
-- `references/embedded/training-evaluation-loop.md`
+Use `references/embedded/latex-paper-pipeline.md` for portable compilation and
+`references/embedded/final-verification.md` before completion.
 
-Read `references/workflow-map.md` for the dependency map, plugin limits, and fallback behavior.
+Read `references/workflow-map.md` for the complete embedded-reference index,
+dependency map, plugin limits, and fallback behavior.

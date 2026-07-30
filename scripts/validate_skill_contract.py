@@ -30,6 +30,8 @@ def main() -> int:
     body_required = ("Do not infer invocation", "unless the user explicitly calls this skill")
     missing_body = [phrase for phrase in body_required if phrase not in text]
     if missing_body: fail("body invocation gate missing: " + ", ".join(missing_body))
+    if len(text.splitlines()) > 500:
+        fail("SKILL.md exceeds the 500-line routing budget")
     descriptor_checks = {
         "README.md": "Explicit Invocation Only",
         "README.en.md": "Explicit Invocation Only",
@@ -67,6 +69,10 @@ def main() -> int:
             "scripts/verify_bibliography_metadata.py",
             "scripts/verify_manuscript_quality.py",
             "scripts/verify_delivery_profiles.py",
+            "scripts/generate_paper_artifacts.py",
+            "scripts/verify_notation_registry.py",
+            "scripts/verify_rendered_figures.py",
+            "references/embedded/orchestration-and-paper-assurance.md",
             "joint feasibility report", "independent node-by-node",
             "attachment-to-subproblem coverage audit",
             "zero/blank-value semantics",
@@ -137,6 +143,12 @@ def main() -> int:
             "analysis-method-result", "model_simplification_log.csv",
             "visual_storyboard.csv", "verify_result_story.py",
         ),
+        "references/embedded/orchestration-and-paper-assurance.md": (
+            "contestctl.py doctor", "contestctl.py run", "contestctl.py summary",
+            "project_schema_version", "rendered_figure_manifest.csv",
+            "notation_registry.csv", "equation_dimensions.csv",
+            "generate_paper_artifacts.py", "paper/generated/core_results.tex",
+        ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
         ),
@@ -175,6 +187,10 @@ def main() -> int:
         "scripts/verify_bibliography_metadata.py",
         "scripts/verify_manuscript_quality.py",
         "scripts/verify_delivery_profiles.py",
+        "scripts/contest_orchestration.py",
+        "scripts/generate_paper_artifacts.py",
+        "scripts/verify_notation_registry.py",
+        "scripts/verify_rendered_figures.py",
         "scripts/verify_evidence_chain.py",
         "scripts/verify_decision_quality.py",
         "scripts/verify_figure_narrative.py",

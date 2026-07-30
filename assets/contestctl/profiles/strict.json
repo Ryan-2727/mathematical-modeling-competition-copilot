@@ -1,0 +1,29 @@
+{
+  "name": "strict",
+  "description": "Submission-freeze workflow requiring rendering and LaTeX evidence.",
+  "phases": {
+    "paper": [
+      "generate-paper-artifacts",
+      "verify-notation",
+      "verify-rendered-figures",
+      "verify-abstract-structure",
+      "verify-answer-density",
+      "verify-result-story",
+      "verify-visual-design",
+      "verify-figure-narrative",
+      "verify-latex-compatibility",
+      "verify-bibliography",
+      "verify-manuscript"
+    ],
+    "freeze": [
+      "verify-decision-stability",
+      "verify-figure-contract",
+      "verify-model-budget",
+      "verify-three-minute-review",
+      "verify-latex-lock",
+      "verify-evidence-chain",
+      "verify-decision-quality",
+      "verify-modeling-argument"
+    ]
+  }
+}

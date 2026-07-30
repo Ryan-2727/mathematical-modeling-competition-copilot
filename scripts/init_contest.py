@@ -47,8 +47,10 @@ def main() -> int:
         "results",
         "figures",
         "paper",
+        "paper/generated",
         "reports",
         "reports/bibliography_metadata",
+        "reports/figure_previews",
         "reports/source_passages",
         "support",
         "environment",
@@ -61,6 +63,7 @@ def main() -> int:
     else:
         scaffold_latex_paper(root, template=selected_template)
     manifest = {
+        "project_schema_version": 1,
         "contest": args.contest,
         "year": args.year,
         "mode": args.mode,
@@ -70,12 +73,21 @@ def main() -> int:
         "rules_snapshot_file": "reports/contest_rules_snapshot.md",
         "rules_lock_file": "rules.lock.json",
         "submission_profile": selected_profile,
+        "quality_profile": "standard",
+        "workflow": {
+            "phase": "setup",
+            "optional_tool_policy": "limited_when_unavailable",
+            "generated_dir": "paper/generated",
+        },
         "latex_template": selected_template,
         "live_mode_policy": "static-authoritative-sources-only" if args.mode == "live" else "not-applicable",
         "submission_state": "draft",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
-    (root / "contest_manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_if_missing(
+        root / "contest_manifest.json",
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+    )
     write_if_missing(
         root / "rules.lock.json",
         json.dumps(
@@ -142,6 +154,14 @@ def main() -> int:
         "figure,label,source_data,caption_insight,axes_units,color_accessibility,claim_id,question_answered,reader_takeaway,decision_relevance,visual_role,style_profile,palette_or_grayscale,typography_precision,panel_order,legibility_evidence,status\n",
     )
     write_if_missing(
+        root / "reports/rendered_figure_manifest.csv",
+        "figure,figure_sha256,source_data,source_sha256,generator_command_id,"
+        "insertion_width_cm,insertion_height_cm,min_text_pt,min_line_pt,"
+        "clipping_check,overlap_check,axis_crowding_check,panel_order,"
+        "panel_spacing,visual_hierarchy,grayscale_check,colorblind_check,"
+        "supported_conclusion,evidence_location,paper_page,status\n",
+    )
+    write_if_missing(
         root / "reports/table_manifest.csv",
         "table,label,source_data,caption_insight,units,precision,emphasis,continuation_check,claim_id,question_answered,reader_takeaway,decision_relevance,style_profile,legibility_evidence,status\n",
     )
@@ -166,6 +186,15 @@ def main() -> int:
     write_if_missing(root / "reports/presentation_checklist.csv", "page,hierarchy,font_readability,orphaned_headings_captions,formula_breaks,table_continuity,whitespace_balance,visual_consistency,reviewer,status\n")
     write_if_missing(root / "reports/stress_tests.csv", "claim_id,subproblem,stress_type,change,acceptance_criterion,result_file,outcome,verdict,status\n")
     write_if_missing(root / "reports/units.csv", "symbol,meaning,unit,source,conversion,range_check,status\n")
+    write_if_missing(
+        root / "reports/notation_registry.csv",
+        "symbol,canonical_tex,meaning,kind,unit,first_definition,code_names,"
+        "figure_labels,appendix_location,equation_ids,status\n",
+    )
+    write_if_missing(
+        root / "reports/equation_dimensions.csv",
+        "equation_id,left_dimension,right_dimension,notation_symbols,evidence,status\n",
+    )
     write_if_missing(
         root / "reports/reviewer_scorecard.csv",
         "dimension,score_1_to_5,evidence,major_objection,smallest_fix,status\n"

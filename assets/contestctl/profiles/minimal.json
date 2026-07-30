@@ -1,0 +1,14 @@
+{
+  "name": "minimal",
+  "description": "Fast standard-library structural checks.",
+  "phases": {
+    "paper": [
+      "generate-paper-artifacts",
+      "verify-notation"
+    ],
+    "freeze": [
+      "verify-decision-stability",
+      "verify-model-budget"
+    ]
+  }
+}

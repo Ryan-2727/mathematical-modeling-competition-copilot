@@ -17,7 +17,7 @@ jobs:
           python-version: "3.11"
       - name: Validate skill contract
         run: python scripts/validate_skill_contract.py
-      - name: Run tests
+      - name: Run full tests including CUMCM and MCM orchestration E2E
         run: python -m unittest discover -s tests -v
 
   windows-utf8-path-qa:
@@ -31,7 +31,7 @@ jobs:
           python-version: "3.11"
       - name: Validate skill contract in UTF-8 mode
         run: python -X utf8 scripts/validate_skill_contract.py
-      - name: Run tests on Windows
+      - name: Run full tests on Windows including orchestration E2E
         run: python -X utf8 -m unittest discover -s tests -v
       - name: Initialize under a non-ASCII path
         shell: pwsh
@@ -65,8 +65,12 @@ jobs:
             texlive-latex-extra \
             texlive-xetex \
             zip
+      - name: Install Pillow for rendered-figure simulations
+        run: python -m pip install pillow
       - name: Run artifact QA tests with Poppler available
         run: python -m unittest discover -s tests -p "test_artifact_qa.py" -v
+      - name: Run orchestration and paper-assurance tests with renderers available
+        run: python -m unittest discover -s tests -p "test_orchestration_and_paper_assurance.py" -v
       - name: Scaffold both bundled paper templates
         run: |
           python scripts/scaffold_latex_paper.py \
