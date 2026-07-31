@@ -43,7 +43,7 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - hash-bound official-rule locks and cumulative setup/modeling/paper/delivery/freeze phase gates
 - data audit, traceability, environment capture, anonymity scanning, and hashing
-- CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, mutually exclusive
+- A single machine-readable CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, mutually exclusive
   AI use/non-use branches, an H6 executable problem audition, and timed readiness scoring
 - a local-only live-contest boundary: internet search is allowed, contest work is
   never uploaded by the skill, and privacy-ambiguous actions pause for user input
@@ -382,7 +382,10 @@ python -X utf8 scripts\validate_skill_contract.py
 python -X utf8 -m unittest discover -s tests -v
 ```
 
-## Repository Structure
+## Core Repository Structure
+
+This is a navigation view, not an exhaustive file manifest. The tested
+`assets/skill-contract.json` is authoritative for required bundled resources.
 
 ```text
 .
@@ -391,8 +394,12 @@ python -X utf8 -m unittest discover -s tests -v
 |-- README.en.md
 |-- DESCRIPTION.md
 |-- assets/
+|   |-- contest-profiles/cumcm-2026.json
+|   |-- skill-contract.json
 |   `-- latex-paper-template/
 |-- scripts/
+|   |-- contest_profile.py
+|   |-- contestlib.py
 |   |-- contestctl.py
 |   |-- lock_contest_rules.py
 |   |-- scaffold_latex_paper.py

@@ -4,6 +4,17 @@ Use this module for Chinese mathematical modeling contests that follow the 2025 
 
 If a local contest or provincial contest gives stricter rules, follow the stricter local rules while preserving the identity-removal, appendix, support-material, and electronic-submission rules below.
 
+## Contents
+
+- [Paper Version](#paper-version)
+- [Abstract Page](#abstract-page)
+- [Main Text](#main-text)
+- [Appendix Requirements](#appendix-requirements)
+- [Electronic Paper](#electronic-paper)
+- [Support Materials](#support-materials)
+- [Identity And Compliance Rules](#identity-and-compliance-rules)
+- [Final Writing Gate](#final-writing-gate)
+
 ## Paper Version
 
 - Use white A4 paper.

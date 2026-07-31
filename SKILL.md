@@ -5,496 +5,337 @@ description: Explicit-invocation-only end-to-end mathematical modeling competiti
 
 # Mathematical Modeling Competition Copilot
 
-Use this only after the user explicitly invokes `$mathematical-modeling-competition-copilot` or supplies a direct link to this SKILL.md. Do not infer invocation merely because a request concerns mathematical modeling, a contest, or paper writing; answer those requests normally unless the user explicitly calls this skill.
+Do not infer invocation from a modeling, contest, or paper-writing request. Use
+this workflow only when the user explicitly calls this skill or links this file.
 
-When explicitly invoked, use this as the main entry point for mathematical modeling competitions. This skill is self-contained for workflow knowledge: it embeds the contest setup, modeling, literature resolution, computation, writing, table, and verification rules that were previously spread across multiple helper skills.
+When invoked, coordinate contest setup, modeling, literature, computation,
+visualization, LaTeX paper production, verification, and delivery. This workflow
+does not guarantee an award; it improves award readiness through reproducible
+evidence, restrained claims, and reader-focused presentation.
 
-It does not promise an award. It maximizes award probability through disciplined modeling, reproducible computation, strong writing, and hard verification.
+## Operating contract
 
-## Operating Mode
+- Follow phases 0--12 in order. Re-enter an earlier phase when a later gate
+  exposes a source defect.
+- Read only the references named for the current phase. Use
+  `references/workflow-map.md` only for routing; do not load every module.
+- Initialize with `scripts/init_contest.py`. Preserve nonempty user work and
+  preview migrations before applying them.
+- Use `scripts/contestctl.py doctor`, select `minimal`, `standard`, `strict`, or
+  a declared custom profile, and run the phase check after specialist artifacts
+  exist. Fix source artifacts, never generated gate reports.
+- Use installed file plugins when available. If a renderer, extractor, solver,
+  or plugin is unavailable, follow `references/embedded/tool-fallbacks.md` and
+  record the scoped limitation; never infer verification.
+- Treat every `PASS` as evidence that the declared check passed, not proof that
+  the mathematics is true or that an award will be won.
 
-- Start with the required workflow order below.
-- Read only the embedded reference files needed for the current phase.
-- Use installed plugins when they are available for file-specific work such as notebooks, DOCX, PDF, or spreadsheets.
-- If a plugin or runtime is unavailable, continue with the workflow manually and record the limitation in `reports/verification_report.md`.
-- Read `references/embedded/orchestration-and-paper-assurance.md` before the
-  paper phase. Use `scripts/contestctl.py doctor`, then select `minimal`,
-  `standard`, `strict`, or an explicit custom profile. Preview project migrations
-  before applying them.
-- After a phase's specialist reports exist, run `scripts/contestctl.py check` for
-  that phase. Fix the source artifact behind a failure; never edit a phase report
-  to bypass a gate.
+## Required workflow
 
-## Required Workflow Order
+### 0. Contest mode, rules, privacy, and compliance
 
-0. **Contest mode, rules, and compliance**
-   - Read `references/embedded/contest-modes-and-compliance.md` before viewing or researching a live problem.
-   - Read `references/embedded/executable-contest-profiles.md`; select a profile
-     from fresh official rules, never from a template or excellent-paper corpus.
-   - Read `references/embedded/operational-quality-gates.md`; save official rule
-     snapshots, run `scripts/lock_contest_rules.py`, and require hash-bound
-     `rules.lock.json` plus `reports/rules_lock_verification.json`.
-   - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
-   - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
-   - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and
-     `references/embedded/cumcm-2026-readiness.md`; select `cumcm-2026`, declare
-     `ai_mode=none|used`, and verify local online-action records.
+Read:
 
-1. **Contest setup and strategy**
-   - Read `references/embedded/contest-setup.md`.
-   - Read `references/embedded/award-oriented-workflow.md`; use
-     `contest-operations-72h.md` generally and the exact 74-hour readiness file
-     for CUMCM 2026.
-   - Use the embedded brainstorming gate in that file before committing to a modeling route.
-   - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
-   - If the contest is CUMCM / 中国大学生数学建模竞赛（国赛）, read `references/embedded/cumcm-model-selection.md` before selecting models. Ask for, or infer from the context, the available Python, MATLAB, and LINGO environments; treat them as equal paths and select the one that best matches the method and reproducibility need.
-   - Create or update `plan.md`, `todo.md`, and `reports/milestones.csv`.
-   - For CUMCM 2026, verify comparable candidate baselines and lock the problem
-     by H6 with `scripts/verify_problem_audition.py`.
+- `references/embedded/contest-modes-and-compliance.md`
+- `references/embedded/executable-contest-profiles.md`
+- `references/embedded/operational-quality-gates.md`
+- for CUMCM 2026, `references/embedded/cumcm-2026-rules.md` and
+  `references/embedded/cumcm-2026-readiness.md`
 
-2. **Problem analysis and model design**
-   - Read `references/embedded/llm-mm-agent-methodology.md`.
-   - Read `references/embedded/mathmodel-six-phase.md` for contest-specific modeling expectations.
-   - Read `references/embedded/problem-structure-playbooks.md`; choose a route
-     from problem structure and evidence needs, not from algorithm prestige.
-   - For CUMCM, route each subproblem through the task signals and model cards in `references/embedded/cumcm-model-selection.md`. Maintain a trace from subproblem to data, model, implementation, validation, result file, and paper section.
-   - Produce a subproblem map, assumptions, variables, constraints, objective functions, candidate methods, and validation plan.
-   - Read `references/embedded/mechanism-semantics-and-argument.md`. Before
-     choosing a model, complete `reports/semantic_audit.csv` and
-     `reports/mechanism_audit.json`: bind every material field representation
-     (zero, blank, censored, missing, or not-observed) to an operational meaning,
-     decision impact, credible alternative treatment, and a falsifiable mechanism
-     implication. Do not turn an unclassified data encoding into an assumption.
-   - Maintain `reports/model_decision_log.csv`. For each subproblem compare a
-     credible baseline with candidate routes, record the failure test and
-     validation cost, and explain why the selected model matches the mechanism.
-     Then preserve the executed comparison and failure-oriented refutation in
-     `reports/model_challenge.json`; a candidate that does not meet its
-     predeclared advantage threshold must be rejected or have its claim narrowed.
-   - Prepare `reports/fallback_plan.csv` before primary execution. If a route
-     yields no verified result, record its failure and ask the user before
-     removing named noncritical factors; retain the original route only as
-     `model_optimization`, never as an unverified result.
-   - Create `reports/traceability.md`; every subproblem must map data, model, validation, result file, figure/table, and paper section.
-   - Before selecting a data-reading strategy, record row counts, field schema,
-     units, time cutoff, and expected reuse. For large event data, create one
-     hashed, immutable aggregate and fit only on the declared historical window;
-     for compact planning tables, preserve the original constraint granularity
-     instead of adding unnecessary aggregation.
-   - Before accepting any candidate solution, classify constraints as local or
-     coupled. For coupled systems, record a constraint graph, input decoding,
-     schema checks, zero/blank-value semantics, and an attachment-to-subproblem coverage audit,
-     then create a joint feasibility report. An independent node-by-node
-     projection is a diagnostic baseline only; it cannot be reported as a
-     feasible solution until shared constraints are checked globally.
-   - For a question involving policy, price, intervention, or treatment, state
-     whether the target is predictive or causal before choosing the model. A
-     causal conclusion needs an estimand, identification assumptions, and
-     diagnostics; otherwise write the result as association or prediction only.
+Required actions:
 
-3. **Literature and reproduction details**
-   - Read `references/embedded/verified-literature-and-two-part-delivery.md`
-     whenever a completed paper is in scope.
-   - Read `references/embedded/literature-fetch-and-explain.md` when literature search, paper selection, or paper explanation is needed.
-   - Read `references/embedded/paper-context-resolver.md` when a narrow source-backed detail matters.
-   - Do not use broad paper summaries as a substitute for model design.
-   - Maintain `reports/bibliography.csv`. A completed paper requires at least 10
-     unique, relevant scholarly works that are cited in the LaTeX body, verified
-     against authoritative metadata, confirmed by an observed exact-title Google
-     Scholar result, and read at the passage supporting the attributed claim.
-   - Record source, claim, source locator, modeling impact, and whether evidence
-     is direct or inferred. Never fabricate bibliographic metadata or source content.
-   - Save authoritative metadata snapshots and claim-supporting passage evidence
-     with hashes. Run `scripts/verify_bibliography_metadata.py`; a pass does not
-     replace reading and interpreting the source.
+- Declare training, live, or post-hoc mode; contest, year, language, deadline,
+  selected executable profile, and deliverables in `contest_manifest.json`.
+- Save fresh official rule snapshots locally, run
+  `scripts/lock_contest_rules.py`, and require hash-bound `rules.lock.json` plus
+  `reports/rules_lock_verification.json`. An initializer skeleton is not
+  official evidence, and a prior-year rule is never the silent default.
+- Keep current contest statements, attachments, data, screenshots, ideas,
+  code, results, paper fragments, and summaries local. Internet search is
+  allowed; current-problem answer searching, interactive help, public posting,
+  and uploading contest material are forbidden. If privacy is ambiguous, ask
+  the user and wait for the answer. Record online actions locally.
+- Record material AI use from the first use. For CUMCM 2026 select
+  `ai_mode=none|used`; the two branches are mutually exclusive.
 
-4. **Computation and experiments**
-   - Read `references/embedded/computation-and-visualization.md`.
-   - Read `references/embedded/data-traceability-and-reproducibility.md` before fitting a data-driven model.
-   - Read `references/embedded/runtime-template-and-decision-audits.md`. Before
-     selecting a solver, run `scripts/probe_runtime_capabilities.py` and lock
-     the observed package versions and required solver profile. Do not install
-     dependencies or silently substitute a solver in contest mode.
-   - Read `references/embedded/award-oriented-evidence-chain.md`. For every
-     decisive claim, maintain `reports/evidence_chain.csv` linking executable
-     code/command, data hash, result hash, verified-value key, reachable LaTeX
-     macro, figure label, and paper location.
-   - Read `references/embedded/data-units-and-source-quality.md` and maintain
-     `reports/units.csv` for quantities, conversions, ranges, and source scope.
-   - Read `references/embedded/stress-testing-and-uncertainty.md`. Register at
-     least one proportionate, predeclared stress test for every decisive
-     subproblem claim in `reports/stress_tests.csv` and save its result artifact.
-     When input uncertainty materially changes a recommendation, compare the
-     expected-value baseline with a robust or stochastic/scenario policy; a
-     mean-only recommendation is not final evidence.
-   - Before reusing a large-data aggregate, bind source and cache hashes,
-     aggregation rule, and a leakage-safe time split with
-     `scripts/verify_data_cache.py`.
-   - Treat a supplied result-form file as a template only after an explicit
-     declaration and structural audit with `scripts/verify_result_template.py`.
-     Never ingest a result-named file as evidence or copy it automatically.
-   - Use notebooks, scripts, or spreadsheets to produce executable evidence.
-   - Every numeric conclusion must come from executed code, a spreadsheet formula, or a cited source.
-   - Maintain `reports/claims.csv` and run `scripts/run_reproduction.py` for the frozen pipeline.
-   - Put every decisive computed value in `results/verified_values.csv`, generate
-     `paper/generated/results.tex` with `scripts/generate_verified_values.py`,
-     and run `scripts/verify_verified_values.py`. Do not retype those values in
-     reachable LaTeX.
-   - Declare each primary model family and its required validation artifacts in
-     a validation manifest, then run `scripts/verify_model_validation.py`.
-     Use the dedicated adapter for regression/forecast, classification,
-     optimization, stochastic simulation, network/ranking, mechanism/dynamics,
-     causal/econometric, unsupervised, queueing/reliability,
-     spatial/spatiotemporal, or multi-objective/dynamic optimization.
-     Treat a pass as evidence-presence and threshold verification, not proof
-     that the selected model is mathematically correct.
-   - Read `references/embedded/evidence-and-quality-gates.md` before claiming numerical validation.
-   - Complete `reports/validation_design.csv` before interpreting results. When
-     external ground truth is absent, require at least two independent checks
-     such as an invariant, small-case enumeration, historical backtest,
-     cross-model agreement, synthetic recovery, or stress test; state the
-     residual limitation instead of inventing accuracy.
-   - For each decision recommendation, complete `reports/decision_robustness.csv`
-     and `reports/implementation_readiness.csv`. Report expected and extreme
-     outcomes, feasibility rate, resource/time cost, interpretability, failure
-     mode, and contingency; do not present objective value alone as a final
-     recommendation.
-   - For causal language, complete `reports/causal_claims.csv`. A causal row
-     requires an estimand, causal graph, confounder set, counterfactual,
-     identification strategy, and diagnostic; otherwise mark it predictive or
-     association and state the causal limitation in the paper.
-   - Read the coupled feasibility gate in
-     `references/embedded/operational-quality-gates.md` whenever controls,
-     networks, geometry, schedules, or shared resources couple decision
-     variables. Record bound coverage, equality residuals, and every coupled
-     constraint violation before writing result tables or numerical claims.
+### 1. Setup, problem audition, and strategy
 
-5. **Tabular analysis and scenario sheets**
-   - Use spreadsheet-style reasoning for scoring matrices, sensitivity tables, scenario comparison, and dashboards.
-   - If the Spreadsheets plugin is installed, use it for `.xlsx` creation and verification.
-   - If not installed, create CSV/Markdown tables and record the limitation.
+Read:
 
-6. **Figures, flowcharts, and diagrams**
-   - Read `references/embedded/diagrams.md`.
-   - Separate data-driven charts from non-data diagrams.
-   - Keep figure captions, labels, and source data traceable.
-   - Maintain `reports/figure_manifest.csv` and run
-     `scripts/verify_manuscript_quality.py` after compiling the paper.
-   - For every figure, record the linked claim, question answered, reader
-     takeaway, and decision relevance. Use a result chart for each subproblem;
-     add mechanism, path/network, comparison, and validation visuals only when
-     they answer a real question; run `scripts/verify_figure_narrative.py`.
-   - Read `references/embedded/paper-presentation-and-visual-design.md` after a
-     paper can compile. Give figures and tables one shared style profile and
-     record their role, units, precision, panel order, and legibility evidence.
+- `references/embedded/contest-setup.md`
+- `references/embedded/award-oriented-workflow.md`
+- `references/embedded/contest-operations-72h.md`
+- for CUMCM, `references/embedded/cumcm-model-selection.md`
 
-7. **Paper writing**
-   - Read `references/embedded/paper-writing.md`.
-   - Run `scripts/generate_paper_artifacts.py`; use the traceable fragments under
-     `paper/generated/` rather than manually duplicating decisive values.
-   - Complete `reports/notation_registry.csv`,
-     `reports/equation_dimensions.csv`, and
-     `reports/rendered_figure_manifest.csv`; run
-     `scripts/verify_notation_registry.py` and
-     `scripts/verify_rendered_figures.py` at final insertion size.
-   - Read `references/embedded/paper-depth-and-page-budget.md` and create
-     `reports/paper_depth_plan.csv` before drafting. Count main text and
-     appendices separately; current official limits always override corpus-derived
-     targets.
-   - When improving paper-writing ability or when an offline corpus of excellent
-     papers is available, read `references/embedded/paper-learning-from-exemplars.md`.
-   - For the learned 2025 Chinese-paper profile, read
-     `references/embedded/2025-corpus-observations.md`.
-   - For cross-year CUMCM writing patterns, read
-     `references/embedded/multi-year-corpus-observations.md`.
-   - Read `references/embedded/latex-paper-pipeline.md` whenever the user requests
-     LaTeX or the contest submission is a Chinese national-format paper.
-   - `scripts/init_contest.py` scaffolds the contest-specific portable LaTeX tree
-     when `paper/` is empty: `cumcm` for CUMCM and `mcm-icm` for MCM/ICM. For an
-     existing project, run `scripts/scaffold_latex_paper.py --template <name>`
-     without `--force`; preserve a nonempty paper directory instead of
-     overwriting it.
-   - Select a current rules branch from the rules snapshot. Use the 2025 Chinese file only as a historical baseline, not as a silent rule default.
-   - For English MCM/ICM, also read `references/embedded/paper-writing-mcm-icm-current.md`.
-   - Assemble assumptions, notation, model derivations, results, figures, tables, sensitivity analysis, and limitations into the paper. For every numbered
-     subproblem, preserve the complete chain: task mechanism -> method rationale
-     -> variables/assumptions -> derivation -> algorithm -> quantified result and
-     interpretation -> local validation. Do not replace this chain with a short
-     method summary followed by an answer.
-   - Maintain `reports/conclusion_map.csv` so every subproblem begins from its
-     question and direct answer/recommendation, then links a decisive verified
-     value, method rationale, validation, limitation, figure/table, and paper
-     location. Use `reports/innovation_ledger.csv` for at most one
-     problem-specific change per subproblem; retain it only when its measured
-     incremental benefit clears the predeclared threshold, otherwise narrow or
-     reject the innovation claim.
-   - Make the abstract concise in three explicit blocks: analysis, method, and
-     quantitative result. Each conclusion needs a direct recommendation,
-     method/result locator, validation, and boundary; run
-     `scripts/verify_abstract_structure.py` and `scripts/verify_answer_density.py`.
-   - Derive the page budget from the seven-part argument chain and verified
-     official maximum. Treat corpus-derived ranges and minimum page targets as
-     advisory only; never add repetition, screenshots, raw code, or unexplained
-     plots to meet a length target.
-   - The completed paper deliverable is `paper/main.pdf` plus its rebuildable
-     LaTeX source, including `paper/main.tex`, every included source file,
-     `paper/references.bib`, `.latexmkrc`, `.vscode/`, `sections/`, `figures/`,
-     and required tables, styles, and assets. It must compile and preview with
-     XeLaTeX/latexmk in both Overleaf and VS Code using only relative paths and
-     portable fonts.
-   - When delivering LaTeX to a user, package a portable source ZIP whose root
-     contains the single entrypoint `main.tex`, `README.md`, `.latexmkrc`,
-     `.vscode/`, `sections/`, and every referenced figure, code,
-     bibliography, style, and asset. Use UTF-8 and XeLaTeX. Configure VS Code
-     LaTeX Workshop to build `main.tex` through latexmk, write PDF output under
-     `build/`, and preview it in a tab; make the same root ZIP directly usable by
-     Overleaf with `main.tex` selected as the main document. Read
-     `latex-paper-pipeline.md` for the required layout and verification steps.
-     Do not substitute DOCX, Markdown, Typst, or source-only output for this
-     deliverable unless the user explicitly changes the requirement.
+Required actions:
 
-8. **Table polish**
-   - Read `references/embedded/latex-tables.md` for LaTeX or academic tables.
-   - For general contest tables, enforce captions, units, source notes, aligned numeric columns, reasonable precision, and consistency with result files.
-   - Record `reports/table_manifest.csv`; run
-     `scripts/verify_visual_design_system.py` once figures and tables are frozen.
+- Confirm the team role split, available Python/MATLAB/LINGO runtimes, time
+  budget, attachment inventory, and submission constraints.
+- Use the bounded brainstorming gate before committing to a route. Create
+  `plan.md`, `todo.md`, and `reports/milestones.csv`.
+- For CUMCM 2026, run comparable executable baselines for candidate problems,
+  complete `reports/problem_audition.csv`, and lock the choice by H6 with
+  `scripts/verify_problem_audition.py`. Use the exact 74-hour schedule rather
+  than adapting a generic 72-hour board.
 
-9. **Final verification**
-   - Read `references/embedded/final-verification.md`.
-   - Read `references/embedded/tool-fallbacks.md` if any plugin or runtime was missing.
-   - Do not claim completion without fresh evidence.
-   - Run `scripts/verify_claims.py`; complete `reports/argument_coverage.csv` for every subproblem.
-   - Run `scripts/verify_evidence_chain.py` and
-     `scripts/verify_decision_quality.py`. Their pass binds decisive claims to
-     data/code/results/LaTeX and requires recorded refutation, uncertainty,
-     fallback, causal-boundary, and implementability evidence; it does not prove
-     the selected mathematics is true.
-   - Run `scripts/verify_modeling_argument_quality.py`. It blocks completion
-     when semantic choices are unbound, no-ground-truth validation lacks
-     independent checks, a subproblem has no conclusion chain, or a claimed
-     innovation lacks a verified incremental benefit.
-   - Before freeze, read `references/embedded/decision-and-delivery-gates.md`.
-     Record stability disclosures, figure numeric contracts, a time-bounded model
-     budget, the first three-minute review path, and a portable LaTeX dependency lock.
-   - Run `scripts/contestctl.py run --phase paper --profile standard` during
-     writing and `scripts/contestctl.py run --phase freeze --profile strict`
-     before submission. Treat `LIMITED` as unresolved evidence under `strict`;
-     never edit a generated report to bypass its source failure.
-   - Run `scripts/verify_abstract_quality.py`, `scripts/verify_abstract_structure.py`,
-     `scripts/verify_result_story.py`, `scripts/verify_bibliography_metadata.py`, and
-     `scripts/verify_manuscript_quality.py`. Resolve missing verified results,
-     unauthorized simplification, or missing comparison visuals before freeze.
-   - Run `scripts/verify_latex_compatibility.py` to create a fresh, compile-backed
-     `reports/latex_compatibility.json`. Require successful project-root and
-     `build/` output builds before the paper-delivery gate.
-   - Run `scripts/verify_paper_depth.py` with the verified main-text count,
-     appendix count, advisory planning ranges, official maximum, and expected
-     subproblem count. Use `--minimum-mode enforce` only for a verified official
-     minimum. Treat its pass as structural evidence only.
-   - Build `support.zip` from `support/materials_manifest.csv`, then run
-     `scripts/verify_paper_delivery.py`. A pass is a structural gate only; inspect
-     the rendered PDF and the cited source passages separately.
-   - Run `scripts/verify_pdf_visual.py` against the compiled PDF. Inspect its
-     rendered pages, first-page markers, sparse-page findings, metadata,
-     figure/table references, and any `LIMITED` items. A mandatory visual rule
-     cannot pass when its required renderer or evidence is unavailable.
-   - Complete a page-by-page human review in
-     `reports/page_readability_checklist.csv`, then run
-     `scripts/verify_page_readability.py`. Review abstract density, first formula
-     definitions, figure legibility, blank space, table breaks, appendix
-     boundaries, and reference consistency; a missing page review is not a pass.
-   - Complete `reports/presentation_checklist.csv` on the rendered PDF and run
-     `scripts/verify_paper_presentation.py`. Resolve hierarchy, font size,
-     heading/caption orphan, formula-break, table-continuity, whitespace, and
-     visual-consistency findings. Missing optional extractors are `LIMITED`, not
-     visual proof.
-   - Run `scripts/anonymity_scan.py` on the complete delivery tree and archive;
-     enable image metadata and OCR checks when the runtime is available.
-   - Rerun `scripts/verify_verified_values.py`,
-     `scripts/verify_model_validation.py`, and the frozen reproduction from a
-     clean copied project. Require repeated-run hashes or declared
-     tolerance-aware values to agree.
-   - When a portable LaTeX source ZIP is delivered, run
-     `scripts/verify_portable_latex.py --archive <zip> --out <report> --compile`
-     after final packaging. Treat a pass as evidence that the archive rebuilds
-     from a fresh directory, not as proof that a remote Overleaf account was used.
+### 2. Problem analysis and model design
 
-10. **Optional award-focused post-paper review**
-   - Only after modeling and the complete paper are finished and phase 9 has run,
-     ask whether the user wants this optional phase. Do not run it by default.
-   - If the user opts in, read `references/embedded/post-paper-award-review.md`
-     and `references/embedded/reviewer-scorecard-and-presentation.md`, then read
-     `references/embedded/independent-review-and-regression.md`. Give independent
-     reviewers a blinded artifact packet, aggregate their evidence-located
-     objections with `scripts/aggregate_reviewer_reports.py`, and produce
-     prioritized findings plus `reports/reviewer_scorecard.csv`. Do not use
-     current-problem answer sources or paired exemplars.
-   - Treat the `writing` reviewer as an editorial reviewer. Require page,
-     figure/table, equation, or source-section locators for every observation.
-   - Run `scripts/verify_award_readiness.py`. Treat a pass as evidence-structure
-     completeness only, never as proof of mathematical truth or an award prediction.
-   - After any accepted revision, rerun phase 9 before freezing.
+Read:
 
-11. **Freeze and submit**
-   - Read `references/embedded/submission-and-anonymity.md`.
-   - In the user-facing `delivery/`, deliver two explicit parts:
-     (1) `paper/main.pdf` with the complete LaTeX
-     source tree, and (2) `support.zip` with runnable code, legally distributable
-     data or reproducible retrieval evidence, environment, exact commands, results,
-     licenses, and hashes.
-   - If a user requests LaTeX source, include the verified portable source ZIP
-     in part (1), retain its hash, and state the exact VS Code and Overleaf
-     entrypoint (`main.tex`) in the delivery note.
-   - Run anonymity scan, environment capture, paper-delivery verification, and submission verification. Record final hashes and transition the manifest through `verified`, `frozen`, `hashed`, `submitted`, and `receipt_verified` only with evidence.
-   - Keep the complete user handoff under `delivery/` and only
-     contest-permitted files under `official-submission/`. Run
-     `scripts/verify_delivery_profiles.py`; never place the user-side support
-     archive in an MCM/ICM official submission.
-   - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; the used branch requires `AI工具使用详情.pdf`, while the none branch requires the exact post-reference declaration.
+- `references/embedded/llm-mm-agent-methodology.md`
+- `references/embedded/mathmodel-six-phase.md`
+- `references/embedded/problem-structure-playbooks.md`
+- `references/embedded/mechanism-semantics-and-argument.md`
 
-12. **Paper-learning regression loop**
-   - Read `references/embedded/training-evaluation-loop.md` before using an
-     excellent-paper corpus to improve this skill.
-   - For 2026 readiness, score 8-, 24-, 48-, and 74-hour rehearsals with `scripts/score_training_readiness.py`.
-   - For user-owned historical problems, first run
-     `scripts/prepare_private_regression.py inventory`, then prepare an
-     explicit private allow-list outside both the source corpus and this Git
-     repository. Do not copy or expose prior code, papers, result files, build
-     products, scores, or benchmark manifests to the solving context.
-   - Keep private manifests, copied inputs, execution artifacts, and scores out
-     of Git. A contaminated source tree needs an explicit reviewed
-     acknowledgement; otherwise mark that case blocked rather than guessing.
-   - Profile an offline corpus once with `scripts/paper_corpus_metrics.py --recursive` and
-     visual inspection; use a portable corpus manifest with relative identifiers,
-     hashes, inspection dates, page metrics, and limitations. Convert only
-     recurring, non-copyrightable strengths into reusable writing rules.
-   - Solve each test problem independently and freeze the baseline source,
-     results, figures, and LaTeX paper before any post-hoc comparison.
-   - Compare the baseline with the corpus profile, revise no more than three
-     generalizable gaps, then re-solve from the statement and data. Never require a
-     current-problem paper as an input and never copy exemplar wording, numbers,
-     models, or figures.
-   - Run `scripts/run_benchmark_regression.py` on the blinded benchmark manifest
-     before releasing a skill revision. A regression beyond the declared
-     tolerance blocks release; never update baselines automatically.
-   - For private historical cases, create a metadata-only five-dimension
-     evidence rubric with `scripts/score_private_regression.py` for input audit,
-     feasibility, reproducibility, writing, and visual communication. Keep its
-     evidence and report outside Git; it is a release diagnostic, not an award
-     prediction or a substitute for blinded regression.
+Required actions:
 
-## Default Artifact Layout
+- Map every subproblem to inputs, mechanism, decision variables, assumptions,
+  objectives, constraints, candidate models, validation, result artifact,
+  figure/table, and paper section in `reports/traceability.md`.
+- Audit schema, units, time cutoff, attachment coverage, and zero, blank,
+  censored, missing, and not-observed meanings in `reports/semantic_audit.csv`
+  and `reports/mechanism_audit.json`. Do not disguise unknown semantics as an
+  assumption.
+- Compare one credible baseline with a stronger candidate in
+  `reports/model_decision_log.csv`. Predeclare the candidate's advantage and
+  failure test in `reports/model_challenge.json`; reject it or narrow the claim
+  when the threshold is not met. Do not stack models for appearance.
+- Classify constraints as local or coupled. For coupled systems, audit input
+  decoding and the constraint graph and require joint feasibility; an
+  independent node-by-node projection is diagnostic only.
+- Distinguish prediction from causality before model selection. Causal language
+  requires an estimand, counterfactual, causal graph, confounders,
+  identification assumptions, and diagnostics.
+- Prepare `reports/fallback_plan.csv`. If a primary model produces no verified
+  result, record the failure and ask the user before removing named
+  noncritical factors. Put an attractive but unverified model under model
+  optimization, never in the results.
 
-Create or preserve this layout unless the user provides an existing project structure:
+### 3. Literature and narrow reproduction details
+
+Read as applicable:
+
+- `references/embedded/verified-literature-and-two-part-delivery.md`
+- `references/embedded/literature-fetch-and-explain.md`
+- `references/embedded/paper-context-resolver.md`
+
+Required actions:
+
+- A completed paper needs at least 10 unique, relevant scholarly works cited in
+  reachable LaTeX. Maintain `reports/bibliography.csv`.
+- Verify metadata against authoritative records, observe an exact-title Google
+  Scholar result, read the passage supporting each attributed claim, and save
+  locators and hashed evidence. Never fabricate metadata or source content.
+- Run `scripts/verify_bibliography_metadata.py`. Its pass does not replace
+  source reading or interpretation.
+
+### 4. Computation, validation, and decision evidence
+
+Read:
+
+- `references/embedded/computation-and-visualization.md`
+- `references/embedded/data-traceability-and-reproducibility.md`
+- `references/embedded/runtime-template-and-decision-audits.md`
+- `references/embedded/award-oriented-evidence-chain.md`
+- `references/embedded/data-units-and-source-quality.md`
+- `references/embedded/stress-testing-and-uncertainty.md`
+- `references/embedded/evidence-and-quality-gates.md`
+
+Required actions:
+
+- Probe and lock observed runtime/solver capabilities before execution. Do not
+  install dependencies or silently substitute a solver in contest mode.
+- Produce every numeric conclusion from executed code, a spreadsheet formula,
+  or a cited source. Maintain claims, units, commands, hashes, validation
+  manifests, and a frozen reproduction run.
+- Put decisive computed values in `results/verified_values.csv`, generate
+  reachable LaTeX fragments, and verify that prose, tables, and figures do not
+  redefine them.
+- Bind every decisive claim to code/command, data hash, result hash, value key,
+  LaTeX, figure, and paper location in `reports/evidence_chain.csv`.
+- Select model-family validation adapters and predeclare proportionate stress
+  tests. Without external truth, require at least two independent checks and
+  disclose the remaining limitation.
+- Compare expected-value decisions with robust/stochastic/scenario alternatives
+  when uncertainty can change the recommendation. Report feasibility, extreme
+  outcomes, implementation cost/time, interpretability, failure mode, and
+  contingency instead of only an objective value.
+- Preserve leakage-safe time splits and immutable aggregate hashes for large
+  data. Treat supplied result-form files as templates only after structural
+  audit; never ingest them automatically as evidence.
+
+### 5. Tables and scenario sheets
+
+- Use spreadsheet reasoning for scoring matrices, sensitivity tables, scenario
+  comparisons, and dashboards.
+- If spreadsheet tooling is unavailable, use CSV/Markdown and record the
+  limitation. Preserve units, aligned numeric columns, precision, captions,
+  source notes, and result-file consistency.
+
+### 6. Figures, flowcharts, and visual narrative
+
+Read:
+
+- `references/embedded/diagrams.md`
+- `references/embedded/paper-presentation-and-visual-design.md`
+
+Required actions:
+
+- Separate data charts from explanatory diagrams. Maintain
+  `reports/figure_manifest.csv` and `reports/visual_storyboard.csv`.
+- Give every figure a question, linked claim, reader takeaway, decision role,
+  source data, units, and legibility evidence. Use result figures for every
+  subproblem; add mechanism, path/network, comparison, and validation figures
+  only when they carry evidence, not decoration.
+- Apply one visual design system across figures and tables and verify narrative,
+  numeric contracts, insertion-size legibility, and compiled-page placement.
+
+### 7. Result-first LaTeX paper
+
+Read:
+
+- `references/embedded/paper-writing.md`
+- `references/embedded/result-first-paper-convergence.md`
+- `references/embedded/paper-depth-and-page-budget.md`
+- `references/embedded/paper-writing-zh-cn-format2025.md` only as a historical
+  CUMCM layout baseline
+- `references/embedded/paper-writing-en-contest-base.md` and
+  `references/embedded/paper-writing-mcm-icm-current.md` for MCM/ICM
+- `references/embedded/latex-paper-pipeline.md`
+- when learning from an offline corpus,
+  `references/embedded/paper-learning-from-exemplars.md`,
+  `references/embedded/2025-corpus-observations.md`, and
+  `references/embedded/multi-year-corpus-observations.md`
+
+Required actions:
+
+- Create `reports/paper_depth_plan.csv`, `reports/conclusion_map.csv`, and an
+  innovation ledger with at most one measured, problem-specific improvement per
+  subproblem. Reject or narrow unsupported innovation claims.
+- Write the abstract in three concise blocks: analysis, method, and quantified
+  result. Begin every subproblem from its direct answer and preserve the chain
+  mechanism -> rationale -> variables/assumptions -> derivation -> algorithm ->
+  result/interpretation -> local validation -> limitation.
+- The paper body must contain verified results. If a model cannot produce them, follow
+  the user-approved simplification route from phase 2; retain the original
+  unverified model only under model optimization.
+- Generate paper artifacts and notation/dimension registries instead of
+  retyping decisive values. Use current official page limits; corpus-derived
+  ranges are advisory and never justify padding.
+- Produce `paper/main.pdf` and a rebuildable UTF-8 XeLaTeX/latexmk source tree
+  with relative paths, `main.tex`, bibliography, sections, generated values,
+  figures, styles, `.latexmkrc`, and `.vscode/`. The same portable root ZIP must
+  build and preview in Overleaf and VS Code.
+
+### 8. Table polish
+
+- Read `references/embedded/latex-tables.md`.
+- Freeze `reports/table_manifest.csv` and verify captions, units, source notes,
+  precision, alignment, continuity, and the shared visual design system.
+
+### 9. Final verification
+
+Read:
+
+- `references/embedded/orchestration-and-paper-assurance.md`
+- `references/embedded/decision-and-delivery-gates.md`
+- `references/embedded/final-verification.md`
+- when needed, `references/embedded/tool-fallbacks.md`
+
+Required gates:
+
+- Run the paper profile during writing and the strict freeze profile before
+  submission. Under strict, unresolved `LIMITED` evidence blocks release.
+- Verify claims/evidence chains, semantic and modeling arguments, model
+  validation, uncertainty/decision quality, causal boundaries, abstract/result
+  story, bibliography, manuscript, figures/tables, notation/dimensions, and
+  verified values.
+- Compile both project-root and `build/` outputs; verify the rendered PDF,
+  page-by-page readability, presentation, anonymity, portable source ZIP, and
+  clean copied-project reproduction. A missing mandatory renderer is not a
+  visual pass.
+- Build `support.zip` from `support/materials_manifest.csv` and run the paper,
+  support, delivery-profile, and submission gates. Inspect the PDF and cited
+  passages separately from structural reports.
+
+### 10. Optional award-focused review
+
+- Only after modeling, the complete paper, and phase 9 are finished, ask whether
+  the user wants this phase. Do not run it by default.
+- If accepted, read `references/embedded/post-paper-award-review.md`,
+  `references/embedded/reviewer-scorecard-and-presentation.md`, and
+  `references/embedded/independent-review-and-regression.md`.
+- Use separate blinded model, evidence, and writing reviewers with artifact
+  locators. Aggregate objections and verify the internal award-readiness
+  evidence structure without predicting an award. Rerun phase 9 after every
+  accepted revision.
+
+### 11. Freeze, deliver, and submit
+
+Read `references/embedded/submission-and-anonymity.md`.
+
+- Deliver two explicit user-facing parts under `delivery/`: (1)
+  `paper/main.pdf` plus complete rebuildable LaTeX and its verified portable
+  source ZIP, and (2) `support.zip` with runnable code, distributable data or
+  retrieval evidence, environment, commands, results, licenses, and hashes.
+- Keep only contest-permitted files under `official-submission/`. Never confuse
+  the complete handoff with the official submission package.
+- Run final anonymity, environment, delivery-profile, paper-delivery, portable
+  LaTeX, and submission checks; record hashes and advance submission state only
+  with evidence. For CUMCM 2026, enforce the selected AI branch, including
+  `AI工具使用详情.pdf` for `used` or the exact declaration for `none`.
+
+### 12. Offline paper-learning and private regression
+
+Read `references/embedded/training-evaluation-loop.md`.
+
+- Learn only reusable, non-copyrightable writing and presentation patterns from
+  offline excellent-paper corpora. Never use a paired paper as an input to a
+  live or blinded solution, and never copy wording, numbers, models, or figures.
+- Keep private problems, manifests, artifacts, scores, and copied inputs outside
+  Git. Solve from statement/data independently, freeze the baseline, revise no
+  more than three generalizable defects, then rerun blindly.
+- Run blinded benchmark regression before releasing a Skill revision. Never
+  update baselines automatically. Score 8/24/48/74-hour CUMCM 2026 rehearsals
+  and treat private five-dimension scores as diagnostics, not award predictions.
+
+## Core project layout
+
+`scripts/init_contest.py` is the tested authority for the complete generated
+layout. Preserve an existing structure; otherwise maintain at least:
 
 ```text
 .
+|-- contest_manifest.json
+|-- rules.lock.json
 |-- plan.md
 |-- todo.md
-|-- rules.lock.json
-|-- data/
-|   |-- raw/
-|   `-- processed/
-|-- notebooks/
+|-- data/{raw,processed}/
 |-- code/
-|-- results/
-|   `-- verified_values.csv
+|-- results/verified_values.csv
 |-- figures/
-|-- reports/
-|   |-- contest_rules_snapshot.md
-|   |-- claims.csv
-|   |-- bibliography.csv
-|   |-- bibliography_metadata/
-|   |-- source_passages/
-|   |-- figure_manifest.csv
-|   |-- table_manifest.csv
-|   |-- model_decision_log.csv
-|   |-- stress_tests.csv
-|   |-- units.csv
-|   |-- model_validation.json
-|   |-- ai_usage_log.jsonl
-|   |-- latex_compatibility.json
-|   |-- portable_latex_verification.json
-|   |-- paper_delivery.json
-|   `-- verification_report.md
+|-- reports/                 # phase evidence and generated gate reports
 |-- environment/
-|   `-- README.md
-|-- support/
-|   |-- README.md
-|   |-- reproduction_commands.txt
-|   |-- materials_manifest.csv
-|   `-- data_inventory.csv
+|-- support/materials_manifest.csv
 |-- support.zip
-|-- delivery/
-|   `-- manifest.csv
-|-- official-submission/
-|   `-- manifest.csv
-`-- paper/
-    |-- main.tex
-    |-- references.bib
-    |-- README.md
-    |-- .latexmkrc
-    |-- .vscode/
-    |   |-- settings.json
-    |   `-- extensions.json
-    |-- sections/
-    |-- generated/
-    |   `-- results.tex
-    |-- code/
-    |   `-- main.py
-    |-- figures/
-    |-- build/
-    `-- main.pdf
+|-- paper/{main.tex,references.bib,sections,generated,figures,build,main.pdf}
+|-- delivery/                # complete user handoff
+`-- official-submission/     # selected-profile files only
 ```
 
-## Decision Rules
+## Global decision rules
 
-- If the problem statement is missing, ask for it before modeling.
-- If data is missing but the task can proceed with public or synthetic data, label that explicitly.
-- If multiple model families fit, compare the simplest credible baseline against one stronger method.
-- Treat creativity as a problem-specific improvement in abstraction, mechanism,
-  constraint design, diagnostic evidence, or decision insight. Algorithmic
-  complexity without measurable benefit is not creativity.
-- For CUMCM, do not stack models for appearance. Select at most one primary model and one evidence-backed comparison or enhancement per subproblem; apply the method-specific minimum validation gate from `cumcm-model-selection.md`.
-- If computation cannot be run, do not present numeric conclusions as verified.
-- If time is short, prioritize a complete baseline model, clean paper structure, and final consistency checks over extra model variants.
-- If a plugin is missing, degrade gracefully; do not pretend visual rendering, workbook formulas, or notebook execution were verified.
-- If corpus PDFs are scanned, use visual rendering as the authority for layout and
-  record OCR/text-extraction limitations; do not claim semantic comparison from
-  empty or incomplete extracted text.
-- Do not silently reuse prior-year rules. A current official rule snapshot is required before a live contest can become submission-ready.
-- An initializer-created rules skeleton is not evidence. Lock saved official
-  sources with URLs, hashes, structured fields, and a validity date.
-- Do not use a public discussion, answer, code-sharing, or interactive-help source for the current live problem.
-- A synthetic dataset may illustrate a method but cannot be presented as observed evidence. Record source permission and data transformations.
-- A heuristic or incomplete solver result is not a global optimum; report solver status, feasibility, tolerance, and optimality gap where applicable.
-- Decisive computed values have one machine-readable source of truth. A generated
-  LaTeX macro may format a value, but neither prose nor a table may silently
-  redefine it.
-- Reproduction commands are argv arrays by default. Shell syntax is permitted
-  only through an explicit, recorded opt-in and must not be inferred from a text
-  command file.
-- Every decisive conclusion needs a proportionate failure-oriented test. Choose
-  the test before seeing its outcome and preserve the result even when it weakens
-  the preferred model.
-- A completed paper needs at least 10 real, relevant, uniquely cited scholarly
-  references. Authoritative metadata and an exact-title Google Scholar query are
-  necessary but not sufficient: read the supporting passage and never infer or
-  fabricate source content.
-- Do not call the work complete until both the compiled PDF plus rebuildable
-  LaTeX source and the verified support-material archive are present.
-- Treat PDF page sequence, appendix boundaries, OCR output, and Office metadata as visual or tool-dependent checks; record an unresolved limitation instead of inferring success.
-- Separate the complete user delivery from the official submission. Apply the
-  selected profile to the latter and reject extra files that the contest forbids.
+- Ask for a missing statement before modeling. Label public or synthetic data
+  explicitly and never present synthetic evidence as observed.
+- Prefer a complete, interpretable baseline and verified results over extra
+  model variants. Complexity without measured benefit is not creativity.
+- Report solver status, feasibility, tolerance, and gap; never label a heuristic
+  or incomplete solve a global optimum.
+- Use one machine-readable source for decisive values and predeclare a
+  proportionate failure-oriented test for each decisive conclusion.
+- Do not claim completion until the compiled PDF, rebuildable LaTeX, verified
+  support archive, current rule evidence, and selected submission-profile checks
+  are all present.
 
-## Embedded References
-
-Use the phase-specific references named above. Keep
-`references/embedded/orchestration-and-paper-assurance.md` as the command,
-profile, migration, rendered-figure, notation, and generated-artifact playbook.
-- `references/embedded/cumcm-model-selection.md` (CUMCM / 中国大学生数学建模竞赛 model routing, Python/MATLAB/LINGO selection, and validation gates)
-Use `references/embedded/latex-paper-pipeline.md` for portable compilation and
-`references/embedded/final-verification.md` before completion.
-
-Read `references/workflow-map.md` for the complete embedded-reference index,
-dependency map, plugin limits, and fallback behavior.
+Read `references/workflow-map.md` for the complete reference index, plugin
+boundaries, phase outputs, and fallback routing.

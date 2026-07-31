@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import re
 from pathlib import Path
+
+from contestlib import sha256_bytes as digest
 
 
 FIELDS = {
@@ -19,10 +20,6 @@ COMPLETE = {"pass", "complete", "verified"}
 METHOD = re.compile(r"模型|算法|方法|优化|回归|预测|仿真|model|method|algorithm|optimization|regression|forecast|simulation", re.I)
 VALIDATION = re.compile(r"验证|检验|敏感|鲁棒|误差|残差|置信|对比|validat|sensitiv|robust|error|residual|confidence|backtest", re.I)
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?\s*(?:%|[A-Za-z]+)?")
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def plain_tex(text: str) -> str:

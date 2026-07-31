@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 from pathlib import Path
 
+from contestlib import read_csv_strict as read_csv
+from contestlib import safe_project_path as safe
+from contestlib import sha256_bytes as digest
 from verify_latex_compatibility import reachable_tex_files
 
 
@@ -17,28 +19,6 @@ FIELDS = {
     "paper_location", "status",
 }
 COMPLETE = {"pass", "complete", "verified"}
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def safe(root: Path, raw: str) -> Path | None:
-    item = Path(raw)
-    if not raw or item.is_absolute() or ".." in item.parts:
-        return None
-    candidate = (root / item).resolve()
-    try:
-        candidate.relative_to(root)
-    except ValueError:
-        return None
-    return candidate
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str]]:
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return list(reader), set(reader.fieldnames or [])
 
 
 def main() -> int:

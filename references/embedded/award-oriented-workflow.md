@@ -4,6 +4,15 @@ Use this module only after the skill has been explicitly invoked. It does not
 promise an award. It turns the main judging dimensions into evidence gates:
 reasonable assumptions, creative modeling, correct results, and clear writing.
 
+## Responsibility boundary
+
+This file routes award-oriented work by phase. The executable claim chain and
+refutation contract belongs to `award-oriented-evidence-chain.md`; reviewer
+presentation belongs to `reviewer-scorecard-and-presentation.md`; user consent
+and re-entry belong to `post-paper-award-review.md`; blinded aggregation and
+release regression belong to `independent-review-and-regression.md`. Do not
+duplicate those detailed contracts here.
+
 ## Route by phase
 
 - At setup, read `contest-operations-72h.md` and freeze milestones.

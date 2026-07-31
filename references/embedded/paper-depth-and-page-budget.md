@@ -6,6 +6,16 @@ prevents two failures: compressing the reasoning into a short answer report, and
 padding a weak main text with code pages. Current official rules and the supplied
 template are always the hard constraints.
 
+## Contents
+
+- [Evidence behind the profile](#evidence-behind-the-profile)
+- [Rule hierarchy and page profiles](#rule-hierarchy-and-page-profiles)
+- [Recommended structure](#recommended-structure-for-a-five-question-paper)
+- [Seven-part argument chain](#seven-part-argument-chain-for-every-subproblem)
+- [What to write fully and compress](#what-to-write-fully-and-what-to-compress)
+- [Figure, table, and paragraph discipline](#figure-table-and-paragraph-discipline)
+- [Final depth review](#final-depth-review)
+
 ## Evidence behind the profile
 
 Three visually inspected 2024 CUMCM A-problem exemplars contain 48, 55, and 59 PDF

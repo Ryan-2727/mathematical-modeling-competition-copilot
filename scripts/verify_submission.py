@@ -15,24 +15,15 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree
 
+from contest_profile import load_contest_profile, submission_profile
 
-CUMCM_FORMAT_URL = (
-    "https://www.mcm.edu.cn/html_cn/node/"
-    "4cd596519c9eb9fbd866398f6df0caa3.html"
-)
-CUMCM_AI_URL = (
-    "https://www.mcm.edu.cn/html_cn/node/"
-    "eebcfb6dc37fd2de9603dc16026fdf01.html"
-)
-CUMCM_NOTICE_URL = (
-    "https://www.mcm.edu.cn/html_cn/node/"
-    "d6fd7a0ee8f3a3d525e30af1c365fcec.html"
-)
-CUMCM_RULES_URL = (
-    "https://www.mcm.edu.cn/html_cn/node/"
-    "9d8e511fe7a1447b35f53a82c908e2e0.html"
-)
-CUMCM_AI_NON_USE_DECLARATION = "本参赛队未使用任何 AI 工具"
+
+CUMCM_2026_PROFILE = load_contest_profile("cumcm-2026")
+CUMCM_FORMAT_URL = CUMCM_2026_PROFILE["source_urls"]["paper_format"]
+CUMCM_AI_URL = CUMCM_2026_PROFILE["source_urls"]["ai_policy"]
+CUMCM_NOTICE_URL = CUMCM_2026_PROFILE["source_urls"]["official_notice"]
+CUMCM_RULES_URL = CUMCM_2026_PROFILE["source_urls"]["contest_rules"]
+CUMCM_AI_NON_USE_DECLARATION = CUMCM_2026_PROFILE["ai_non_use_declaration"]
 MCM_RULES_URL = (
     "https://contest.comap.com/undergraduate/contests/mcm/instructions.php"
 )
@@ -49,31 +40,7 @@ PROFILES: dict[str, dict[str, Any]] = {
         "max_paper_mb": 20,
         "max_support_mb": 20,
     },
-    "cumcm-2026": {
-        "paper_suffixes": {".pdf", ".doc", ".docx"},
-        "support_suffixes": {".zip", ".rar"},
-        "max_paper_mb": 20,
-        "max_support_mb": 20,
-        "max_main_text_pages": 30,
-        "toc_forbidden": True,
-        "snapshot": {
-            "profile_version": "cumcm-2026.2026-07-31",
-            "verified_at": "2026-07-31",
-            "valid_through": "2026-09-13",
-            "competition_start": "2026-09-10T18:00:00+08:00",
-            "competition_end": "2026-09-13T20:00:00+08:00",
-            "registration_deadline": "2026-09-07T20:00:00+08:00",
-            "timezone": "Asia/Shanghai",
-            "submission_channel": "CNKI competition management system",
-            "freshness_checkpoints": ["2026-08-11", "2026-09-03", "2026-09-09"],
-            "source_urls": [
-                CUMCM_NOTICE_URL,
-                CUMCM_FORMAT_URL,
-                CUMCM_RULES_URL,
-                CUMCM_AI_URL,
-            ],
-        },
-    },
+    "cumcm-2026": submission_profile("cumcm-2026"),
     "mcm-icm-current": {
         "paper_suffixes": {".pdf"},
         "support_suffixes": set(),

@@ -3,6 +3,17 @@
 This is the executable portable-paper contract for CUMCM and MCM/ICM. The
 selected current official contest profile overrides all template defaults.
 
+## Contents
+
+- [Source layout](#source-layout)
+- [VS Code and Overleaf compatibility](#vs-code-and-overleaf-compatibility)
+- [Minimum paper elements](#minimum-paper-elements)
+- [Reference integrity](#reference-integrity)
+- [Figure and table policy](#figure-and-table-policy)
+- [Overleaf build](#overleaf-build)
+- [VS Code build and preview](#vs-code-build-and-preview)
+- [Compatibility and visual QA](#compatibility-and-visual-qa)
+
 ## Source layout
 
 Initialize the contest project with `scripts/init_contest.py`; it chooses the

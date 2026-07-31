@@ -16,6 +16,7 @@ SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import lock_contest_rules
+from contest_profile import load_contest_profile
 
 
 def sha256(path: Path) -> str:
@@ -31,6 +32,27 @@ def write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, object]]) 
 
 
 class Cumcm2026ReadinessTests(unittest.TestCase):
+    def test_bundled_profile_is_the_executable_2026_source(self) -> None:
+        profile = load_contest_profile("cumcm-2026")
+        self.assertEqual(profile["competition_start"], "2026-09-10T18:00:00+08:00")
+        self.assertEqual(profile["competition_end"], "2026-09-13T20:00:00+08:00")
+        self.assertEqual(profile["registration_deadline"], "2026-09-07T20:00:00+08:00")
+        self.assertEqual(profile["freshness_checkpoints"], lock_contest_rules.CUMCM_2026_CHECKPOINTS)
+        self.assertEqual(set(profile["source_urls"]), lock_contest_rules.CUMCM_2026_SOURCE_ROLES)
+        rules_text = (ROOT / "references" / "embedded" / "cumcm-2026-rules.md").read_text(encoding="utf-8")
+        profiles_text = (ROOT / "references" / "embedded" / "executable-contest-profiles.md").read_text(encoding="utf-8")
+        for value in profile["source_urls"].values():
+            self.assertIn(value, profiles_text)
+        self.assertIn("2026-09-10 18:00", rules_text)
+        self.assertIn("2026-09-13 20:00", rules_text)
+        self.assertIn("2026-09-07 20:00", rules_text)
+        self.assertIn("assets/contest-profiles/cumcm-2026.json", rules_text)
+        profile["competition_start"] = "changed"
+        self.assertEqual(
+            load_contest_profile("cumcm-2026")["competition_start"],
+            "2026-09-10T18:00:00+08:00",
+        )
+
     def run_script(
         self, name: str, *args: str, expect: int = 0
     ) -> subprocess.CompletedProcess[str]:

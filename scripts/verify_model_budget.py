@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import json
 from pathlib import Path
+
+from contestlib import read_csv_with_error as read_csv
+from contestlib import sha256_bytes as digest
 
 
 COMPLETE = {"pass", "complete", "verified"}
@@ -19,25 +20,12 @@ ROUTE_TYPES = {"baseline", "candidate", "fallback"}
 RISK_LEVELS = {"low", "medium", "high"}
 
 
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def number(raw: str) -> float | None:
     try:
         value = float(raw)
     except (TypeError, ValueError):
         return None
     return value if value >= 0 and value == value and value != float("inf") else None
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str], str | None]:
-    try:
-        with path.open(encoding="utf-8-sig", newline="") as handle:
-            reader = csv.DictReader(handle)
-            return list(reader), set(reader.fieldnames or []), None
-    except (OSError, UnicodeError, csv.Error) as exc:
-        return [], set(), str(exc)
 
 
 def main() -> int:

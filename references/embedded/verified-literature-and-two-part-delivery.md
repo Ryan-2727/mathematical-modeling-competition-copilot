@@ -3,6 +3,13 @@
 Use this playbook whenever the skill is expected to produce a completed paper.
 It is a hard completion gate, not a suggestion.
 
+## Contents
+
+- [Ten-source minimum](#ten-source-minimum)
+- [Paper deliverable](#paper-deliverable)
+- [Support-material deliverable](#support-material-deliverable)
+- [Completion gate](#completion-gate)
+
 ## Ten-source minimum
 
 - Cite at least 10 unique, relevant scholarly works in the LaTeX body. Do not

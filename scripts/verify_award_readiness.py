@@ -8,9 +8,10 @@ were recorded and linked to the paper's subproblems.
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from pathlib import Path
+
+from contestlib import read_csv_if_exists as read_csv
 
 
 COMPLETE = {"complete", "completed", "pass", "passed", "verified"}
@@ -45,14 +46,6 @@ SCHEMAS = {
     },
     "milestones.csv": {"milestone", "hour", "deliverable", "owner", "gate", "status"},
 }
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str]]:
-    if not path.is_file():
-        return [], set()
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return list(reader), set(reader.fieldnames or [])
 
 
 def value(row: dict[str, str], field: str) -> str:

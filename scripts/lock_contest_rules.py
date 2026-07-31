@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
+from contest_profile import load_contest_profile
+
 
 PROFILE_RULES = {
     "cumcm": {
@@ -30,20 +32,19 @@ PROFILE_RULES = {
     },
 }
 
-CUMCM_2026_SOURCE_ROLES = {
-    "official_notice",
-    "paper_format",
-    "contest_rules",
-    "ai_policy",
-}
+CUMCM_2026_PROFILE = load_contest_profile("cumcm-2026")
+CUMCM_2026_SOURCE_ROLES = set(CUMCM_2026_PROFILE["source_urls"])
 CUMCM_2026_RULES = {
-    "competition_start": "2026-09-10T18:00:00+08:00",
-    "competition_end": "2026-09-13T20:00:00+08:00",
-    "registration_deadline": "2026-09-07T20:00:00+08:00",
-    "timezone": "Asia/Shanghai",
-    "submission_channel": "CNKI competition management system",
+    key: CUMCM_2026_PROFILE[key]
+    for key in (
+        "competition_start",
+        "competition_end",
+        "registration_deadline",
+        "timezone",
+        "submission_channel",
+    )
 }
-CUMCM_2026_CHECKPOINTS = ["2026-08-11", "2026-09-03", "2026-09-09"]
+CUMCM_2026_CHECKPOINTS = CUMCM_2026_PROFILE["freshness_checkpoints"]
 
 
 def sha256_file(path: Path) -> str:

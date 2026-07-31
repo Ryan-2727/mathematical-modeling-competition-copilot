@@ -8,6 +8,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from contestlib import read_csv_strict as read_csv
+from contestlib import safe_project_path as safe
+
 
 COMPLETE = {"pass", "complete", "verified"}
 CSV_FIELDS = {
@@ -16,24 +19,6 @@ CSV_FIELDS = {
     "fallback_plan.csv": {"subproblem", "model_family", "failure_mode", "trigger", "primary_route", "fallback_route", "boundary_statement", "result_file", "paper_location", "status"},
     "causal_claims.csv": {"claim_id", "claim_type", "estimand", "causal_graph", "confounders", "counterfactual", "identification_strategy", "diagnostic", "limitation", "paper_location", "status"},
 }
-
-
-def safe(root: Path, raw: str) -> Path | None:
-    candidate = Path(raw)
-    if not raw or candidate.is_absolute() or ".." in candidate.parts:
-        return None
-    resolved = (root / candidate).resolve()
-    try:
-        resolved.relative_to(root)
-    except ValueError:
-        return None
-    return resolved
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str]]:
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return list(reader), set(reader.fieldnames or [])
 
 
 def number(value: Any) -> float | None:

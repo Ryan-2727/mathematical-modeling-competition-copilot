@@ -2,6 +2,14 @@
 
 Use this module before claiming that the modeling work or paper is complete.
 
+## Contents
+
+- [Evidence Rule](#evidence-rule)
+- [Required Checks](#required-checks)
+- [Verification Report](#verification-report)
+- [Optional award-focused review](#optional-award-focused-review)
+- [Red Flags](#red-flags)
+
 ## Evidence Rule
 
 Do not claim completion without fresh verification evidence.

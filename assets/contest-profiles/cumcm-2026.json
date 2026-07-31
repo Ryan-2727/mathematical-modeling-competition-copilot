@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "profile_id": "cumcm-2026",
+  "profile_version": "cumcm-2026.2026-07-31",
+  "verified_at": "2026-07-31",
+  "valid_through": "2026-09-13",
+  "competition_start": "2026-09-10T18:00:00+08:00",
+  "competition_end": "2026-09-13T20:00:00+08:00",
+  "registration_deadline": "2026-09-07T20:00:00+08:00",
+  "timezone": "Asia/Shanghai",
+  "submission_channel": "CNKI competition management system",
+  "contest_duration_hours": 74,
+  "freshness_checkpoints": [
+    "2026-08-11",
+    "2026-09-03",
+    "2026-09-09"
+  ],
+  "source_urls": {
+    "official_notice": "https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html",
+    "paper_format": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
+    "contest_rules": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html",
+    "ai_policy": "https://www.mcm.edu.cn/html_cn/node/eebcfb6dc37fd2de9603dc16026fdf01.html"
+  },
+  "paper_suffixes": [".pdf", ".doc", ".docx"],
+  "support_suffixes": [".zip", ".rar"],
+  "max_paper_mb": 20,
+  "max_support_mb": 20,
+  "max_main_text_pages": 30,
+  "toc_forbidden": true,
+  "ai_modes": ["none", "used"],
+  "ai_report_filename": "AI工具使用详情.pdf",
+  "ai_non_use_declaration": "本参赛队未使用任何 AI 工具"
+}

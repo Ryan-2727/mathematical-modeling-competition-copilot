@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 import re
 from pathlib import Path
+
+from contestlib import sha256_bytes as digest
 
 
 FIELDS = {
@@ -16,10 +17,6 @@ FIELDS = {
     "visual_consistency", "reviewer", "status",
 }
 COMPLETE = {"pass", "complete", "verified", "not_applicable"}
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def inspect_pdf(path: Path) -> tuple[int | None, list[str], list[str]]:

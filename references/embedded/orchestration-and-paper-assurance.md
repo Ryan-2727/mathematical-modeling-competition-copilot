@@ -4,6 +4,16 @@ Use this playbook after project initialization and before the paper or submissio
 freeze.  It coordinates specialist checks; it does not replace model reasoning,
 source reading, numerical reruns, or page-by-page human review.
 
+## Contents
+
+- [Project schema](#project-schema)
+- [Profiles](#profiles)
+- [Unified commands](#unified-commands)
+- [Rendered-figure contract](#rendered-figure-contract)
+- [Notation and dimensions](#notation-and-dimensions)
+- [Generated paper artifacts](#generated-paper-artifacts)
+- [Freeze order](#freeze-order)
+
 ## Project schema
 
 Current projects declare `project_schema_version`, `quality_profile`, and a

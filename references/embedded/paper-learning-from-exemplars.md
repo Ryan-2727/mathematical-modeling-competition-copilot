@@ -5,6 +5,15 @@ competition papers. It teaches reusable writing decisions; it does not make
 excellent papers an input to a live contest solution and it does not require a
 problem-to-paper pairing.
 
+## Contents
+
+- [Offline corpus pass](#offline-corpus-pass)
+- [Live contest boundary](#live-contest-boundary)
+- [Generalizable structure](#generalizable-structure)
+- [Figure and table grammar](#figure-and-table-grammar)
+- [2025 Chinese-paper style profile](#2025-chinese-paper-style-profile)
+- [Independent improvement loop](#independent-improvement-loop)
+
 ## Offline corpus pass
 
 When a reference corpus is available, profile it once before solving new problems.

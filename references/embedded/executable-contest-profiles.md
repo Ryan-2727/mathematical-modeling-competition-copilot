@@ -5,6 +5,13 @@ the official rule pages again. The script records hashes and enforces the rules
 that can be supported by artifact text, archive members, declared counts, or
 hash-bound review evidence. It does not replace final visual inspection.
 
+## Contents
+
+- [Status contract](#status-contract)
+- [CUMCM 2026](#cumcm-2026)
+- [MCM/ICM 2027](#mcmicm-2027)
+- [Hash-bound fallback evidence](#hash-bound-fallback-evidence)
+
 ## Status contract
 
 - `PASS`: every applicable automated check passed.
@@ -21,6 +28,10 @@ parameters before using it after that date.
 ## CUMCM 2026
 
 Snapshot verified 2026-07-31:
+
+Executable values come from `assets/contest-profiles/cumcm-2026.json` through
+`scripts/contest_profile.py`; this section explains the profile and is checked
+for parity rather than acting as another executable source.
 
 - [First 2026 notice](https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html)
 - [Paper format rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html)

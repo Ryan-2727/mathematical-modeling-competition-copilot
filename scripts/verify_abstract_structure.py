@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 from pathlib import Path
+
+from contestlib import sha256_bytes as digest
 
 
 BLOCKS = {
@@ -15,10 +16,6 @@ BLOCKS = {
     "result": re.compile(r"(?:主要结果|结果|results?)\s*[:：]", re.I),
 }
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?\s*(?:%|[A-Za-z]+)?")
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def plain_tex(text: str) -> str:

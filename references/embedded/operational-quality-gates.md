@@ -4,6 +4,15 @@ Use this module to coordinate existing specialist verifiers. These gates check
 recorded evidence and artifacts; they do not prove mathematical truth or predict
 an award.
 
+## Contents
+
+- [Coupled feasibility gate](#coupled-feasibility-gate)
+- [Data-scale and time-split gate](#data-scale-and-time-split-gate)
+- [Lock official rules](#lock-official-rules)
+- [Coordinate phases](#coordinate-phases)
+- [Paper quality checks](#paper-quality-checks)
+- [Delivery versus official submission](#delivery-versus-official-submission)
+
 ## Coupled feasibility gate
 
 Before presenting a solution for a system with shared geometry, flows, resources,

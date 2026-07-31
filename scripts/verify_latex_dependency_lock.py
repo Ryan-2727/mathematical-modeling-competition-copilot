@@ -3,22 +3,18 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import shutil
 import subprocess
 from pathlib import Path
 
+from contestlib import sha256_bytes as digest
 from verify_latex_compatibility import source_fingerprint
 
 
 PACKAGE_RE = re.compile(r"\\usepackage(?:\[[^\]]*\])?\{([^}]+)\}")
 FONT_RE = re.compile(r"\\(?:setmainfont|setsansfont|setmonofont|setCJKmainfont|setCJKsansfont|setCJKmonofont)\{([^}]+)\}")
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def version(command: str) -> str:

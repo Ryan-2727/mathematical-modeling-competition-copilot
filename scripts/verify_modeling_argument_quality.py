@@ -8,28 +8,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from contestlib import read_csv_strict as read_csv
+from contestlib import safe_project_path as safe
+
 
 COMPLETE = {"pass", "complete", "verified"}
 SEMANTIC_TYPES = {"observed_zero", "structural_zero", "no_opportunity", "not_observed", "censored_not_detected", "missing", "not_applicable"}
 TRUTH = {"external_ground_truth", "partial_ground_truth", "no_ground_truth"}
-
-
-def safe(root: Path, raw: str) -> Path | None:
-    item = Path(raw)
-    if not raw or item.is_absolute() or ".." in item.parts:
-        return None
-    target = (root / item).resolve()
-    try:
-        target.relative_to(root)
-    except ValueError:
-        return None
-    return target
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str]]:
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return list(reader), set(reader.fieldnames or [])
 
 
 def number(value: Any) -> float | None:

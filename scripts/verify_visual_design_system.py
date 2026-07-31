@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import json
 from pathlib import Path
+
+from contestlib import read_csv_with_error as read_csv
+from contestlib import sha256_bytes as digest
 
 
 FIGURE_FIELDS = {
@@ -22,19 +23,6 @@ TABLE_FIELDS = {
     "legibility_evidence", "status",
 }
 COMPLETE = {"pass", "complete", "verified"}
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str], str | None]:
-    try:
-        with path.open(encoding="utf-8-sig", newline="") as handle:
-            reader = csv.DictReader(handle)
-            return list(reader), set(reader.fieldnames or []), None
-    except (OSError, UnicodeError, csv.Error) as exc:
-        return [], set(), str(exc)
 
 
 def audit(name: str, rows: list[dict[str, str]], fields: set[str], required: set[str], errors: list[str]) -> set[str]:

@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
-import csv
-import hashlib
 import json
 from pathlib import Path
+
+from contestlib import read_csv_with_error as read_csv
+from contestlib import safe_project_path as safe
+from contestlib import sha256_bytes as digest
 
 
 COMPLETE = {"pass", "complete", "verified"}
@@ -15,31 +17,6 @@ FIELDS = {
     "axis_scale", "x_limits", "y_limits", "value_transform",
     "decisive_value_keys", "paper_location", "status",
 }
-
-
-def digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def safe(root: Path, raw: str) -> Path | None:
-    candidate = Path(raw)
-    if not raw or candidate.is_absolute() or ".." in candidate.parts:
-        return None
-    resolved = (root / candidate).resolve()
-    try:
-        resolved.relative_to(root)
-    except ValueError:
-        return None
-    return resolved
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str], str | None]:
-    try:
-        with path.open(encoding="utf-8-sig", newline="") as handle:
-            reader = csv.DictReader(handle)
-            return list(reader), set(reader.fieldnames or []), None
-    except (OSError, UnicodeError, csv.Error) as exc:
-        return [], set(), str(exc)
 
 
 def main() -> int:

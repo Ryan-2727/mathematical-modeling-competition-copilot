@@ -43,7 +43,7 @@
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
 - 绑定官方来源 URL、快照哈希、有效期和结构化字段的规则锁，以及累计阶段门
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
-- CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、AI 使用/未使用互斥分支、
+- 单一机器可读的 CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、AI 使用/未使用互斥分支、
   H6 可执行选题试跑和限时训练就绪度评分
 - 正式比赛材料全程只留本地：允许互联网搜索，Skill 不上传赛题或作答内容；
   无法判断隐私风险时暂停并询问用户
@@ -437,7 +437,10 @@ python -X utf8 scripts\validate_skill_contract.py
 python -X utf8 -m unittest discover -s tests -v
 ```
 
-## 仓库结构
+## 核心仓库结构
+
+这里展示的是导航结构，不是完整文件清单。经过测试的
+`assets/skill-contract.json` 是必需内置资源的权威清单。
 
 ```text
 .
@@ -445,7 +448,13 @@ python -X utf8 -m unittest discover -s tests -v
 |-- README.md
 |-- README.en.md
 |-- DESCRIPTION.md
+|-- assets/
+|   |-- contest-profiles/cumcm-2026.json
+|   |-- skill-contract.json
+|   `-- latex-paper-template/
 |-- scripts/
+|   |-- contest_profile.py
+|   |-- contestlib.py
 |   |-- contestctl.py
 |   |-- lock_contest_rules.py
 |   |-- scaffold_latex_paper.py

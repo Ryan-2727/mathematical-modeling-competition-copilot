@@ -2,6 +2,16 @@
 
 Use this module to select the correct paper-writing branch.
 
+## Responsibility boundary
+
+This router owns branch selection and shared prose discipline only.
+`result-first-paper-convergence.md` owns abstract/result convergence,
+`paper-depth-and-page-budget.md` owns reasoning depth and page allocation,
+`paper-presentation-and-visual-design.md` owns rendered visual presentation,
+`latex-paper-pipeline.md` owns compilation and portability, and
+`final-verification.md` owns release evidence. Follow those owners instead of
+restating their detailed checks here.
+
 ## Branch Selection
 
 - Select the paper branch from the current official rules snapshot. Historical format files are guidance only and never override a current official notice.

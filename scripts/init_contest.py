@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from contest_profile import load_contest_profile
 from scaffold_latex_paper import paper_files, scaffold_latex_paper
 
 
@@ -40,6 +41,7 @@ def main() -> int:
     selected_template = default_template if args.template == "auto" else args.template
     selected_profile = args.submission_profile or default_profile
     is_cumcm_2026 = selected_profile == "cumcm-2026"
+    cumcm_2026 = load_contest_profile("cumcm-2026") if is_cumcm_2026 else None
     root = args.project_dir
     for name in (
         "data/raw",
@@ -75,7 +77,7 @@ def main() -> int:
         "rules_lock_file": "rules.lock.json",
         "submission_profile": selected_profile,
         "ai_mode": None if is_cumcm_2026 else "not_applicable",
-        "contest_duration_hours": 74 if is_cumcm_2026 else None,
+        "contest_duration_hours": cumcm_2026["contest_duration_hours"] if cumcm_2026 else None,
         "quality_profile": "standard",
         "workflow": {
             "phase": "setup",
@@ -107,9 +109,7 @@ def main() -> int:
                 "status": "unverified",
                 **(
                     {
-                        "freshness_checkpoints": [
-                            "2026-08-11", "2026-09-03", "2026-09-09"
-                        ]
+                        "freshness_checkpoints": cumcm_2026["freshness_checkpoints"]
                     }
                     if is_cumcm_2026
                     else {}

@@ -6,7 +6,8 @@ This repository is designed as a self-contained Codex skill. A new computer can 
 
 The following formerly separate skills or helper workflows are embedded as reference playbooks:
 
-- `contest-setup.md`: project initialization, `plan.md`, `todo.md`, contest constraints, and task tracking.
+- `contest-setup.md`: project initialization, bounded brainstorming, `plan.md`,
+  `todo.md`, contest constraints, and task tracking.
 - `award-oriented-workflow.md`: four evidence dimensions and phase-by-phase award-readiness gates.
 - `contest-operations-72h.md`: milestone schedule, role handoffs, and stop-loss rules for a 72-hour contest.
 - `contest-modes-and-compliance.md`: live-contest boundary, current rules snapshot, AI-use evidence, and submission-state machine.
@@ -24,7 +25,6 @@ The following formerly separate skills or helper workflows are embedded as refer
   `contestctl doctor/run/summary`, minimal/standard/strict/custom profiles,
   rendered-figure review, notation/dimension checks, and generated LaTeX result
   artifacts.
-- `contest-setup.md` also embeds the `brainstorming` gate for bounded model-route exploration.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `problem-structure-playbooks.md`: route selection for evaluation, forecasting, optimization, mechanism, classification, and simulation problems.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.

@@ -1,5 +1,10 @@
 # CUMCM 2026 executable rules profile
 
+The executable facts in this reference are loaded from
+`assets/contest-profiles/cumcm-2026.json`. Update and verify that bundled profile
+first when an official source changes; do not maintain a second script-local
+copy of dates, URLs, AI branches, or submission limits.
+
 Use this profile only after confirming that the project is governed by the 2026
 National College Student Mathematical Modeling Competition rules. Record the
 official URLs and access time in `reports/contest_rules_snapshot.md`.

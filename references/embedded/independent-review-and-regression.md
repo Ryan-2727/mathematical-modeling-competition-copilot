@@ -5,6 +5,13 @@ verification are finished, and only after the user accepts the optional
 post-paper review. The aggregate is an internal diagnostic. It must not predict
 an award, imitate an official judge, or replace baseline verification.
 
+## Contents
+
+- [Independent review packet](#independent-review-packet)
+- [Aggregation](#aggregation)
+- [Revision and regression rule](#revision-and-regression-rule)
+- [Blinded skill-release regression](#blinded-skill-release-regression)
+
 ## Independent review packet
 
 Run three separate passes with exactly one role each: `model`, `evidence`, and

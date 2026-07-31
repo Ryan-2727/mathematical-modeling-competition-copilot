@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import hashlib
 import json
 import re
@@ -12,6 +11,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO
 
+from contestlib import read_csv_if_exists as read_csv
 from verify_latex_compatibility import reachable_tex_files, source_fingerprint
 
 
@@ -35,14 +35,6 @@ CITE_RE = re.compile(
     r"\*?(?:\s*\[[^\]]*\]){0,2}\s*\{([^{}]+)\}"
 )
 BIB_RE = re.compile(r"@\w+\s*\{\s*([^,\s]+)\s*,", re.IGNORECASE)
-
-
-def read_csv(path: Path) -> tuple[list[dict[str, str]], set[str]]:
-    if not path.is_file():
-        return [], set()
-    with path.open(encoding="utf-8-sig", newline="") as handle:
-        reader = csv.DictReader(handle)
-        return list(reader), set(reader.fieldnames or [])
 
 
 def value(row: dict[str, str], field: str) -> str:
