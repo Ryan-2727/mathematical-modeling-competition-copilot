@@ -64,6 +64,9 @@ def main() -> int:
             "scripts/verify_paper_presentation.py",
             "scripts/verify_abstract_structure.py",
             "scripts/verify_result_story.py",
+            "scripts/verify_problem_audition.py",
+            "scripts/score_training_readiness.py",
+            "references/embedded/cumcm-2026-readiness.md",
             "scripts/contestctl.py", "scripts/lock_contest_rules.py",
             "scripts/verify_abstract_quality.py",
             "scripts/verify_bibliography_metadata.py",
@@ -149,6 +152,13 @@ def main() -> int:
             "notation_registry.csv", "equation_dimensions.csv",
             "generate_paper_artifacts.py", "paper/generated/core_results.tex",
         ),
+        "references/embedded/cumcm-2026-readiness.md": (
+            "verify_online_actions.py", "verify_problem_audition.py",
+            "score_training_readiness.py", "H72-H74",
+        ),
+        "references/embedded/cumcm-2026-rules.md": (
+            "2026-09-10 18:00", "2026-09-13 20:00", "--ai-mode none|used",
+        ),
         "assets/latex-paper-template/main.tex": (
             "支撑材料文件清单", r"\lstinputlisting", "code/main.py",
         ),
@@ -201,6 +211,9 @@ def main() -> int:
         "scripts/verify_paper_presentation.py",
         "scripts/verify_abstract_structure.py",
         "scripts/verify_result_story.py",
+        "scripts/verify_problem_audition.py",
+        "scripts/score_training_readiness.py",
+        "scripts/verify_online_actions.py",
         "assets/latex-paper-template/main.tex",
         "assets/latex-paper-template/README.md",
         "assets/latex-paper-template/.latexmkrc",

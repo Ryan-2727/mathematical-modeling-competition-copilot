@@ -20,9 +20,11 @@ parameters before using it after that date.
 
 ## CUMCM 2026
 
-Snapshot verified 2026-07-24:
+Snapshot verified 2026-07-31:
 
+- [First 2026 notice](https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html)
 - [Paper format rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html)
+- [Contest rules](https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html)
 - [AI tool rules](https://www.mcm.edu.cn/html_cn/node/eebcfb6dc37fd2de9603dc16026fdf01.html)
 
 The `cumcm-2026` profile preserves PDF/Word paper and ZIP/RAR support-package
@@ -33,9 +35,9 @@ text-extractable PDF or DOCX it also checks:
 - no table-of-contents heading is present;
 - the appendix contains a support-file list or no-support declaration;
 - the appendix contains complete-code evidence or a no-program declaration;
-- when AI was used, the support ZIP contains `AI工具使用详情.pdf`, the paper
-  contains inline AI-use disclosure evidence, and the reference section lists
-  an AI tool.
+- exactly one AI branch is selected: `none` verifies the exact post-reference
+  non-use declaration; `used` verifies inline disclosure, an AI reference, and
+  `AI工具使用详情.pdf` in the support ZIP.
 
 Example:
 
@@ -45,9 +47,11 @@ python scripts/verify_submission.py `
   --paper paper/main.pdf `
   --support support.zip `
   --main-text-pages 30 `
-  --require-ai-report `
+  --ai-mode used `
   --out reports/submission_manifest.json
 ```
+
+Use `--ai-mode none` when no AI tool was used.
 
 Legacy Word documents remain allowed. If their page layout or text cannot be
 parsed, the report names the uninspected scope and requires visual review.

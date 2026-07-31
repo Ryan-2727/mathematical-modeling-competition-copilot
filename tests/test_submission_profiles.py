@@ -101,7 +101,7 @@ class SubmissionProfileTests(unittest.TestCase):
                     support=support,
                     profile_name="cumcm-2026",
                     main_text_pages=3,
-                    require_ai_report=True,
+                    ai_mode="used",
                 )
             self.assertEqual(payload["status"], "PASS", payload)
             statuses = {item["id"]: item["status"] for item in payload["checks"]}
@@ -113,8 +113,73 @@ class SubmissionProfileTests(unittest.TestCase):
                 "cumcm.ai_report",
                 "cumcm.ai_inline_disclosure",
                 "cumcm.ai_reference",
+                "cumcm.ai_mode",
             ):
                 self.assertEqual(statuses[check_id], "PASS", check_id)
+
+    def test_cumcm_ai_none_requires_exact_post_reference_declaration(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            paper = self.make_pdf(root)
+            pages = [
+                "摘要\n本文给出模型、结果与验证。\n关键词：建模",
+                "模型建立与求解",
+                "参考文献\n[1] Test.\n本参赛队未使用任何 AI 工具",
+                "A 附录：代码与支撑材料说明\n本论文没有支撑材料\n本论文没有用到程序",
+            ]
+            with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
+                payload = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                )
+            self.assertEqual(payload["status"], "PASS", payload)
+            self.assertEqual(payload["ai_mode"], "none")
+
+            pages[2] = "本参赛队未使用任何 AI 工具\n参考文献\n[1] Test."
+            with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
+                failure = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                )
+            self.assertEqual(failure["status"], "FAIL")
+            self.assertIn("cumcm.ai_non_use_declaration", {
+                item["id"] for item in failure["checks"] if item["status"] == "FAIL"
+            })
+
+    def test_cumcm_ai_mode_is_required_and_contradictions_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            paper = self.make_pdf(root)
+            support = self.make_ai_support(root)
+            pages = [
+                "摘要\n模型与结果",
+                "本文使用 ChatGPT 辅助编程并完成人工核验。",
+                "参考文献\n[1] OpenAI, ChatGPT, 2026.\n本参赛队未使用任何 AI 工具",
+                "附录\n支撑材料的文件列表：AI工具使用详情.pdf\n本论文没有用到程序",
+            ]
+            with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
+                missing = submission.verify_submission(
+                    paper=paper,
+                    support=support,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                )
+                contradiction = submission.verify_submission(
+                    paper=paper,
+                    support=support,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="used",
+                )
+            self.assertEqual(missing["status"], "FAIL")
+            self.assertEqual(contradiction["status"], "FAIL")
+            self.assertTrue(any("non-use declaration" in item for item in contradiction["errors"]))
 
     def test_cumcm_rejects_toc_wrong_first_page_and_missing_appendix_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

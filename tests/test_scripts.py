@@ -595,7 +595,7 @@ class ScriptTests(unittest.TestCase):
             with zipfile.ZipFile(support, "w") as archive:
                 archive.writestr("AI\u5de5\u5177\u4f7f\u7528\u8be6\u60c5.pdf", b"pdf-placeholder")
             out = root / "manifest.json"
-            self.run_script("verify_submission.py", "--paper", str(paper), "--support", str(support), "--profile", "cumcm-2026", "--main-text-pages", "30", "--require-ai-report", "--out", str(out))
+            self.run_script("verify_submission.py", "--paper", str(paper), "--support", str(support), "--profile", "cumcm-2026", "--main-text-pages", "30", "--ai-mode", "used", "--out", str(out))
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
 
     @unittest.skipUnless(shutil.which("xelatex") or shutil.which("pdflatex"), "LaTeX is unavailable")

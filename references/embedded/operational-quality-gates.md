@@ -55,19 +55,27 @@ python scripts/lock_contest_rules.py create `
   --contest CUMCM `
   --year 2026 `
   --profile cumcm-2026 `
-  --valid-through 2026-12-31 `
-  --source-url <official-url> `
-  --snapshot reports/rules/cumcm-format.pdf `
+  --valid-through 2026-09-13 `
+  --source-role official_notice --source-url <official-notice-url> --snapshot reports/rules/notice.pdf `
+  --source-role paper_format --source-url <official-format-url> --snapshot reports/rules/format.html `
+  --source-role contest_rules --source-url <official-rules-url> --snapshot reports/rules/rules.html `
+  --source-role ai_policy --source-url <official-ai-url> --snapshot reports/rules/ai.html `
   --rule paper_format=PDF `
   --rule paper_size_limit_mb=20 `
   --rule support_archive=ZIP-or-RAR `
   --rule main_text_page_limit=30 `
   --rule ai_policy=disclose `
-  --rule anonymity=no-identity
+  --rule anonymity=no-identity `
+  --rule competition_start=2026-09-10T18:00:00+08:00 `
+  --rule competition_end=2026-09-13T20:00:00+08:00 `
+  --rule registration_deadline=2026-09-07T20:00:00+08:00 `
+  --rule timezone=Asia/Shanghai `
+  --rule "submission_channel=CNKI competition management system"
 ```
 
-Run `lock_contest_rules.py validate` again before freeze. Never treat the
-initializer's unverified skeleton as a current official snapshot.
+Run `lock_contest_rules.py validate --mode precontest --as-of-date YYYY-MM-DD`
+at T-30, T-7, and T-1, then use `--mode live` against the local snapshots.
+Never treat the initializer's unverified skeleton as a current official snapshot.
 
 ## Coordinate phases
 

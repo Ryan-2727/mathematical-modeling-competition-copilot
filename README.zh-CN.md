@@ -20,7 +20,8 @@
 新电脑只需要安装这个仓库，就能获得完整的数学建模竞赛工作流。原先分散在多个小 skill 里的流程知识已经内嵌到 `references/embedded/`：
 
 - 竞赛启动与 `plan.md` / `todo.md`
-- 获奖导向证据门、72 小时里程碑看板和止损规则
+- 获奖导向证据门、通用 72 小时控制，以及精确适配 CUMCM 2026 的
+  74 小时里程碑看板和止损规则
 - 有边界的建模路线 brainstorming
 - 按问题结构选路，以及可审计的“基线—候选模型”取舍日志
 - 数学建模六阶段流程
@@ -42,7 +43,10 @@
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
 - 绑定官方来源 URL、快照哈希、有效期和结构化字段的规则锁，以及累计阶段门
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
-- CUMCM 2026 规则配置、AI 使用详情 PDF、证据账本、可复现运行清单与论证覆盖检查
+- CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、AI 使用/未使用互斥分支、
+  H6 可执行选题试跑和限时训练就绪度评分
+- 正式比赛材料全程只留本地：允许互联网搜索，Skill 不上传赛题或作答内容；
+  无法判断隐私风险时暂停并询问用户
 - CUMCM 与 MCM/ICM 可执行规则配置，以及初始化时自动选择的独立可移植
   LaTeX 模板
 - 由计算结果哈希驱动的关键数值唯一真源、LaTeX 宏生成器和 11 类模型族验证适配器
@@ -117,7 +121,13 @@ python scripts/contestctl.py summary --project-dir <project>
 论文与 Skill 发布流程使用以下确定性检查：
 
 - `lock_contest_rules.py` 将保存的官方规则快照与 URL、哈希、结构化字段
-  和有效期绑定；`contestctl.py check` 累计协调各阶段门，但不替代专项检查器。
+  和有效期绑定，并执行 CUMCM 2026 的规则新鲜度检查；`contestctl.py check`
+  累计协调各阶段门，但不替代专项检查器。
+- `verify_problem_audition.py` 核验候选题的可执行证据和 H6 选题锁；
+  `score_training_readiness.py` 评估 8/24/48/74 小时训练；
+  `verify_online_actions.py` 审计正式比赛材料仅留本地的联网行为声明。
+- `verify_submission.py --profile cumcm-2026 --ai-mode none|used` 分别核验
+  参考文献后的准确未使用声明，或完整的 AI 使用证据链。
 - `results/verified_values.csv` 是关键计算数值的唯一真源；
   `generate_verified_values.py` 生成 `paper/generated/results.tex`，
   `verify_verified_values.py` 检查哈希、类型、单位、LaTeX 可达性和过期状态。

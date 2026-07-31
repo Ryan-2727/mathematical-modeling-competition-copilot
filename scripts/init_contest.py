@@ -39,6 +39,7 @@ def main() -> int:
     default_template, default_profile = contest_defaults(args.contest, args.year)
     selected_template = default_template if args.template == "auto" else args.template
     selected_profile = args.submission_profile or default_profile
+    is_cumcm_2026 = selected_profile == "cumcm-2026"
     root = args.project_dir
     for name in (
         "data/raw",
@@ -73,6 +74,8 @@ def main() -> int:
         "rules_snapshot_file": "reports/contest_rules_snapshot.md",
         "rules_lock_file": "rules.lock.json",
         "submission_profile": selected_profile,
+        "ai_mode": None if is_cumcm_2026 else "not_applicable",
+        "contest_duration_hours": 74 if is_cumcm_2026 else None,
         "quality_profile": "standard",
         "workflow": {
             "phase": "setup",
@@ -81,6 +84,7 @@ def main() -> int:
         },
         "latex_template": selected_template,
         "live_mode_policy": "static-authoritative-sources-only" if args.mode == "live" else "not-applicable",
+        "online_action_policy": "local-work-only; search allowed; ask user when privacy is ambiguous",
         "submission_state": "draft",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
@@ -92,7 +96,7 @@ def main() -> int:
         root / "rules.lock.json",
         json.dumps(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "contest": args.contest,
                 "year": args.year,
                 "profile": selected_profile,
@@ -101,6 +105,15 @@ def main() -> int:
                 "sources": [],
                 "rules": {},
                 "status": "unverified",
+                **(
+                    {
+                        "freshness_checkpoints": [
+                            "2026-08-11", "2026-09-03", "2026-09-09"
+                        ]
+                    }
+                    if is_cumcm_2026
+                    else {}
+                ),
             },
             ensure_ascii=False,
             indent=2,
@@ -177,6 +190,31 @@ def main() -> int:
     write_if_missing(root / "reports/decision_stability.csv", "decision_id,subproblem,baseline_recommendation,perturbation_id,perturbation,perturbed_recommendation,recommendation_changed,materiality,conditional_conclusion,limitation_location,result_file,paper_location,status\n")
     write_if_missing(root / "reports/figure_numeric_contract.csv", "figure,label,source_data,data_sha256,axis_x,axis_y,axis_scale,x_limits,y_limits,value_transform,decisive_value_keys,paper_location,status\n")
     write_if_missing(root / "reports/model_budget.csv", "subproblem,route_name,route_type,selected,estimated_hours,risk_level,validation_hours,fallback_route,expected_value,deadline_hours,status\n")
+    write_if_missing(
+        root / "reports/problem_audition.csv",
+        "problem_id,attachment_status,attachment_evidence,baseline_command,baseline_result,"
+        "subproblem_closure_risk,result_verifiability,upgrade_headroom,team_fit,"
+        "writing_visual_potential,fatal_risk,score,status\n",
+    )
+    write_if_missing(
+        root / "reports/problem_selection.json",
+        '{\n  "selected_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n  "override": null\n}\n',
+    )
+    write_if_missing(
+        root / "reports/training_runs.csv",
+        "run_id,rehearsal_hours,selection_lock_hour,first_verified_result_hour,"
+        "all_subproblem_results_hour,full_draft_hour,strict_freeze_hour,"
+        "submission_rehearsal,unresolved_vetoes,status\n",
+    )
+    write_if_missing(
+        root / "reports/training_defects.csv",
+        "run_id,defect_class,severity,evidence,resolution_status\n",
+    )
+    write_if_missing(
+        root / "reports/online_actions.csv",
+        "action_id,mode,action_type,purpose,destination,"
+        "contains_current_contest_material,privacy_ambiguity,user_decision,evidence,status\n",
+    )
     write_if_missing(root / "reports/three_minute_review.csv", "element,reader_question,direct_answer,evidence_type,evidence_ref,paper_location,status\n")
     write_if_missing(root / "reports/decision_robustness.csv", "decision_id,uncertainty_material,comparison_type,scenario_count,expected_value,worst_case_value,extreme_feasibility_rate,policy_changed,interpretation,status\n")
     write_if_missing(root / "reports/implementation_readiness.csv", "decision_id,implementation_steps,required_inputs,execution_cost,execution_time,interpretability,extreme_feasibility_rate,failure_mode,contingency,paper_location,status\n")
@@ -203,20 +241,34 @@ def main() -> int:
         "result_correctness,,,,,pending\n"
         "writing_clarity,,,,,pending\n",
     )
-    write_if_missing(
-        root / "reports/milestones.csv",
-        "milestone,hour,deliverable,owner,gate,status\n"
-        "scope-lock,3,problem split and compliance snapshot,unassigned,scope agreed,pending\n"
-        "data-lock,8,data audit and baseline plan,unassigned,data usable,pending\n"
-        "route-lock,12,model decision log,unassigned,primary route selected,pending\n"
-        "baseline-run,30,complete baseline results,unassigned,all subproblems answered,pending\n"
-        "validation-lock,42,diagnostics and stress tests,unassigned,decisive claims tested,pending\n"
-        "figure-lock,54,final figures and tables,unassigned,all numbers traceable,pending\n"
-        "draft-lock,60,complete paper draft,unassigned,no missing section,pending\n"
-        "review-lock,66,independent consistency review,unassigned,major objections resolved,pending\n"
-        "submission-build,70,final anonymous submission files,unassigned,profile checks pass,pending\n"
-        "receipt-lock,72,hashes and receipt evidence,unassigned,submission verified,pending\n",
-    )
+    if is_cumcm_2026:
+        milestones = (
+            "milestone,hour,deliverable,owner,gate,status\n"
+            "scope-lock,2,rules roles and candidate criteria,unassigned,scope agreed,pending\n"
+            "selection-lock,6,verified problem audition and selected problem,unassigned,H6 selection verified,pending\n"
+            "baseline-run,24,all subproblems have baseline results,unassigned,results executable,pending\n"
+            "model-lock,42,primary comparison and validation frozen,unassigned,claims survive challenge,pending\n"
+            "figure-lock,54,stress tests figures and tables frozen,unassigned,numbers traceable,pending\n"
+            "draft-lock,64,complete paper and support draft,unassigned,no missing section,pending\n"
+            "review-lock,70,independent review and strict checks,unassigned,vetoes resolved,pending\n"
+            "submission-rehearsal,72,hash AI branch and package rehearsal,unassigned,local checks pass,pending\n"
+            "receipt-lock,74,manual official submission and receipt evidence,unassigned,submission verified,pending\n"
+        )
+    else:
+        milestones = (
+            "milestone,hour,deliverable,owner,gate,status\n"
+            "scope-lock,3,problem split and compliance snapshot,unassigned,scope agreed,pending\n"
+            "data-lock,8,data audit and baseline plan,unassigned,data usable,pending\n"
+            "route-lock,12,model decision log,unassigned,primary route selected,pending\n"
+            "baseline-run,30,complete baseline results,unassigned,all subproblems answered,pending\n"
+            "validation-lock,42,diagnostics and stress tests,unassigned,decisive claims tested,pending\n"
+            "figure-lock,54,final figures and tables,unassigned,all numbers traceable,pending\n"
+            "draft-lock,60,complete paper draft,unassigned,no missing section,pending\n"
+            "review-lock,66,independent consistency review,unassigned,major objections resolved,pending\n"
+            "submission-build,70,final anonymous submission files,unassigned,profile checks pass,pending\n"
+            "receipt-lock,72,hashes and receipt evidence,unassigned,submission verified,pending\n"
+        )
+    write_if_missing(root / "reports/milestones.csv", milestones)
     write_if_missing(root / "reports/ai_usage_log.jsonl", "")
     write_if_missing(root / "reports/verification_report.md", "# Verification report\n\n## Submission state\n\ndraft\n\n## Checks\n\n| Check | Status | Evidence |\n| --- | --- | --- |\n")
     write_if_missing(

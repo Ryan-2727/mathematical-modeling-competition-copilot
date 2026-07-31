@@ -30,6 +30,21 @@ PROFILE_RULES = {
     },
 }
 
+CUMCM_2026_SOURCE_ROLES = {
+    "official_notice",
+    "paper_format",
+    "contest_rules",
+    "ai_policy",
+}
+CUMCM_2026_RULES = {
+    "competition_start": "2026-09-10T18:00:00+08:00",
+    "competition_end": "2026-09-13T20:00:00+08:00",
+    "registration_deadline": "2026-09-07T20:00:00+08:00",
+    "timezone": "Asia/Shanghai",
+    "submission_channel": "CNKI competition management system",
+}
+CUMCM_2026_CHECKPOINTS = ["2026-08-11", "2026-09-03", "2026-09-09"]
+
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
@@ -60,7 +75,25 @@ def profile_family(profile: str) -> str:
     return "generic"
 
 
-def validate_lock(root: Path, payload: Any) -> dict[str, Any]:
+def parse_datetime(value: object, label: str, errors: list[str]) -> datetime | None:
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        errors.append(f"{label} must be an ISO-8601 datetime")
+        return None
+    if parsed.tzinfo is None:
+        errors.append(f"{label} must include a timezone offset")
+        return None
+    return parsed
+
+
+def validate_lock(
+    root: Path,
+    payload: Any,
+    *,
+    as_of_date: date | None = None,
+    mode: str = "precontest",
+) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
     if not isinstance(payload, dict):
@@ -81,6 +114,7 @@ def validate_lock(root: Path, payload: Any) -> dict[str, Any]:
         errors.append("rules lock needs at least one official source snapshot")
         sources = []
     source_reports: list[dict[str, Any]] = []
+    source_roles: set[str] = set()
     for index, source in enumerate(sources, 1):
         local_errors: list[str] = []
         if not isinstance(source, dict):
@@ -91,6 +125,11 @@ def validate_lock(root: Path, payload: Any) -> dict[str, Any]:
         if parsed.scheme != "https" or not parsed.netloc:
             local_errors.append("official source URL must use HTTPS")
         relative = str(source.get("snapshot") or "").strip()
+        role = str(source.get("role") or "").strip()
+        if role:
+            if role in source_roles:
+                local_errors.append(f"duplicate source role: {role}")
+            source_roles.add(role)
         path = safe_project_file(root, relative)
         if path is None or not path.is_file():
             local_errors.append("snapshot is missing or outside the project")
@@ -102,6 +141,7 @@ def validate_lock(root: Path, payload: Any) -> dict[str, Any]:
         source_reports.append(
             {
                 "url": url,
+                "role": role,
                 "snapshot": relative,
                 "status": "PASS" if not local_errors else "FAIL",
                 "errors": local_errors,
@@ -119,11 +159,41 @@ def validate_lock(root: Path, payload: Any) -> dict[str, Any]:
     for field in sorted(required):
         if field not in rules or rules[field] in {"", None}:
             errors.append(f"missing structured rule: {field}")
+    latest_due_checkpoint = ""
+    if str(payload.get("profile") or "").lower() == "cumcm-2026":
+        missing_roles = sorted(CUMCM_2026_SOURCE_ROLES - source_roles)
+        if missing_roles:
+            errors.append("missing official source role(s): " + ", ".join(missing_roles))
+        for index, source in enumerate(sources, 1):
+            if not isinstance(source, dict):
+                continue
+            host = (urlparse(str(source.get("url") or "")).hostname or "").lower()
+            if host != "mcm.edu.cn" and not host.endswith(".mcm.edu.cn"):
+                errors.append(f"sources[{index}]: CUMCM 2026 source must use mcm.edu.cn")
+        for field, expected in CUMCM_2026_RULES.items():
+            if rules.get(field) != expected:
+                errors.append(f"CUMCM 2026 structured rule {field} must equal {expected}")
+        checkpoints = payload.get("freshness_checkpoints")
+        if checkpoints != CUMCM_2026_CHECKPOINTS:
+            errors.append("CUMCM 2026 freshness checkpoints must be T-30, T-7, and T-1")
+        today = as_of_date or date.today()
+        due = [item for item in CUMCM_2026_CHECKPOINTS if date.fromisoformat(item) <= today]
+        latest_due_checkpoint = due[-1] if due else ""
+        checked = parse_datetime(payload.get("created_at_utc"), "created_at_utc", errors)
+        if checked is not None and latest_due_checkpoint:
+            if checked.date() < date.fromisoformat(latest_due_checkpoint):
+                errors.append(
+                    "rules lock predates the latest freshness checkpoint "
+                    f"{latest_due_checkpoint}; refresh official snapshots before use"
+                )
     status = "FAIL" if errors else ("LIMITED" if warnings else "PASS")
     return {
         "status": status,
         "scope": "hash, freshness, official URL, and structured-rule verification",
         "profile_family": family,
+        "mode": mode,
+        "as_of_date": (as_of_date or date.today()).isoformat(),
+        "latest_due_checkpoint": latest_due_checkpoint,
         "sources": source_reports,
         "errors": errors,
         "warnings": warnings,
@@ -191,7 +261,10 @@ def main() -> int:
     create.add_argument("--valid-through", required=True)
     create.add_argument("--source-url", action="append", default=[])
     create.add_argument("--snapshot", action="append", default=[])
+    create.add_argument("--source-role", action="append", default=[])
     create.add_argument("--rule", action="append", default=[])
+    create.add_argument("--checked-at")
+    create.add_argument("--mode", choices=["precontest", "live"], default="precontest")
     create.add_argument("--out", type=Path, default=Path("rules.lock.json"))
     create.add_argument(
         "--report",
@@ -201,6 +274,8 @@ def main() -> int:
     validate = subparsers.add_parser("validate")
     validate.add_argument("--project-dir", type=Path, required=True)
     validate.add_argument("--lock", type=Path, default=Path("rules.lock.json"))
+    validate.add_argument("--as-of-date", type=date.fromisoformat)
+    validate.add_argument("--mode", choices=["precontest", "live"], default="precontest")
     validate.add_argument(
         "--out",
         type=Path,
@@ -217,9 +292,14 @@ def main() -> int:
             raise SystemExit(
                 "provide the same non-zero number of --source-url and --snapshot values"
             )
+        if args.source_role and len(args.source_role) != len(args.source_url):
+            raise SystemExit("--source-role must be omitted or match the source count")
+        if args.profile.lower() == "cumcm-2026" and not args.source_role:
+            raise SystemExit("cumcm-2026 requires --source-role for every official source")
         rules = parse_pairs(args.rule, "--rule")
         sources: list[dict[str, Any]] = []
-        for url, raw_path in zip(args.source_url, args.snapshot):
+        roles = args.source_role or [""] * len(args.source_url)
+        for role, url, raw_path in zip(roles, args.source_url, args.snapshot):
             path = safe_project_file(root, raw_path)
             if path is None or not path.is_file():
                 raise SystemExit(f"snapshot must be an existing project file: {raw_path}")
@@ -229,27 +309,34 @@ def main() -> int:
                 raise SystemExit("rules lock outputs must not overwrite a source snapshot")
             sources.append(
                 {
+                    "role": role,
                     "url": url,
                     "snapshot": path.relative_to(root).as_posix(),
                     "sha256": sha256_file(path),
                     "size_bytes": path.stat().st_size,
                 }
             )
+        checked_at = args.checked_at or datetime.now(timezone.utc).isoformat()
+        checked = parse_datetime(checked_at, "--checked-at", [])
+        if checked is None:
+            raise SystemExit("--checked-at must be an ISO-8601 datetime with timezone")
         payload = {
-            "schema_version": 1,
+            "schema_version": 2,
             "contest": args.contest,
             "year": args.year,
             "profile": args.profile,
-            "created_at_utc": datetime.now(timezone.utc).isoformat(),
+            "created_at_utc": checked.isoformat(),
             "valid_through": args.valid_through,
             "sources": sources,
             "rules": rules,
         }
+        if args.profile.lower() == "cumcm-2026":
+            payload["freshness_checkpoints"] = CUMCM_2026_CHECKPOINTS
         lock_path.parent.mkdir(parents=True, exist_ok=True)
         lock_path.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
         )
-        report = validate_lock(root, payload)
+        report = validate_lock(root, payload, mode=args.mode)
     else:
         lock_path = resolve_output(root, args.lock, "rules lock input", False)
         report_path = resolve_output(root, args.out, "verification report", True)
@@ -267,7 +354,9 @@ def main() -> int:
                 "warnings": [],
             }
         else:
-            report = validate_lock(root, payload)
+            report = validate_lock(
+                root, payload, as_of_date=args.as_of_date, mode=args.mode
+            )
             for source in payload.get("sources") or []:
                 if not isinstance(source, dict):
                     continue

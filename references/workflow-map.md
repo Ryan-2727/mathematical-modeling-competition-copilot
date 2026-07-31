@@ -11,6 +11,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `contest-operations-72h.md`: milestone schedule, role handoffs, and stop-loss rules for a 72-hour contest.
 - `contest-modes-and-compliance.md`: live-contest boundary, current rules snapshot, AI-use evidence, and submission-state machine.
 - `cumcm-2026-rules.md`: executable CUMCM 2026 format, support-package, AI-report, and submission-profile checks.
+- `cumcm-2026-readiness.md`: local-only online boundary, H6 problem audition,
+  exact 74-hour operations, and timed rehearsal readiness.
 - `executable-contest-profiles.md`: versioned CUMCM and MCM/ICM official-rule
   profiles, evidence fields, template selection, and executable submission gates.
 - `operational-quality-gates.md`: hash-bound rule lock, cumulative phase

@@ -44,7 +44,7 @@ The verification loop:
   unreferenced figures, undefined citations/references, figure-manifest gaps, and
   material LaTeX log warnings.
 - Submission format matches contest requirements.
-- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026`; explicitly record main-text pages, visual abstract-first/no-TOC checks, and the support archive result.
+- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
   counts. Confirm every numbered subproblem has its own completed depth-plan row;
   a long code appendix does not compensate for an abbreviated main argument.

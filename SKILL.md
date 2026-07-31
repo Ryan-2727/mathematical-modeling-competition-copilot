@@ -29,26 +29,28 @@ It does not promise an award. It maximizes award probability through disciplined
 
 0. **Contest mode, rules, and compliance**
    - Read `references/embedded/contest-modes-and-compliance.md` before viewing or researching a live problem.
-   - Read `references/embedded/executable-contest-profiles.md`. Select an
-     executable profile from a fresh official rules snapshot; do not infer
-     current requirements from a template or an excellent-paper corpus.
-   - Read `references/embedded/operational-quality-gates.md`. Save the official
-     rule pages or PDFs, run `scripts/lock_contest_rules.py`, and require a fresh
-     hash-bound `rules.lock.json` plus
-     `reports/rules_lock_verification.json`.
+   - Read `references/embedded/executable-contest-profiles.md`; select a profile
+     from fresh official rules, never from a template or excellent-paper corpus.
+   - Read `references/embedded/operational-quality-gates.md`; save official rule
+     snapshots, run `scripts/lock_contest_rules.py`, and require hash-bound
+     `rules.lock.json` plus `reports/rules_lock_verification.json`.
    - Run `scripts/init_contest.py` and create `contest_manifest.json` plus a current official `reports/contest_rules_snapshot.md`.
    - In live mode, prohibit current-problem discussion, interactive help, answer searching, and public posting. Record AI use from the first material use.
-   - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and select the `cumcm-2026` verification profile.
+   - For CUMCM 2026, read `references/embedded/cumcm-2026-rules.md` and
+     `references/embedded/cumcm-2026-readiness.md`; select `cumcm-2026`, declare
+     `ai_mode=none|used`, and verify local online-action records.
 
 1. **Contest setup and strategy**
    - Read `references/embedded/contest-setup.md`.
-   - Read `references/embedded/award-oriented-workflow.md` and
-     `references/embedded/contest-operations-72h.md`. Adapt the milestone hours
-     proportionally when the contest is not 72 hours.
+   - Read `references/embedded/award-oriented-workflow.md`; use
+     `contest-operations-72h.md` generally and the exact 74-hour readiness file
+     for CUMCM 2026.
    - Use the embedded brainstorming gate in that file before committing to a modeling route.
    - Confirm contest type, language, submission format, time budget, team role split, available data, and deliverables.
    - If the contest is CUMCM / 中国大学生数学建模竞赛（国赛）, read `references/embedded/cumcm-model-selection.md` before selecting models. Ask for, or infer from the context, the available Python, MATLAB, and LINGO environments; treat them as equal paths and select the one that best matches the method and reproducibility need.
    - Create or update `plan.md`, `todo.md`, and `reports/milestones.csv`.
+   - For CUMCM 2026, verify comparable candidate baselines and lock the problem
+     by H6 with `scripts/verify_problem_audition.py`.
 
 2. **Problem analysis and model design**
    - Read `references/embedded/llm-mm-agent-methodology.md`.
@@ -348,11 +350,12 @@ It does not promise an award. It maximizes award probability through disciplined
      contest-permitted files under `official-submission/`. Run
      `scripts/verify_delivery_profiles.py`; never place the user-side support
      archive in an MCM/ICM official submission.
-   - When AI is used in CUMCM 2026, render and include `AI工具使用详情.pdf`, then use `verify_submission.py --profile cumcm-2026 --require-ai-report`.
+   - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; the used branch requires `AI工具使用详情.pdf`, while the none branch requires the exact post-reference declaration.
 
 12. **Paper-learning regression loop**
    - Read `references/embedded/training-evaluation-loop.md` before using an
      excellent-paper corpus to improve this skill.
+   - For 2026 readiness, score 8-, 24-, 48-, and 74-hour rehearsals with `scripts/score_training_readiness.py`.
    - For user-owned historical problems, first run
      `scripts/prepare_private_regression.py inventory`, then prepare an
      explicit private allow-list outside both the source corpus and this Git

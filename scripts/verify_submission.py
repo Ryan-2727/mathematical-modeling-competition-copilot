@@ -24,6 +24,15 @@ CUMCM_AI_URL = (
     "https://www.mcm.edu.cn/html_cn/node/"
     "eebcfb6dc37fd2de9603dc16026fdf01.html"
 )
+CUMCM_NOTICE_URL = (
+    "https://www.mcm.edu.cn/html_cn/node/"
+    "d6fd7a0ee8f3a3d525e30af1c365fcec.html"
+)
+CUMCM_RULES_URL = (
+    "https://www.mcm.edu.cn/html_cn/node/"
+    "9d8e511fe7a1447b35f53a82c908e2e0.html"
+)
+CUMCM_AI_NON_USE_DECLARATION = "本参赛队未使用任何 AI 工具"
 MCM_RULES_URL = (
     "https://contest.comap.com/undergraduate/contests/mcm/instructions.php"
 )
@@ -48,10 +57,21 @@ PROFILES: dict[str, dict[str, Any]] = {
         "max_main_text_pages": 30,
         "toc_forbidden": True,
         "snapshot": {
-            "profile_version": "cumcm-2026.2026-07-24",
-            "verified_at": "2026-07-24",
-            "valid_through": "2026-12-31",
-            "source_urls": [CUMCM_FORMAT_URL, CUMCM_AI_URL],
+            "profile_version": "cumcm-2026.2026-07-31",
+            "verified_at": "2026-07-31",
+            "valid_through": "2026-09-13",
+            "competition_start": "2026-09-10T18:00:00+08:00",
+            "competition_end": "2026-09-13T20:00:00+08:00",
+            "registration_deadline": "2026-09-07T20:00:00+08:00",
+            "timezone": "Asia/Shanghai",
+            "submission_channel": "CNKI competition management system",
+            "freshness_checkpoints": ["2026-08-11", "2026-09-03", "2026-09-09"],
+            "source_urls": [
+                CUMCM_NOTICE_URL,
+                CUMCM_FORMAT_URL,
+                CUMCM_RULES_URL,
+                CUMCM_AI_URL,
+            ],
         },
     },
     "mcm-icm-current": {
@@ -344,6 +364,22 @@ def has_ai_reference(text: str) -> bool:
     )
 
 
+def has_ai_non_use_declaration_after_references(text: str) -> bool:
+    normalized = re.sub(r"\s+", " ", text)
+    reference = re.search(r"(?:参考文献|references|bibliography)", normalized, re.I)
+    declaration = normalized.find(CUMCM_AI_NON_USE_DECLARATION)
+    return reference is not None and declaration > reference.end()
+
+
+def ai_report_in_archive(support: Path | None) -> bool | None:
+    if support is None or not support.is_file():
+        return False
+    names = zip_names(support)
+    if names is None:
+        return None
+    return any(Path(name).name == "AI工具使用详情.pdf" for name in names)
+
+
 def evidence_bool(evidence: dict[str, Any], key: str) -> bool:
     return evidence.get(key) is True
 
@@ -353,7 +389,7 @@ def verify_cumcm(
     paper: Path,
     support: Path | None,
     main_text_pages: int | None,
-    require_ai_report: bool,
+    ai_mode: str | None,
     inspection: PdfInspection | None,
     docx_text: str | None,
     evidence: dict[str, Any],
@@ -363,6 +399,20 @@ def verify_cumcm(
     limitations: list[str],
 ) -> None:
     profile = PROFILES["cumcm-2026"]
+    mode_ok = ai_mode in {"none", "used"}
+    add_check(
+        checks,
+        errors,
+        limitations,
+        "cumcm.ai_mode",
+        mode_ok,
+        (
+            f"CUMCM AI compliance branch is {ai_mode}"
+            if mode_ok
+            else "CUMCM 2026 requires exactly one AI branch: none or used"
+        ),
+        "declared --ai-mode",
+    )
     if main_text_pages is None:
         warnings.append(
             "main-text page count was not supplied; visual counting remains required"
@@ -515,7 +565,7 @@ def verify_cumcm(
                 "PDF content",
             )
 
-    if require_ai_report:
+    if ai_mode == "used":
         if support is None or not support.is_file():
             add_check(
                 checks,
@@ -626,6 +676,83 @@ def verify_cumcm(
         else:
             warnings.append(
                 "Word AI inline-disclosure and reference entries were not machine-inspected"
+            )
+        if all_text is not None:
+            contradiction = has_ai_non_use_declaration_after_references(all_text)
+            add_check(
+                checks,
+                errors,
+                limitations,
+                "cumcm.ai_used_no_non_use_declaration",
+                not contradiction,
+                (
+                    "AI-used branch does not contain the non-use declaration"
+                    if not contradiction
+                    else "AI-used branch contradicts a post-reference non-use declaration"
+                ),
+                "extracted electronic-paper text",
+            )
+    elif ai_mode == "none":
+        if all_text is not None:
+            declaration_ok = has_ai_non_use_declaration_after_references(all_text)
+            usage_text = all_text.replace(CUMCM_AI_NON_USE_DECLARATION, "")
+            inline_absent = not has_ai_inline_disclosure(usage_text)
+            reference_absent = not has_ai_reference(usage_text)
+            for check_id, passed, good, bad in (
+                (
+                    "cumcm.ai_non_use_declaration",
+                    declaration_ok,
+                    "exact AI non-use declaration appears after the references",
+                    "exact AI non-use declaration is missing or not after the references",
+                ),
+                (
+                    "cumcm.ai_none_inline_absent",
+                    inline_absent,
+                    "no inline AI-use evidence found",
+                    "AI non-use branch conflicts with inline AI-use evidence",
+                ),
+                (
+                    "cumcm.ai_none_reference_absent",
+                    reference_absent,
+                    "no AI-tool bibliography entry found",
+                    "AI non-use branch conflicts with an AI-tool bibliography entry",
+                ),
+            ):
+                add_check(
+                    checks, errors, limitations, check_id, passed,
+                    good if passed else bad, "extracted electronic-paper text",
+                )
+        elif evidence:
+            for check_id, key, description in (
+                ("cumcm.ai_non_use_declaration", "ai_non_use_declaration_after_references", "post-reference non-use declaration"),
+                ("cumcm.ai_none_inline_absent", "ai_inline_disclosure_absent", "absence of inline AI use"),
+                ("cumcm.ai_none_reference_absent", "ai_reference_entry_absent", "absence of an AI reference"),
+            ):
+                passed = evidence_bool(evidence, key)
+                add_check(
+                    checks, errors, limitations, check_id, passed,
+                    f"hash-bound evidence records {description}" if passed else f"evidence does not confirm {description}",
+                    "recorded content evidence", limited=passed,
+                )
+        else:
+            add_check(
+                checks, errors, limitations, "cumcm.ai_non_use_declaration", False,
+                "AI non-use declaration check requires extracted text or hash-bound evidence",
+                "paper content",
+            )
+        report_present = ai_report_in_archive(support)
+        if report_present is None:
+            absent = evidence_bool(evidence, "ai_report_absent")
+            add_check(
+                checks, errors, limitations, "cumcm.ai_none_report_absent", absent,
+                "recorded evidence confirms no AI-use report" if absent else "RAR contents cannot confirm absence of AI工具使用详情.pdf",
+                "support archive or recorded evidence", limited=absent,
+            )
+        else:
+            add_check(
+                checks, errors, limitations, "cumcm.ai_none_report_absent", not report_present,
+                "support package has no AI-use report" if not report_present else "AI non-use branch conflicts with AI工具使用详情.pdf",
+                "support archive member names",
             )
 
 
@@ -1009,6 +1136,7 @@ def verify_submission(
     main_text_pages: int | None = None,
     solution_pages: int | None = None,
     require_ai_report: bool = False,
+    ai_mode: str | None = None,
     max_paper_mb: float | None = None,
     max_support_mb: float | None = None,
     font_size_pt: float | None = None,
@@ -1031,6 +1159,9 @@ def verify_submission(
     artifacts: list[dict[str, Any]] = []
     inspection: PdfInspection | None = None
     evidence: dict[str, Any] = {}
+
+    if profile_name == "cumcm-2026" and require_ai_report and ai_mode != "used":
+        errors.append("--require-ai-report is compatible only with --ai-mode used for CUMCM 2026")
 
     if not paper.is_file():
         errors.append("paper is missing")
@@ -1107,7 +1238,7 @@ def verify_submission(
                 paper=paper,
                 support=support,
                 main_text_pages=main_text_pages,
-                require_ai_report=require_ai_report,
+                ai_mode=ai_mode,
                 inspection=inspection,
                 docx_text=extract_docx_text(paper),
                 evidence=evidence,
@@ -1135,6 +1266,7 @@ def verify_submission(
     return {
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "profile": profile_name,
+        "ai_mode": ai_mode,
         "profile_snapshot": snapshot,
         "status": status,
         "scope": (
@@ -1159,6 +1291,7 @@ def main() -> int:
     parser.add_argument("--main-text-pages", type=int)
     parser.add_argument("--solution-pages", type=int)
     parser.add_argument("--require-ai-report", action="store_true")
+    parser.add_argument("--ai-mode", choices=["none", "used"])
     parser.add_argument("--max-paper-mb", type=float)
     parser.add_argument("--max-support-mb", type=float)
     parser.add_argument("--font-size-pt", type=float)
@@ -1173,6 +1306,7 @@ def main() -> int:
         main_text_pages=args.main_text_pages,
         solution_pages=args.solution_pages,
         require_ai_report=args.require_ai_report,
+        ai_mode=args.ai_mode,
         max_paper_mb=args.max_paper_mb,
         max_support_mb=args.max_support_mb,
         font_size_pt=args.font_size_pt,

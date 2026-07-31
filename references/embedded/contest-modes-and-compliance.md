@@ -42,6 +42,12 @@ For each external source, record URL, publisher, access date, license/permission
 claim supported, and whether it is static and authoritative. Reject a source whose
 provenance, permission, or relevance cannot be established.
 
+For CUMCM 2026, also read `cumcm-2026-readiness.md`. Keep all current-contest
+materials and work local; this skill must not upload them. Internet searching is
+allowed without a lexical search-term ban. Record online actions locally with
+`scripts/verify_online_actions.py`. When disclosure risk is unclear, ask the user
+and wait for the reply before proceeding.
+
 ## Freeze and submission states
 
 Use only these states: `draft`, `verified`, `frozen`, `hashed`, `submitted`,

@@ -19,7 +19,8 @@ Use $mathematical-modeling-competition-copilot for this contest problem.
 A new computer can install only this repository and still get the full mathematical modeling competition workflow. The workflow knowledge that used to be spread across multiple helper skills is now embedded under `references/embedded/`:
 
 - contest setup and `plan.md` / `todo.md`
-- award-oriented evidence gates, a 72-hour milestone board, and stop-loss rules
+- award-oriented evidence gates, generic 72-hour control, and an exact CUMCM
+  2026 74-hour board with stop-loss rules
 - bounded brainstorming for model-route selection
 - problem-structure playbooks and an auditable baseline-versus-candidate model decision log
 - mathematical modeling six-phase workflow
@@ -42,7 +43,10 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - hash-bound official-rule locks and cumulative setup/modeling/paper/delivery/freeze phase gates
 - data audit, traceability, environment capture, anonymity scanning, and hashing
-- CUMCM 2026 rule profile, AI-use PDF, evidence ledger, reproducible-run manifest, and argument-coverage checks
+- CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, mutually exclusive
+  AI use/non-use branches, an H6 executable problem audition, and timed readiness scoring
+- a local-only live-contest boundary: internet search is allowed, contest work is
+  never uploaded by the skill, and privacy-ambiguous actions pause for user input
 - executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
   templates selected automatically at project initialization
 - a decisive-value registry that generates LaTeX macros from hashed computation
@@ -126,8 +130,14 @@ Paper assurance now includes:
 The release and paper workflow then uses deterministic checks:
 
 - `lock_contest_rules.py` binds saved official rule snapshots to URLs, hashes,
-  structured fields, and a validity date. `contestctl.py check` coordinates
+  structured fields, a validity date, and the CUMCM 2026 freshness checkpoints.
+  `contestctl.py check` coordinates
   cumulative phase gates without replacing specialist verifiers.
+- `verify_problem_audition.py` enforces comparable executable evidence and the
+  H6 selection lock; `score_training_readiness.py` scores 8/24/48/74-hour drills;
+  `verify_online_actions.py` audits the declared local-only online boundary.
+- `verify_submission.py --profile cumcm-2026 --ai-mode none|used` checks the
+  exact post-reference non-use declaration or the complete AI-use evidence chain.
 - `results/verified_values.csv` is the single source of truth for decisive
   computed values; `generate_verified_values.py` creates
   `paper/generated/results.tex`, and `verify_verified_values.py` checks hashes,
