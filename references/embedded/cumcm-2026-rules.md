@@ -17,7 +17,8 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
 - Submission channel: CNKI competition management system; the team performs the
   final upload manually.
 - Lock four official `mcm.edu.cn` roles: first notice, paper format, contest
-  rules, and AI policy. Save local snapshots and hashes.
+  rules, and AI policy. For each role save the official index locator, article
+  page, and attachment PDF with local snapshots and hashes.
 - Recheck online at T-30, T-7, and T-1 before the contest. During live work use
   the local lock unless the user explicitly authorizes a refresh.
 
@@ -42,11 +43,12 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
   filler, smaller type, or duplicated prose.
 - Electronic paper starts with the abstract page and excludes the commitment
   and number-only pages. Confirm these by visual inspection.
-- Declare exactly one AI branch with `--ai-mode none|used`. `none` requires the
-  exact official non-use declaration after the references and forbids conflicting
-  AI evidence. `used` requires inline disclosure, an AI-tool reference, and
-  `AI工具使用详情.pdf` in the support archive, including tool/version,
-  purpose/stage, key interactions, adoption, and human verification or changes.
+- Declare exactly one AI branch with `--ai-mode none|used`. Put the official
+  `AI工具使用声明` before the references. `none` requires the exact 2026 non-use
+  declaration and forbids conflicting AI evidence. `used` requires the exact
+  use-declaration pattern with a non-empty purpose and `AI工具使用详情.pdf` in the
+  support archive, including tool/version, purpose/stage, principal prompting or
+  process description, adoption, and human review, modification, or verification.
 - Never allow identity, school, or region information in any submitted file.
 
 The profile is a guardrail, not a substitute for the current official rules or

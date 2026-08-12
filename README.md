@@ -33,7 +33,8 @@ A new computer can install only this repository and still get the full mathemati
 - code, notebooks, result tables, and data-driven figures
 - source-scope and unit checks plus predeclared, failure-oriented stress tests
 - flowcharts and architecture diagrams
-- paper writing router with Chinese 2025 format and English contest baseline branches
+- paper writing router with a current CUMCM 2026 executable profile, a retained
+  Chinese 2025 historical layout reference, and an English contest baseline branch
 - cross-year exemplar-corpus lessons for structure, visuals, and evidence narrative
 - LaTeX and academic table rules
 - a portable XeLaTeX/latexmk paper scaffold that compiles and previews in both
@@ -43,8 +44,9 @@ A new computer can install only this repository and still get the full mathemati
 - contest mode, current-rules snapshot, AI-use evidence, and submission freeze
 - hash-bound official-rule locks and cumulative setup/modeling/paper/delivery/freeze phase gates
 - data audit, traceability, environment capture, anonymity scanning, and hashing
-- A single machine-readable CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, mutually exclusive
-  AI use/non-use branches, an H6 executable problem audition, and timed readiness scoring
+- A single machine-readable CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, official
+  locator/page/PDF snapshots, the 2026 AI declarations, an H6 weight-sensitivity
+  problem audition, and P90/trend/two-full-pass readiness scoring
 - a local-only live-contest boundary: internet search is allowed, contest work is
   never uploaded by the skill, and privacy-ambiguous actions pause for user input
 - executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
@@ -133,11 +135,14 @@ The release and paper workflow then uses deterministic checks:
   structured fields, a validity date, and the CUMCM 2026 freshness checkpoints.
   `contestctl.py check` coordinates
   cumulative phase gates without replacing specialist verifiers.
-- `verify_problem_audition.py` enforces comparable executable evidence and the
-  H6 selection lock; `score_training_readiness.py` scores 8/24/48/74-hour drills;
+- `verify_problem_audition.py` recomputes candidate scores across declared
+  weight scenarios and enforces the H6 selection lock;
+  `score_training_readiness.py` scores 8/24/48/74-hour drills with median, P90,
+  worst case, trend, recurrence, role/owner bottlenecks, and a
+  latest-two-full-pass readiness gate;
   `verify_online_actions.py` audits the declared local-only online boundary.
 - `verify_submission.py --profile cumcm-2026 --ai-mode none|used` checks the
-  exact post-reference non-use declaration or the complete AI-use evidence chain.
+  exact pre-reference 2026 declaration or the complete AI-use evidence chain.
 - `results/verified_values.csv` is the single source of truth for decisive
   computed values; `generate_verified_values.py` creates
   `paper/generated/results.tex`, and `verify_verified_values.py` checks hashes,

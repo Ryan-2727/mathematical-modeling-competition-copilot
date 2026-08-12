@@ -23,14 +23,24 @@ not an operating-system network interceptor.
 Before H6, run a small executable baseline for each serious candidate. Record:
 
 - attachment parsing status and local evidence;
-- baseline command and result artifact;
+- reproducible attachment-parse command;
+- baseline command, result artifact, and elapsed hours (target at most two);
+- at least one paper-grade result figure and evidence that every subproblem has
+  a plausible closure route;
+- a named fallback route with local evidence;
 - subproblem closure risk and result verifiability;
 - model-upgrade headroom and team fit;
 - writing and visual potential;
 - fatal risk and comparable score.
 
 Complete `reports/problem_audition.csv` and `reports/problem_selection.json`,
-then run `scripts/verify_problem_audition.py`. Lock the selected problem by H6.
+set normalized weights and at least two sensitivity scenarios in
+`reports/problem_audition_weights.json`, then run
+`scripts/verify_problem_audition.py`. The verifier recomputes scores, reports the
+selected problem's scenario win rate, minimum margin, and confidence, and
+requires an evidence-backed team-authorized override for a non-winning or
+weight-unstable choice, a baseline exceeding two hours, or a declared fatal
+risk. Lock the selected problem by H6.
 After H6, change it only for documented catastrophic infeasibility with local
 evidence and team authorization. The validator verifies the evidence process; it
 does not choose the problem.
@@ -68,7 +78,13 @@ rehearsals. Only after freezing the independent output may excellent papers be
 used to extract general lessons.
 
 Record runs in `reports/training_runs.csv` and evidence-located defects in
-`reports/training_defects.csv`. Run `scripts/score_training_readiness.py` after
-each rehearsal. A full readiness pass requires a successful 74-hour rehearsal,
-a submission rehearsal, and no unresolved critical defect. Partial runs are
-training evidence, not an award prediction.
+`reports/training_defects.csv`. Record selection, modeling, paper, and submission
+role owners, distinct backups, planned/actual completion, and handoff evidence in
+`reports/training_roles.csv`. Run `scripts/score_training_readiness.py` after
+each rehearsal. Review median, nearest-rank P90, worst case, latest-three-run
+trend, deadline margin, defect recurrence, and defects reopened after a prior
+resolution, plus role/owner delay bottlenecks. A stable readiness pass requires
+the latest two 74-hour rehearsals
+to pass, including submission rehearsals, with no unresolved critical defect.
+One passing full rehearsal is provisional evidence. Partial runs and these
+metrics are training evidence, not an award prediction.

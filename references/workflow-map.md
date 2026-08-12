@@ -48,7 +48,9 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `paper-writing.md`: paper-writing branch selector.
 - `paper-depth-and-page-budget.md`: evidence-based main-text depth profiles,
   section budgets, and detailed-versus-brief writing rules.
-- `paper-writing-zh-cn-format2025.md`: Chinese mathematical modeling paper format rules based on the supplied 2025 format document.
+- `paper-writing-zh-cn-format2025.md`: historical Chinese layout reference based
+  on the supplied 2025 format document; never override the current CUMCM 2026
+  profile or fresh official rules with it.
 - `paper-writing-en-contest-base.md`: preserved English contest paper-writing baseline for later MCM/ICM-specific changes.
 - `paper-writing-mcm-icm-current.md`: current-rule verification checklist for MCM/ICM submission and AI disclosure.
 - `latex-paper-pipeline.md`: portable XeLaTeX/latexmk source tree, Overleaf and

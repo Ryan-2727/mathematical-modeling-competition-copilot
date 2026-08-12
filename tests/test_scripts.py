@@ -55,6 +55,7 @@ class ScriptTests(unittest.TestCase):
                 root / "paper" / ".vscode" / "extensions.json",
                 root / "paper" / "code" / "main.py",
                 root / "paper" / "sections" / "abstract.tex",
+                root / "paper" / "sections" / "ai_declaration.tex",
                 root / "support" / "README.md",
                 root / "support" / "reproduction_commands.txt",
                 root / "support" / "materials_manifest.csv",
@@ -64,6 +65,11 @@ class ScriptTests(unittest.TestCase):
                 root / "official-submission" / "manifest.csv",
             ):
                 self.assertTrue(filename.is_file(), str(filename))
+            main_tex = (root / "paper" / "main.tex").read_text(encoding="utf-8")
+            self.assertLess(
+                main_tex.index(r"\input{sections/ai_declaration}"),
+                main_tex.index(r"\bibliography{references}"),
+            )
             log = root / "reports" / "ai_usage_log.jsonl"
             self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "reviewed")
             self.assertIn("TestAI", log.read_text(encoding="utf-8"))

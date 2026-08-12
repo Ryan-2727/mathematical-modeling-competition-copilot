@@ -192,13 +192,35 @@ def main() -> int:
     write_if_missing(root / "reports/model_budget.csv", "subproblem,route_name,route_type,selected,estimated_hours,risk_level,validation_hours,fallback_route,expected_value,deadline_hours,status\n")
     write_if_missing(
         root / "reports/problem_audition.csv",
-        "problem_id,attachment_status,attachment_evidence,baseline_command,baseline_result,"
+        "problem_id,attachment_status,attachment_evidence,attachment_parse_command,"
+        "baseline_command,baseline_result,baseline_elapsed_hours,paper_figure,"
+        "subproblem_closure_evidence,fallback_route,fallback_evidence,"
         "subproblem_closure_risk,result_verifiability,upgrade_headroom,team_fit,"
         "writing_visual_potential,fatal_risk,score,status\n",
     )
     write_if_missing(
         root / "reports/problem_selection.json",
-        '{\n  "selected_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n  "override": null\n}\n',
+        '{\n  "selected_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n  "selection_override": null,\n  "override": null\n}\n',
+    )
+    write_if_missing(
+        root / "reports/problem_audition_weights.json",
+        '{\n'
+        '  "schema_version": 1,\n'
+        '  "minimum_selected_win_rate": 0.75,\n'
+        '  "recorded_score_tolerance": 1.0,\n'
+        '  "base_weights": {\n'
+        '    "subproblem_closure_risk": 0.30,\n'
+        '    "result_verifiability": 0.25,\n'
+        '    "upgrade_headroom": 0.15,\n'
+        '    "team_fit": 0.20,\n'
+        '    "writing_visual_potential": 0.10\n'
+        '  },\n'
+        '  "sensitivity_scenarios": [\n'
+        '    {"name": "closure_first", "weights": {"subproblem_closure_risk": 0.45, "result_verifiability": 0.20, "upgrade_headroom": 0.10, "team_fit": 0.15, "writing_visual_potential": 0.10}},\n'
+        '    {"name": "evidence_first", "weights": {"subproblem_closure_risk": 0.20, "result_verifiability": 0.40, "upgrade_headroom": 0.10, "team_fit": 0.20, "writing_visual_potential": 0.10}},\n'
+        '    {"name": "team_delivery", "weights": {"subproblem_closure_risk": 0.25, "result_verifiability": 0.20, "upgrade_headroom": 0.10, "team_fit": 0.30, "writing_visual_potential": 0.15}}\n'
+        '  ]\n'
+        '}\n',
     )
     write_if_missing(
         root / "reports/training_runs.csv",
@@ -209,6 +231,11 @@ def main() -> int:
     write_if_missing(
         root / "reports/training_defects.csv",
         "run_id,defect_class,severity,evidence,resolution_status\n",
+    )
+    write_if_missing(
+        root / "reports/training_roles.csv",
+        "run_id,role,owner,planned_complete_hour,actual_complete_hour,"
+        "handoff_evidence,backup_owner,status\n",
     )
     write_if_missing(
         root / "reports/online_actions.csv",

@@ -33,7 +33,8 @@
 - 代码、Notebook、结果表和数据图流程
 - 数据来源范围、量纲单位核验，以及预先登记的失败导向压力测试
 - 流程图和结构图规则
-- 中文 2025 格式和英语比赛基础版论文撰写分支
+- 当前 CUMCM 2026 可执行规则配置、保留的中文 2025 历史版式参考，以及
+  英语比赛基础版论文撰写分支
 - 从优秀论文语料库学习结构、图表语法、验证叙事和 LaTeX 写作规范
 - 多年份优秀论文库的跨题型写作规律
 - LaTeX 和学术表格规则
@@ -43,8 +44,9 @@
 - 比赛模式、当年规则快照、AI 使用留痕与提交冻结
 - 绑定官方来源 URL、快照哈希、有效期和结构化字段的规则锁，以及累计阶段门
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
-- 单一机器可读的 CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、AI 使用/未使用互斥分支、
-  H6 可执行选题试跑和限时训练就绪度评分
+- 单一机器可读的 CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、官方
+  索引/正文/PDF 多源快照、2026 AI 声明、H6 选题权重敏感性分析，以及
+  P90/趋势/连续两次完整通过的训练就绪度评分
 - 正式比赛材料全程只留本地：允许互联网搜索，Skill 不上传赛题或作答内容；
   无法判断隐私风险时暂停并询问用户
 - CUMCM 与 MCM/ICM 可执行规则配置，以及初始化时自动选择的独立可移植
@@ -123,11 +125,12 @@ python scripts/contestctl.py summary --project-dir <project>
 - `lock_contest_rules.py` 将保存的官方规则快照与 URL、哈希、结构化字段
   和有效期绑定，并执行 CUMCM 2026 的规则新鲜度检查；`contestctl.py check`
   累计协调各阶段门，但不替代专项检查器。
-- `verify_problem_audition.py` 核验候选题的可执行证据和 H6 选题锁；
-  `score_training_readiness.py` 评估 8/24/48/74 小时训练；
+- `verify_problem_audition.py` 按声明的权重场景复算候选题得分并核验 H6
+  选题锁；`score_training_readiness.py` 用中位数、P90、最坏值、趋势、
+  缺陷复发、角色/队员瓶颈和最近两次完整通过评估 8/24/48/74 小时训练；
   `verify_online_actions.py` 审计正式比赛材料仅留本地的联网行为声明。
 - `verify_submission.py --profile cumcm-2026 --ai-mode none|used` 分别核验
-  参考文献后的准确未使用声明，或完整的 AI 使用证据链。
+  参考文献之前的 2026 官方未使用/使用声明，或完整的 AI 使用证据链。
 - `results/verified_values.csv` 是关键计算数值的唯一真源；
   `generate_verified_values.py` 生成 `paper/generated/results.tex`，
   `verify_verified_values.py` 检查哈希、类型、单位、LaTeX 可达性和过期状态。

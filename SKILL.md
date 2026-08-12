@@ -74,9 +74,12 @@ Required actions:
 - Use the bounded brainstorming gate before committing to a route. Create
   `plan.md`, `todo.md`, and `reports/milestones.csv`.
 - For CUMCM 2026, run comparable executable baselines for candidate problems,
-  complete `reports/problem_audition.csv`, and lock the choice by H6 with
-  `scripts/verify_problem_audition.py`. Use the exact 74-hour schedule rather
-  than adapting a generic 72-hour board.
+  complete `reports/problem_audition.csv`, declare normalized base and
+  sensitivity weights in `reports/problem_audition_weights.json`, and lock the
+  choice by H6 with `scripts/verify_problem_audition.py`. Require a documented
+  team-authorized override when the choice is not the recomputed base winner or
+  misses the declared scenario win-rate threshold. Use the exact 74-hour
+  schedule rather than adapting a generic 72-hour board.
 
 ### 2. Problem analysis and model design
 

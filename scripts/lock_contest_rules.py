@@ -34,6 +34,10 @@ PROFILE_RULES = {
 
 CUMCM_2026_PROFILE = load_contest_profile("cumcm-2026")
 CUMCM_2026_SOURCE_ROLES = set(CUMCM_2026_PROFILE["source_urls"])
+CUMCM_2026_SOURCE_KINDS = {
+    role: set(variants)
+    for role, variants in CUMCM_2026_PROFILE.get("source_variants", {}).items()
+}
 CUMCM_2026_RULES = {
     key: CUMCM_2026_PROFILE[key]
     for key in (
@@ -116,6 +120,7 @@ def validate_lock(
         sources = []
     source_reports: list[dict[str, Any]] = []
     source_roles: set[str] = set()
+    source_role_kinds: dict[str, set[str]] = {}
     for index, source in enumerate(sources, 1):
         local_errors: list[str] = []
         if not isinstance(source, dict):
@@ -127,10 +132,15 @@ def validate_lock(
             local_errors.append("official source URL must use HTTPS")
         relative = str(source.get("snapshot") or "").strip()
         role = str(source.get("role") or "").strip()
+        kind = str(source.get("kind") or "").strip()
         if role:
-            if role in source_roles:
+            if not kind and role in source_roles:
                 local_errors.append(f"duplicate source role: {role}")
             source_roles.add(role)
+            if kind:
+                if kind in source_role_kinds.setdefault(role, set()):
+                    local_errors.append(f"duplicate source role/kind: {role}/{kind}")
+                source_role_kinds[role].add(kind)
         path = safe_project_file(root, relative)
         if path is None or not path.is_file():
             local_errors.append("snapshot is missing or outside the project")
@@ -143,6 +153,7 @@ def validate_lock(
             {
                 "url": url,
                 "role": role,
+                "kind": kind,
                 "snapshot": relative,
                 "status": "PASS" if not local_errors else "FAIL",
                 "errors": local_errors,
@@ -165,6 +176,29 @@ def validate_lock(
         missing_roles = sorted(CUMCM_2026_SOURCE_ROLES - source_roles)
         if missing_roles:
             errors.append("missing official source role(s): " + ", ".join(missing_roles))
+        for role, required_kinds in sorted(CUMCM_2026_SOURCE_KINDS.items()):
+            missing_kinds = sorted(required_kinds - source_role_kinds.get(role, set()))
+            if missing_kinds:
+                errors.append(
+                    f"official source role {role} missing source kind(s): "
+                    + ", ".join(missing_kinds)
+                )
+        expected_sources = CUMCM_2026_PROFILE.get("source_variants", {})
+        for index, source in enumerate(sources, 1):
+            if not isinstance(source, dict):
+                continue
+            role = str(source.get("role") or "").strip()
+            kind = str(source.get("kind") or "").strip()
+            expected_url = (expected_sources.get(role) or {}).get(kind)
+            if expected_url is None:
+                errors.append(
+                    f"sources[{index}]: unknown CUMCM 2026 source role/kind {role}/{kind}"
+                )
+            elif str(source.get("url") or "").strip() != expected_url:
+                errors.append(
+                    f"sources[{index}]: CUMCM 2026 source URL does not match "
+                    f"the bundled {role}/{kind} official source"
+                )
         for index, source in enumerate(sources, 1):
             if not isinstance(source, dict):
                 continue
@@ -263,6 +297,7 @@ def main() -> int:
     create.add_argument("--source-url", action="append", default=[])
     create.add_argument("--snapshot", action="append", default=[])
     create.add_argument("--source-role", action="append", default=[])
+    create.add_argument("--source-kind", action="append", default=[])
     create.add_argument("--rule", action="append", default=[])
     create.add_argument("--checked-at")
     create.add_argument("--mode", choices=["precontest", "live"], default="precontest")
@@ -295,12 +330,19 @@ def main() -> int:
             )
         if args.source_role and len(args.source_role) != len(args.source_url):
             raise SystemExit("--source-role must be omitted or match the source count")
+        if args.source_kind and len(args.source_kind) != len(args.source_url):
+            raise SystemExit("--source-kind must be omitted or match the source count")
         if args.profile.lower() == "cumcm-2026" and not args.source_role:
             raise SystemExit("cumcm-2026 requires --source-role for every official source")
+        if args.profile.lower() == "cumcm-2026" and not args.source_kind:
+            raise SystemExit("cumcm-2026 requires --source-kind for every official source")
         rules = parse_pairs(args.rule, "--rule")
         sources: list[dict[str, Any]] = []
         roles = args.source_role or [""] * len(args.source_url)
-        for role, url, raw_path in zip(roles, args.source_url, args.snapshot):
+        kinds = args.source_kind or [""] * len(args.source_url)
+        for role, kind, url, raw_path in zip(
+            roles, kinds, args.source_url, args.snapshot
+        ):
             path = safe_project_file(root, raw_path)
             if path is None or not path.is_file():
                 raise SystemExit(f"snapshot must be an existing project file: {raw_path}")
@@ -311,6 +353,7 @@ def main() -> int:
             sources.append(
                 {
                     "role": role,
+                    "kind": kind,
                     "url": url,
                     "snapshot": path.relative_to(root).as_posix(),
                     "sha256": sha256_file(path),

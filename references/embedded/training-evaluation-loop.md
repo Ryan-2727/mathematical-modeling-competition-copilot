@@ -22,7 +22,10 @@ only when it improves more than one problem type without leaking task-specific
 answers.
 
 For the 2026 CUMCM readiness sequence, use 8-, 24-, 48-, and 74-hour rehearsals.
-Record `reports/training_runs.csv` and `reports/training_defects.csv`, then run
-`scripts/score_training_readiness.py`. A `PASS` requires a successful full
-74-hour run and no unresolved critical defect; shorter runs are `LIMITED`
-readiness evidence.
+Record `reports/training_runs.csv`, `reports/training_defects.csv`, and
+`reports/training_roles.csv`, then run
+`scripts/score_training_readiness.py`. Inspect median, P90, worst case,
+latest-three-run trend, safety margin, and defect recurrence rather than relying
+on averages alone. A stable `PASS` requires the latest two full 74-hour runs to
+pass and no unresolved critical defect; one full pass is `provisional`, and
+shorter runs are `LIMITED` readiness evidence.

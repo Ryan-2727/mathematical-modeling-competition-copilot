@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "profile_id": "cumcm-2026",
-  "profile_version": "cumcm-2026.2026-07-31",
-  "verified_at": "2026-07-31",
+  "profile_version": "cumcm-2026.2026-08-12",
+  "verified_at": "2026-08-12",
   "valid_through": "2026-09-13",
   "competition_start": "2026-09-10T18:00:00+08:00",
   "competition_end": "2026-09-13T20:00:00+08:00",
@@ -19,7 +19,29 @@
     "official_notice": "https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html",
     "paper_format": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
     "contest_rules": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html",
-    "ai_policy": "https://www.mcm.edu.cn/html_cn/node/eebcfb6dc37fd2de9603dc16026fdf01.html"
+    "ai_policy": "https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html"
+  },
+  "source_variants": {
+    "official_notice": {
+      "locator": "https://www.mcm.edu.cn/html_cn/block/20ead73cbcf5a1c24b91947f98d7aac2.html",
+      "page": "https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html",
+      "attachment": "https://www.mcm.edu.cn/upload_cn/node/779/D3txF20S95f4041e22b41b4a1f9e0e22ac8a1389.pdf"
+    },
+    "paper_format": {
+      "locator": "https://www.mcm.edu.cn/html_cn/block/44e92058f537729c6b6a62a3662ee417.html",
+      "page": "https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html",
+      "attachment": "https://www.mcm.edu.cn/upload_cn/node/775/cQMeL0YY905244c8bd4b9af832f1699446d8385e.pdf"
+    },
+    "contest_rules": {
+      "locator": "https://www.mcm.edu.cn/html_cn/block/44e92058f537729c6b6a62a3662ee417.html",
+      "page": "https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html",
+      "attachment": "https://www.mcm.edu.cn/upload_cn/node/774/FlQt6kJV6f5d5b4603e06c3c60acf89b72d7f298.pdf"
+    },
+    "ai_policy": {
+      "locator": "https://www.mcm.edu.cn/html_cn/block/44e92058f537729c6b6a62a3662ee417.html",
+      "page": "https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html",
+      "attachment": "https://www.mcm.edu.cn/upload_cn/node/785/Glps6mBh6563c55c45300fede72ddbf6eb33d3a8.pdf"
+    }
   },
   "paper_suffixes": [".pdf", ".doc", ".docx"],
   "support_suffixes": [".zip", ".rar"],
@@ -29,5 +51,8 @@
   "toc_forbidden": true,
   "ai_modes": ["none", "used"],
   "ai_report_filename": "AI工具使用详情.pdf",
-  "ai_non_use_declaration": "本参赛队未使用任何 AI 工具"
+  "ai_declaration_location": "before_references",
+  "ai_non_use_declaration": "本参赛队在竞赛过程中未使用任何AI工具。",
+  "ai_use_declaration_prefix": "本参赛队在竞赛过程中使用了AI工具，主要用于",
+  "ai_use_declaration_suffix": "，详细使用情况见支撑材料。"
 }

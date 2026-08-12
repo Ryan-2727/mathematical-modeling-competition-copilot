@@ -27,7 +27,7 @@ parameters before using it after that date.
 
 ## CUMCM 2026
 
-Snapshot verified 2026-07-31:
+Snapshot verified 2026-08-12:
 
 Executable values come from `assets/contest-profiles/cumcm-2026.json` through
 `scripts/contest_profile.py`; this section explains the profile and is checked
@@ -36,7 +36,8 @@ for parity rather than acting as another executable source.
 - [First 2026 notice](https://www.mcm.edu.cn/html_cn/node/d6fd7a0ee8f3a3d525e30af1c365fcec.html)
 - [Paper format rules](https://www.mcm.edu.cn/html_cn/node/4cd596519c9eb9fbd866398f6df0caa3.html)
 - [Contest rules](https://www.mcm.edu.cn/html_cn/node/9d8e511fe7a1447b35f53a82c908e2e0.html)
-- [AI tool rules](https://www.mcm.edu.cn/html_cn/node/eebcfb6dc37fd2de9603dc16026fdf01.html)
+- [AI tool rules](https://www.mcm.edu.cn/html_cn/node/fef94648f2836ab6cc81586f4c38512b.html)
+- [Official rules index and source locator](https://www.mcm.edu.cn/html_cn/block/44e92058f537729c6b6a62a3662ee417.html)
 
 The `cumcm-2026` profile preserves PDF/Word paper and ZIP/RAR support-package
 handling, both 20 MB limits, and the declared 30-page main-text count. For a
@@ -46,8 +47,9 @@ text-extractable PDF or DOCX it also checks:
 - no table-of-contents heading is present;
 - the appendix contains a support-file list or no-support declaration;
 - the appendix contains complete-code evidence or a no-program declaration;
-- exactly one AI branch is selected: `none` verifies the exact post-reference
-  non-use declaration; `used` verifies inline disclosure, an AI reference, and
+- exactly one AI branch is selected and its exact 2026 declaration appears
+  before the references: `none` verifies the official non-use declaration;
+  `used` verifies a non-empty purpose in the use declaration and
   `AI工具使用详情.pdf` in the support ZIP.
 
 Example:
@@ -130,8 +132,8 @@ paper. Relevant optional fields are:
   "toc_absent": true,
   "appendix_support_manifest": true,
   "appendix_code_or_no_program": true,
-  "ai_inline_disclosure": true,
-  "ai_reference_entry": true,
+  "ai_use_declaration_before_references": true,
+  "ai_non_use_declaration_before_references": true,
   "summary_sheet_first": true,
   "font_size_pt": 12,
   "pdf_pages": 26,

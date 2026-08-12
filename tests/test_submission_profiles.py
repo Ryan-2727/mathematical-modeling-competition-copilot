@@ -91,8 +91,8 @@ class SubmissionProfileTests(unittest.TestCase):
             support = self.make_ai_support(root)
             pages = [
                 "摘要\n本文给出模型、结果与验证。\n关键词：建模",
-                "模型建立\n本文使用 ChatGPT 辅助翻译，相关内容已人工核验 [2]。",
-                "参考文献\n[1] Test. [2] OpenAI, ChatGPT, GPT-4o, 2026-07-24.",
+                "模型建立\nAI工具使用声明\n本参赛队在竞赛过程中使用了AI工具，主要用于语言润色和代码调试，详细使用情况见支撑材料。",
+                "参考文献\n[1] Test.",
                 "A 附录：代码与支撑材料说明\n支撑材料的文件列表：code/run.py\n完整源程序代码如下。",
             ]
             with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
@@ -111,20 +111,33 @@ class SubmissionProfileTests(unittest.TestCase):
                 "cumcm.appendix_support_manifest",
                 "cumcm.appendix_code_evidence",
                 "cumcm.ai_report",
-                "cumcm.ai_inline_disclosure",
-                "cumcm.ai_reference",
+                "cumcm.ai_use_declaration",
                 "cumcm.ai_mode",
             ):
                 self.assertEqual(statuses[check_id], "PASS", check_id)
 
-    def test_cumcm_ai_none_requires_exact_post_reference_declaration(self) -> None:
+            pages[1] = (
+                "AI工具使用声明\n本参赛队在竞赛过程中使用了AI工具，主要用于"
+                "请替换为真实、简要用途，详细使用情况见支撑材料。"
+            )
+            with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
+                placeholder = submission.verify_submission(
+                    paper=paper,
+                    support=support,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="used",
+                )
+            self.assertEqual(placeholder["status"], "FAIL")
+
+    def test_cumcm_ai_none_requires_exact_pre_reference_declaration(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             paper = self.make_pdf(root)
             pages = [
                 "摘要\n本文给出模型、结果与验证。\n关键词：建模",
                 "模型建立与求解",
-                "参考文献\n[1] Test.\n本参赛队未使用任何 AI 工具",
+                "AI工具使用声明\n本参赛队在竞赛过程中未使用任何AI工具。\n参考文献\n[1] Test.",
                 "A 附录：代码与支撑材料说明\n本论文没有支撑材料\n本论文没有用到程序",
             ]
             with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
@@ -138,7 +151,7 @@ class SubmissionProfileTests(unittest.TestCase):
             self.assertEqual(payload["status"], "PASS", payload)
             self.assertEqual(payload["ai_mode"], "none")
 
-            pages[2] = "本参赛队未使用任何 AI 工具\n参考文献\n[1] Test."
+            pages[2] = "参考文献\n[1] Test.\n本参赛队在竞赛过程中未使用任何AI工具。"
             with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):
                 failure = submission.verify_submission(
                     paper=paper,
@@ -159,8 +172,8 @@ class SubmissionProfileTests(unittest.TestCase):
             support = self.make_ai_support(root)
             pages = [
                 "摘要\n模型与结果",
-                "本文使用 ChatGPT 辅助编程并完成人工核验。",
-                "参考文献\n[1] OpenAI, ChatGPT, 2026.\n本参赛队未使用任何 AI 工具",
+                "AI工具使用声明\n本参赛队在竞赛过程中使用了AI工具，主要用于代码调试，详细使用情况见支撑材料。\n本参赛队在竞赛过程中未使用任何AI工具。",
+                "参考文献\n[1] Test.",
                 "附录\n支撑材料的文件列表：AI工具使用详情.pdf\n本论文没有用到程序",
             ]
             with patch.object(submission, "inspect_pdf", return_value=inspected(pages)):

@@ -16,3 +16,12 @@ Select `main.tex` as the main document and XeLaTeX as the compiler. Keep
 `references.bib` in the uploaded project. Replace the baseline
 `code/main.py` and the appendix support-material manifest with the complete
 contest program and actual relative file list before submission.
+
+## CUMCM 2026 AI declaration
+
+`sections/ai_declaration.tex` is inserted immediately before the references.
+Leave `\cumcmaiusedfalse` in `main.tex` only when no AI tool was used. When AI
+was used, change it to `\cumcmaiusedtrue`, replace the bold purpose placeholder
+with the actual concise purpose, and include `AI工具使用详情.pdf` in the support
+archive. The selected branch must match `contest_manifest.json` and
+`verify_submission.py --ai-mode none|used`.

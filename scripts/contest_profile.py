@@ -56,5 +56,14 @@ def submission_profile(profile_id: str) -> dict[str, Any]:
     result["paper_suffixes"] = set(result["paper_suffixes"])
     result["support_suffixes"] = set(result["support_suffixes"])
     result["snapshot"] = {key: payload[key] for key in snapshot_fields}
-    result["snapshot"]["source_urls"] = list(payload["source_urls"].values())
+    variants = payload.get("source_variants") or {}
+    result["snapshot"]["source_urls"] = sorted(
+        {
+            url
+            for role in variants.values()
+            if isinstance(role, dict)
+            for url in role.values()
+        }
+        or set(payload["source_urls"].values())
+    )
     return result

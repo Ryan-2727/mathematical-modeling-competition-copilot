@@ -54,8 +54,9 @@ model-selection metric.
 
 ## Lock official rules
 
-Save each official rule page or PDF inside the project, then bind its URL,
-snapshot hash, validity date, and structured rule fields:
+Save each official locator/index page, article page, and attachment PDF inside
+the project, then bind its role, source kind, URL, snapshot hash, validity date,
+and structured rule fields:
 The resulting project-root lock file is `rules.lock.json`.
 
 ```powershell
@@ -65,10 +66,18 @@ python scripts/lock_contest_rules.py create `
   --year 2026 `
   --profile cumcm-2026 `
   --valid-through 2026-09-13 `
-  --source-role official_notice --source-url <official-notice-url> --snapshot reports/rules/notice.pdf `
-  --source-role paper_format --source-url <official-format-url> --snapshot reports/rules/format.html `
-  --source-role contest_rules --source-url <official-rules-url> --snapshot reports/rules/rules.html `
-  --source-role ai_policy --source-url <official-ai-url> --snapshot reports/rules/ai.html `
+  --source-role official_notice --source-kind locator --source-url <notice-index-url> --snapshot reports/rules/notice-index.html `
+  --source-role official_notice --source-kind page --source-url <notice-page-url> --snapshot reports/rules/notice-page.html `
+  --source-role official_notice --source-kind attachment --source-url <notice-pdf-url> --snapshot reports/rules/notice.pdf `
+  --source-role paper_format --source-kind locator --source-url <rules-index-url> --snapshot reports/rules/format-index.html `
+  --source-role paper_format --source-kind page --source-url <format-page-url> --snapshot reports/rules/format-page.html `
+  --source-role paper_format --source-kind attachment --source-url <format-pdf-url> --snapshot reports/rules/format.pdf `
+  --source-role contest_rules --source-kind locator --source-url <rules-index-url> --snapshot reports/rules/rules-index.html `
+  --source-role contest_rules --source-kind page --source-url <rules-page-url> --snapshot reports/rules/rules-page.html `
+  --source-role contest_rules --source-kind attachment --source-url <rules-pdf-url> --snapshot reports/rules/rules.pdf `
+  --source-role ai_policy --source-kind locator --source-url <rules-index-url> --snapshot reports/rules/ai-index.html `
+  --source-role ai_policy --source-kind page --source-url <ai-page-url> --snapshot reports/rules/ai-page.html `
+  --source-role ai_policy --source-kind attachment --source-url <ai-pdf-url> --snapshot reports/rules/ai.pdf `
   --rule paper_format=PDF `
   --rule paper_size_limit_mb=20 `
   --rule support_archive=ZIP-or-RAR `

@@ -46,7 +46,8 @@
     "references/embedded/orchestration-and-paper-assurance.md": ["contestctl.py doctor", "contestctl.py run", "contestctl.py summary", "project_schema_version", "rendered_figure_manifest.csv", "notation_registry.csv", "equation_dimensions.csv", "generate_paper_artifacts.py", "paper/generated/core_results.tex"],
     "references/embedded/cumcm-2026-readiness.md": ["verify_online_actions.py", "verify_problem_audition.py", "score_training_readiness.py", "H72-H74"],
     "references/embedded/cumcm-2026-rules.md": ["2026-09-10 18:00", "2026-09-13 20:00", "--ai-mode none|used"],
-    "assets/latex-paper-template/main.tex": ["支撑材料文件清单", "\\lstinputlisting", "code/main.py"],
+    "assets/latex-paper-template/main.tex": ["支撑材料文件清单", "\\lstinputlisting", "code/main.py", "sections/ai_declaration", "\\cumcmaiusedfalse"],
+    "assets/latex-paper-template/sections/ai_declaration.tex": ["AI工具使用声明", "本参赛队在竞赛过程中未使用任何AI工具", "本参赛队在竞赛过程中使用了AI工具"],
     "assets/latex-paper-template-mcm/main.tex": ["\\documentclass[12pt]", "\\TeamControlNumber", "\\includeaireport", "sections/summary"],
     "assets/latex-paper-template-mcm/sections/summary.tex": ["Summary Sheet", "\\TeamControlNumber", "\\ProblemChoice"]
   },
@@ -58,6 +59,7 @@
     "assets/latex-paper-template/.vscode/settings.json",
     "assets/latex-paper-template/.vscode/extensions.json",
     "assets/latex-paper-template/code/main.py",
+    "assets/latex-paper-template/sections/ai_declaration.tex",
     "assets/latex-paper-template-mcm/main.tex",
     "assets/latex-paper-template-mcm/README.md",
     "assets/latex-paper-template-mcm/.latexmkrc",

@@ -39,6 +39,13 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
         self.assertEqual(profile["registration_deadline"], "2026-09-07T20:00:00+08:00")
         self.assertEqual(profile["freshness_checkpoints"], lock_contest_rules.CUMCM_2026_CHECKPOINTS)
         self.assertEqual(set(profile["source_urls"]), lock_contest_rules.CUMCM_2026_SOURCE_ROLES)
+        self.assertEqual(profile["verified_at"], "2026-08-12")
+        self.assertIn("2026年试行", "全国大学生数学建模竞赛人工智能工具使用规定（2026年试行）")
+        self.assertIn("fef94648", profile["source_urls"]["ai_policy"])
+        self.assertEqual(
+            set(profile["source_variants"]["ai_policy"]),
+            {"locator", "page", "attachment"},
+        )
         rules_text = (ROOT / "references" / "embedded" / "cumcm-2026-rules.md").read_text(encoding="utf-8")
         profiles_text = (ROOT / "references" / "embedded" / "executable-contest-profiles.md").read_text(encoding="utf-8")
         for value in profile["source_urls"].values():
@@ -67,25 +74,22 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
         return result
 
     def rules_payload(self, root: Path, checked_at: str) -> dict[str, object]:
-        source_specs = [
-            ("official_notice", "notice.pdf"),
-            ("paper_format", "format.html"),
-            ("contest_rules", "rules.html"),
-            ("ai_policy", "ai.html"),
-        ]
+        profile = load_contest_profile("cumcm-2026")
         sources = []
-        for role, name in source_specs:
-            path = root / "rules" / name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(role, encoding="utf-8")
-            sources.append(
-                {
-                    "role": role,
-                    "url": f"https://www.mcm.edu.cn/{name}",
-                    "snapshot": path.relative_to(root).as_posix(),
-                    "sha256": sha256(path),
-                }
-            )
+        for role, variants in profile["source_variants"].items():
+            for kind, url in variants.items():
+                path = root / "rules" / f"{role}-{kind}.snapshot"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(f"{role}/{kind}", encoding="utf-8")
+                sources.append(
+                    {
+                        "role": role,
+                        "kind": kind,
+                        "url": url,
+                        "snapshot": path.relative_to(root).as_posix(),
+                        "sha256": sha256(path),
+                    }
+                )
         return {
             "schema_version": 2,
             "contest": "CUMCM",
@@ -125,9 +129,11 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             self.assertEqual(manifest["contest_duration_hours"], 74)
             for relative in (
                 "reports/problem_audition.csv",
+                "reports/problem_audition_weights.json",
                 "reports/problem_selection.json",
                 "reports/training_runs.csv",
                 "reports/training_defects.csv",
+                "reports/training_roles.csv",
                 "reports/online_actions.csv",
             ):
                 self.assertTrue((root / relative).is_file(), relative)
@@ -166,25 +172,37 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             (root / "results").mkdir()
             (root / "results" / "a.txt").write_text("baseline A", encoding="utf-8")
             (root / "results" / "b.txt").write_text("baseline B", encoding="utf-8")
+            for name in ("a.png", "b.png"):
+                (root / "results" / name).write_bytes(b"figure")
+            for name in ("a-closure.md", "b-closure.md", "a-fallback.md", "b-fallback.md"):
+                (root / "results" / name).write_text(name, encoding="utf-8")
             fields = [
                 "problem_id", "attachment_status", "attachment_evidence",
-                "baseline_command", "baseline_result", "subproblem_closure_risk",
+                "attachment_parse_command", "baseline_command", "baseline_result",
+                "baseline_elapsed_hours", "paper_figure", "subproblem_closure_evidence",
+                "fallback_route", "fallback_evidence", "subproblem_closure_risk",
                 "result_verifiability", "upgrade_headroom", "team_fit",
                 "writing_visual_potential", "fatal_risk", "score", "status",
             ]
             rows = []
-            for problem, score in (("A", 86), ("B", 72)):
+            for problem, score in (("A", 100), ("B", 57.5)):
                 rows.append(
                     {
                         "problem_id": problem,
                         "attachment_status": "verified",
                         "attachment_evidence": f"results/{problem.lower()}.txt",
+                        "attachment_parse_command": f"python code/parse_{problem.lower()}.py",
                         "baseline_command": f"python code/{problem.lower()}.py",
                         "baseline_result": f"results/{problem.lower()}.txt",
-                        "subproblem_closure_risk": "low",
-                        "result_verifiability": "high",
+                        "baseline_elapsed_hours": 1.5 if problem == "A" else 1.8,
+                        "paper_figure": f"results/{problem.lower()}.png",
+                        "subproblem_closure_evidence": f"results/{problem.lower()}-closure.md",
+                        "fallback_route": "simplified baseline",
+                        "fallback_evidence": f"results/{problem.lower()}-fallback.md",
+                        "subproblem_closure_risk": "low" if problem == "A" else "medium",
+                        "result_verifiability": "high" if problem == "A" else "medium",
                         "upgrade_headroom": "high",
-                        "team_fit": "high",
+                        "team_fit": "high" if problem == "A" else "medium",
                         "writing_visual_potential": "high",
                         "fatal_risk": "none",
                         "score": score,
@@ -192,6 +210,25 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                     }
                 )
             write_csv(root / "reports" / "problem_audition.csv", fields, rows)
+            weights = {
+                "schema_version": 1,
+                "minimum_selected_win_rate": 0.75,
+                "recorded_score_tolerance": 1.0,
+                "base_weights": {
+                    "subproblem_closure_risk": 0.30,
+                    "result_verifiability": 0.25,
+                    "upgrade_headroom": 0.15,
+                    "team_fit": 0.20,
+                    "writing_visual_potential": 0.10,
+                },
+                "sensitivity_scenarios": [
+                    {"name": "closure_first", "weights": {"subproblem_closure_risk": 0.45, "result_verifiability": 0.20, "upgrade_headroom": 0.10, "team_fit": 0.15, "writing_visual_potential": 0.10}},
+                    {"name": "evidence_first", "weights": {"subproblem_closure_risk": 0.20, "result_verifiability": 0.40, "upgrade_headroom": 0.10, "team_fit": 0.20, "writing_visual_potential": 0.10}},
+                ],
+            }
+            (root / "reports" / "problem_audition_weights.json").write_text(
+                json.dumps(weights), encoding="utf-8"
+            )
             selection = {
                 "selected_problem": "A",
                 "selection_hour": 5.5,
@@ -205,8 +242,36 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             self.run_script(
                 "verify_problem_audition.py", "--project-dir", str(root), "--out", str(out)
             )
-            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
+            stable = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(stable["status"], "PASS")
+            self.assertEqual(stable["base_winners"], ["A"])
+            self.assertEqual(stable["selected_win_rate"], 1.0)
+            self.assertEqual(stable["selection_confidence"], "high")
 
+            selection["selected_problem"] = "B"
+            selection["rationale"] = "team deliberately accepts lower closure stability"
+            (root / "reports" / "problem_selection.json").write_text(
+                json.dumps(selection), encoding="utf-8"
+            )
+            self.run_script(
+                "verify_problem_audition.py", "--project-dir", str(root), "--out", str(out), expect=1
+            )
+            selection["selection_override"] = {
+                "type": "selection_exception",
+                "reason": "specialized domain experience offsets the scored risk",
+                "evidence": "results/b.txt",
+                "authorized_by": "team",
+                "exceptions": ["not_base_winner", "low_scenario_win_rate"],
+            }
+            (root / "reports" / "problem_selection.json").write_text(
+                json.dumps(selection), encoding="utf-8"
+            )
+            self.run_script(
+                "verify_problem_audition.py", "--project-dir", str(root), "--out", str(out)
+            )
+
+            selection["selected_problem"] = "A"
+            selection["selection_override"] = None
             selection["selection_hour"] = 6.5
             (root / "reports" / "problem_selection.json").write_text(
                 json.dumps(selection), encoding="utf-8"
@@ -238,7 +303,7 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 "unresolved_vetoes", "status",
             ]
             short_run = {
-                "run_id": "r1", "rehearsal_hours": 24, "selection_lock_hour": 5,
+                "run_id": "r1", "rehearsal_hours": 24, "selection_lock_hour": 6,
                 "first_verified_result_hour": 10, "all_subproblem_results_hour": 22,
                 "full_draft_hour": "", "strict_freeze_hour": "",
                 "submission_rehearsal": "no", "unresolved_vetoes": 0,
@@ -247,6 +312,11 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             write_csv(root / "reports" / "training_runs.csv", run_fields, [short_run])
             defect_fields = ["run_id", "defect_class", "severity", "evidence", "resolution_status"]
             write_csv(root / "reports" / "training_defects.csv", defect_fields, [])
+            role_fields = [
+                "run_id", "role", "owner", "planned_complete_hour",
+                "actual_complete_hour", "handoff_evidence", "backup_owner", "status",
+            ]
+            write_csv(root / "reports" / "training_roles.csv", role_fields, [])
             out = root / "reports" / "training_readiness.json"
             self.run_script(
                 "score_training_readiness.py", "--project-dir", str(root), "--out", str(out), expect=2
@@ -257,12 +327,23 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
 
             full_run = {
                 "run_id": "r2", "rehearsal_hours": 74, "selection_lock_hour": 5.5,
-                "first_verified_result_hour": 11, "all_subproblem_results_hour": 34,
+                "first_verified_result_hour": 11, "all_subproblem_results_hour": 23.5,
                 "full_draft_hour": 62, "strict_freeze_hour": 69,
                 "submission_rehearsal": "yes", "unresolved_vetoes": 0,
                 "status": "complete",
             }
             write_csv(root / "reports" / "training_runs.csv", run_fields, [short_run, full_run])
+            write_csv(
+                root / "reports" / "training_roles.csv",
+                role_fields,
+                [
+                    {"run_id": "r2", "role": role, "owner": f"owner-{role}", "planned_complete_hour": planned, "actual_complete_hour": actual, "handoff_evidence": f"reports/r2-{role}.md", "backup_owner": f"backup-{role}", "status": "complete"}
+                    for role, planned, actual in (
+                        ("selection", 6, 5.5), ("modeling", 42, 41),
+                        ("paper", 64, 62), ("submission", 72, 71),
+                    )
+                ],
+            )
             write_csv(
                 root / "reports" / "training_defects.csv",
                 defect_fields,
@@ -272,12 +353,82 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 ],
             )
             self.run_script(
+                "score_training_readiness.py", "--project-dir", str(root), "--out", str(out), expect=2
+            )
+            provisional = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(provisional["readiness_state"], "provisional")
+            self.assertEqual(provisional["consecutive_full_passes"], 1)
+
+            second_full_run = {
+                "run_id": "r3", "rehearsal_hours": 74, "selection_lock_hour": 5,
+                "first_verified_result_hour": 10, "all_subproblem_results_hour": 22.5,
+                "full_draft_hour": 60, "strict_freeze_hour": 68,
+                "submission_rehearsal": "yes", "unresolved_vetoes": 0,
+                "status": "complete",
+            }
+            write_csv(
+                root / "reports" / "training_runs.csv",
+                run_fields,
+                [short_run, full_run, second_full_run],
+            )
+            write_csv(
+                root / "reports" / "training_roles.csv",
+                role_fields,
+                [
+                    {"run_id": run_id, "role": role, "owner": f"owner-{role}", "planned_complete_hour": planned, "actual_complete_hour": actual, "handoff_evidence": f"reports/{run_id}-{role}.md", "backup_owner": f"backup-{role}", "status": "complete"}
+                    for run_id, actuals in (
+                        ("r2", {"selection": 5.5, "modeling": 41, "paper": 62, "submission": 71}),
+                        ("r3", {"selection": 5, "modeling": 40, "paper": 60, "submission": 70}),
+                    )
+                    for role, planned in (("selection", 6), ("modeling", 42), ("paper", 64), ("submission", 72))
+                    for actual in (actuals[role],)
+                ],
+            )
+            write_csv(
+                root / "reports" / "training_defects.csv",
+                defect_fields,
+                [
+                    {"run_id": "r1", "defect_class": "late_selection", "severity": "major", "evidence": "reports/r1.json", "resolution_status": "resolved"},
+                    {"run_id": "r2", "defect_class": "late_selection", "severity": "major", "evidence": "reports/r2.json", "resolution_status": "open"},
+                    {"run_id": "r3", "defect_class": "late_selection", "severity": "minor", "evidence": "reports/r3.json", "resolution_status": "resolved"},
+                ],
+            )
+            self.run_script(
                 "score_training_readiness.py", "--project-dir", str(root), "--out", str(out)
             )
             ready = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual(ready["status"], "PASS", ready)
             self.assertEqual(ready["readiness_state"], "ready")
-            self.assertEqual(ready["repeated_defects"]["late_selection"], 2)
+            self.assertEqual(ready["consecutive_full_passes"], 2)
+            self.assertEqual(ready["repeated_defects"]["late_selection"], 3)
+            self.assertEqual(ready["defect_recurrence_counts"]["late_selection"], 2)
+            self.assertEqual(ready["reopened_after_resolution"]["late_selection"], ["r2"])
+            selection_stats = ready["milestone_statistics"]["selection_lock_hour"]
+            self.assertEqual(selection_stats["worst"], 6.0)
+            self.assertEqual(selection_stats["p90_nearest_rank"], 6.0)
+            self.assertEqual(selection_stats["trend"], "improving")
+            self.assertEqual(
+                ready["full_rehearsal_role_coverage"]["r3"],
+                ["modeling", "paper", "selection", "submission"],
+            )
+            self.assertLess(ready["owner_bottlenecks"]["owner-paper"]["mean_delay_hours"], 0)
+
+            blocked_roles = [
+                {"run_id": run_id, "role": role, "owner": f"owner-{role}", "planned_complete_hour": planned, "actual_complete_hour": actual, "handoff_evidence": f"reports/{run_id}-{role}.md", "backup_owner": f"backup-{role}", "status": "blocked" if run_id == "r3" and role == "submission" else "complete"}
+                for run_id, actuals in (
+                    ("r2", {"selection": 5.5, "modeling": 41, "paper": 62, "submission": 71}),
+                    ("r3", {"selection": 5, "modeling": 40, "paper": 60, "submission": 70}),
+                )
+                for role, planned in (("selection", 6), ("modeling", 42), ("paper", 64), ("submission", 72))
+                for actual in (actuals[role],)
+            ]
+            write_csv(root / "reports" / "training_roles.csv", role_fields, blocked_roles)
+            self.run_script(
+                "score_training_readiness.py", "--project-dir", str(root), "--out", str(out), expect=1
+            )
+            blocked = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(blocked["readiness_state"], "not_ready")
+            self.assertEqual(blocked["blocked_role_counts"]["submission"], 1)
 
     def test_live_online_actions_never_upload_and_pause_on_ambiguity(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

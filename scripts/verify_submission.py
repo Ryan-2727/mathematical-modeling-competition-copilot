@@ -24,6 +24,8 @@ CUMCM_AI_URL = CUMCM_2026_PROFILE["source_urls"]["ai_policy"]
 CUMCM_NOTICE_URL = CUMCM_2026_PROFILE["source_urls"]["official_notice"]
 CUMCM_RULES_URL = CUMCM_2026_PROFILE["source_urls"]["contest_rules"]
 CUMCM_AI_NON_USE_DECLARATION = CUMCM_2026_PROFILE["ai_non_use_declaration"]
+CUMCM_AI_USE_DECLARATION_PREFIX = CUMCM_2026_PROFILE["ai_use_declaration_prefix"]
+CUMCM_AI_USE_DECLARATION_SUFFIX = CUMCM_2026_PROFILE["ai_use_declaration_suffix"]
 MCM_RULES_URL = (
     "https://contest.comap.com/undergraduate/contests/mcm/instructions.php"
 )
@@ -331,11 +333,32 @@ def has_ai_reference(text: str) -> bool:
     )
 
 
-def has_ai_non_use_declaration_after_references(text: str) -> bool:
-    normalized = re.sub(r"\s+", " ", text)
-    reference = re.search(r"(?:参考文献|references|bibliography)", normalized, re.I)
-    declaration = normalized.find(CUMCM_AI_NON_USE_DECLARATION)
-    return reference is not None and declaration > reference.end()
+def compact_text(text: str) -> str:
+    return re.sub(r"\s+", "", text)
+
+
+def before_references(text: str, declaration_start: int) -> bool:
+    compact = compact_text(text)
+    reference = re.search(r"(?:参考文献|references|bibliography)", compact, re.I)
+    return declaration_start >= 0 and reference is not None and declaration_start < reference.start()
+
+
+def has_ai_non_use_declaration_before_references(text: str) -> bool:
+    compact = compact_text(text)
+    declaration = compact.find(compact_text(CUMCM_AI_NON_USE_DECLARATION))
+    return before_references(text, declaration)
+
+
+def has_ai_use_declaration_before_references(text: str) -> bool:
+    compact = compact_text(text)
+    prefix = re.escape(compact_text(CUMCM_AI_USE_DECLARATION_PREFIX))
+    suffix = re.escape(compact_text(CUMCM_AI_USE_DECLARATION_SUFFIX))
+    match = re.search(prefix + r"(.+?)" + suffix, compact)
+    if match is None or not before_references(text, match.start()):
+        return False
+    purpose = match.group(1).strip()
+    placeholders = ("请替换", "简要用途", "真实用途", "TODO", "TBD")
+    return bool(purpose) and not any(marker.lower() in purpose.lower() for marker in placeholders)
 
 
 def ai_report_in_archive(support: Path | None) -> bool | None:
@@ -574,78 +597,40 @@ def verify_cumcm(
                     "ZIP archive member names",
                 )
         if all_text is not None:
-            inline_ok = has_ai_inline_disclosure(all_text)
-            reference_ok = has_ai_reference(all_text)
+            declaration_ok = has_ai_use_declaration_before_references(all_text)
             add_check(
                 checks,
                 errors,
                 limitations,
-                "cumcm.ai_inline_disclosure",
-                inline_ok,
+                "cumcm.ai_use_declaration",
+                declaration_ok,
                 (
-                    "paper contains inline AI-use disclosure evidence"
-                    if inline_ok
-                    else "paper lacks inline AI-use disclosure evidence"
+                    "exact AI-use declaration with a non-empty purpose appears before the references"
+                    if declaration_ok
+                    else "exact AI-use declaration with a non-empty purpose is missing or not before the references"
                 ),
                 "extracted electronic-paper text",
             )
-            add_check(
-                checks,
-                errors,
-                limitations,
-                "cumcm.ai_reference",
-                reference_ok,
-                (
-                    "reference section contains an AI-tool entry"
-                    if reference_ok
-                    else "reference section lacks an AI-tool entry"
-                ),
-                "extracted reference-section text",
-            )
         elif evidence:
-            for check_id, key, description in (
-                (
-                    "cumcm.ai_inline_disclosure",
-                    "ai_inline_disclosure",
-                    "inline AI disclosure",
-                ),
-                ("cumcm.ai_reference", "ai_reference_entry", "AI reference entry"),
-            ):
-                passed = evidence_bool(evidence, key)
-                add_check(
-                    checks,
-                    errors,
-                    limitations,
-                    check_id,
-                    passed,
-                    (
-                        f"hash-bound evidence records {description}"
-                        if passed
-                        else f"compliance evidence does not confirm {description}"
-                    ),
-                    "recorded content evidence",
-                    limited=passed,
-                )
+            passed = evidence_bool(evidence, "ai_use_declaration_before_references")
+            add_check(
+                checks, errors, limitations, "cumcm.ai_use_declaration", passed,
+                "hash-bound evidence records the pre-reference AI-use declaration"
+                if passed else "compliance evidence does not confirm the pre-reference AI-use declaration",
+                "recorded content evidence", limited=passed,
+            )
         elif paper.suffix.lower() == ".pdf":
-            for check_id, description in (
-                ("cumcm.ai_inline_disclosure", "inline AI disclosure"),
-                ("cumcm.ai_reference", "AI reference entry"),
-            ):
-                add_check(
-                    checks,
-                    errors,
-                    limitations,
-                    check_id,
-                    False,
-                    f"{description} check requires pdftotext or hash-bound evidence",
-                    "PDF content",
-                )
+            add_check(
+                checks, errors, limitations, "cumcm.ai_use_declaration", False,
+                "AI-use declaration check requires pdftotext or hash-bound evidence",
+                "PDF content",
+            )
         else:
             warnings.append(
-                "Word AI inline-disclosure and reference entries were not machine-inspected"
+                "Word AI-use declaration was not machine-inspected"
             )
         if all_text is not None:
-            contradiction = has_ai_non_use_declaration_after_references(all_text)
+            contradiction = has_ai_non_use_declaration_before_references(all_text)
             add_check(
                 checks,
                 errors,
@@ -655,22 +640,25 @@ def verify_cumcm(
                 (
                     "AI-used branch does not contain the non-use declaration"
                     if not contradiction
-                    else "AI-used branch contradicts a post-reference non-use declaration"
+                    else "AI-used branch contradicts a pre-reference non-use declaration"
                 ),
                 "extracted electronic-paper text",
             )
     elif ai_mode == "none":
         if all_text is not None:
-            declaration_ok = has_ai_non_use_declaration_after_references(all_text)
-            usage_text = all_text.replace(CUMCM_AI_NON_USE_DECLARATION, "")
+            declaration_ok = has_ai_non_use_declaration_before_references(all_text)
+            usage_text = compact_text(all_text)
+            usage_text = usage_text.replace(
+                compact_text(CUMCM_AI_NON_USE_DECLARATION), ""
+            ).replace("AI工具使用声明", "")
             inline_absent = not has_ai_inline_disclosure(usage_text)
             reference_absent = not has_ai_reference(usage_text)
             for check_id, passed, good, bad in (
                 (
                     "cumcm.ai_non_use_declaration",
                     declaration_ok,
-                    "exact AI non-use declaration appears after the references",
-                    "exact AI non-use declaration is missing or not after the references",
+                    "exact AI non-use declaration appears before the references",
+                    "exact AI non-use declaration is missing or not before the references",
                 ),
                 (
                     "cumcm.ai_none_inline_absent",
@@ -691,7 +679,7 @@ def verify_cumcm(
                 )
         elif evidence:
             for check_id, key, description in (
-                ("cumcm.ai_non_use_declaration", "ai_non_use_declaration_after_references", "post-reference non-use declaration"),
+                ("cumcm.ai_non_use_declaration", "ai_non_use_declaration_before_references", "pre-reference non-use declaration"),
                 ("cumcm.ai_none_inline_absent", "ai_inline_disclosure_absent", "absence of inline AI use"),
                 ("cumcm.ai_none_reference_absent", "ai_reference_entry_absent", "absence of an AI reference"),
             ):
