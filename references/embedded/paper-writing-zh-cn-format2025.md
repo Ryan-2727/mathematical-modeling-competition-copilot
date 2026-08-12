@@ -1,6 +1,10 @@
 # Chinese Contest Paper Format 2025
 
-Use this module for Chinese mathematical modeling contests that follow the 2025 National College Student Mathematical Modeling Competition paper format document supplied as `format2025.doc`.
+Use this module only for Chinese mathematical modeling contests that follow the
+2025 National College Student Mathematical Modeling Competition paper format
+document supplied as `format2025.doc`. It is historical layout guidance, not a
+2026 rule source. For CUMCM 2026, use `cumcm-2026-rules.md`: its abstract,
+no-contents, 30-main-text-page, and unlimited-appendix rules take precedence.
 
 If a local contest or provincial contest gives stricter rules, follow the stricter local rules while preserving the identity-removal, appendix, support-material, and electronic-submission rules below.
 

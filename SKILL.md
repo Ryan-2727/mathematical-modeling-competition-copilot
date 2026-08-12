@@ -197,8 +197,9 @@ Read:
 - `references/embedded/paper-writing.md`
 - `references/embedded/result-first-paper-convergence.md`
 - `references/embedded/paper-depth-and-page-budget.md`
-- `references/embedded/paper-writing-zh-cn-format2025.md` only as a historical
-  CUMCM layout baseline
+- for CUMCM 2026, `references/embedded/cumcm-2026-rules.md`; use
+  `references/embedded/paper-writing-zh-cn-format2025.md` only as a historical
+  layout baseline
 - `references/embedded/paper-writing-en-contest-base.md` and
   `references/embedded/paper-writing-mcm-icm-current.md` for MCM/ICM
 - `references/embedded/latex-paper-pipeline.md`
@@ -211,7 +212,11 @@ Required actions:
 
 - Create `reports/paper_depth_plan.csv`, `reports/conclusion_map.csv`, and an
   innovation ledger with at most one measured, problem-specific improvement per
-  subproblem. Reject or narrow unsupported innovation claims.
+  subproblem. Before drafting, set the rule-bound ceiling and a task-specific
+  main-text budget; for CUMCM 2026, require abstract <=1 page, no contents page,
+  main text <=30 pages excluding unlimited appendices, and normally plan 20--25
+  information-dense main-text pages rather than filling the limit. Reject or
+  narrow unsupported innovation claims.
 - Write the abstract in three concise blocks: analysis, method, and quantified
   result. Begin every subproblem from its direct answer and preserve the chain
   mechanism -> rationale -> variables/assumptions -> derivation -> algorithm ->
@@ -220,8 +225,11 @@ Required actions:
   the user-approved simplification route from phase 2; retain the original
   unverified model only under model optimization.
 - Generate paper artifacts and notation/dimension registries instead of
-  retyping decisive values. Use current official page limits; corpus-derived
-  ranges are advisory and never justify padding.
+  retyping decisive values. Keep complete code, oversized tables, detailed
+  intermediate results, and secondary experiments in appendices/support; retain
+  the model, key parameters, core results, and model-appropriate validation in
+  the body. Use current official page limits; corpus-derived ranges are advisory
+  and never justify padding.
 - Produce `paper/main.pdf` and a rebuildable UTF-8 XeLaTeX/latexmk source tree
   with relative paths, `main.tex`, bibliography, sections, generated values,
   figures, styles, `.latexmkrc`, and `.vscode/`. The same portable root ZIP must
@@ -252,8 +260,10 @@ Required gates:
   verified values.
 - Compile both project-root and `build/` outputs; verify the rendered PDF,
   page-by-page readability, presentation, anonymity, portable source ZIP, and
-  clean copied-project reproduction. A missing mandatory renderer is not a
-  visual pass.
+  clean copied-project reproduction. For CUMCM 2026, explicitly record abstract
+  page count, main-text page count, appendix page count, absence of a contents
+  page, and whether code/large tables were correctly moved out of the body. A
+  missing mandatory renderer is not a visual pass.
 - Build `support.zip` from `support/materials_manifest.csv` and run the paper,
   support, delivery-profile, and submission gates. Inspect the PDF and cited
   passages separately from structural reports.

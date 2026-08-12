@@ -10,7 +10,7 @@ template are always the hard constraints.
 
 - [Evidence behind the profile](#evidence-behind-the-profile)
 - [Rule hierarchy and page profiles](#rule-hierarchy-and-page-profiles)
-- [Recommended structure](#recommended-structure-for-a-five-question-paper)
+- [Recommended structure](#recommended-structure-and-priority)
 - [Seven-part argument chain](#seven-part-argument-chain-for-every-subproblem)
 - [What to write fully and compress](#what-to-write-fully-and-what-to-compress)
 - [Figure, table, and paragraph discipline](#figure-table-and-paragraph-discipline)
@@ -42,12 +42,14 @@ Apply rules in this order:
 3. the profiles below as anti-underwriting guidance;
 4. exemplar length only as a diagnostic comparison, never as a quota.
 
-For a complex CUMCM-style problem with four or more linked subproblems, use the
-following as planning diagnostics, never minimum-length requirements:
+For a CUMCM-style paper governed by the 2026 profile, enforce the official
+30-page main-text ceiling and the abstract-page, no-contents, and unlimited
+appendix rules in `cumcm-2026-rules.md`. Use the following as planning
+diagnostics, never minimum-length requirements:
 
 | Situation | Main-text plan | Complete PDF plan | Gate |
 | --- | ---: | ---: | --- |
-| Verified maximum is 30 main-text pages | derive the budget from the seven-part argument chain; often 18--30 | main text plus required appendices | never exceed 30; no minimum is inferred |
+| 2026 CUMCM profile | normally 20--25; lower when the task needs less, near 30 only when evidence needs it | main text plus required appendices | never exceed 30; do not pad |
 | No verified page cap | derive a section budget from task complexity and evidence | task-specific | no padding or empirical floor |
 | Verified maximum is below the initial plan | compress standard detail and move reproducibility material to appendices/support | obey the official rule | preserve decisive reasoning and validation |
 | Smaller or lightly coupled task | derive a task-specific budget | task-specific | do not force the complex profile |
@@ -61,23 +63,23 @@ Before drafting, create `reports/paper_depth_plan.csv`. After compilation, recor
 visually confirmed main-text and appendix page counts and run
 `scripts/verify_paper_depth.py`.
 
-## Recommended structure for a five-question paper
+## Recommended structure and priority
 
 The page ranges below are planning ranges under a 30-page main-text cap. Rebalance
 them according to difficulty; do not make every question equal.
 
 | Part | Typical pages | Required depth |
 | --- | ---: | --- |
-| Abstract and keywords | 1 | one answer sentence per task: method, decisive result, and validation/meaning |
-| Problem restatement | 0.5--1 | concise background; enumerate inputs, conditions, outputs, units, and task boundary |
-| Problem analysis | 2--3 | a separate subsection per question; mechanism, method rationale, dependency on earlier questions, solution path, and validation plan |
-| Assumptions and notation | 1--2 | only assumptions and symbols used later; explain the effect of restrictive assumptions |
-| Each simpler subproblem | 2--3 | complete argument chain, not only equations and answers |
-| Each central/complex subproblem | 4--6 | geometry/mechanism, derivation, algorithm details, evidence, interpretation, and local checks |
-| Global validation and sensitivity | 2--4 | independent checks, errors, perturbations, robustness, uncertainty, or failure boundary |
-| Conclusions and model evaluation | 1--2 | direct answers, evidence-based strengths/weaknesses, realistic extensions |
-| References | 0.5--1 | only verified and cited works; follow the skill's bibliography contract |
-| Code/data appendix | as required | reproduction aid; excluded from the main-text depth claim |
+| Abstract and keywords | <=1 | research object; per-question method, quantitative answer, and validation/meaning; no generic background or method-only abstract |
+| Problem restatement | about 1 | concise task boundary and outputs; do not copy the statement |
+| Problem analysis | 1--2 | per-question mechanism, dependency, method rationale, data route, and validation plan; use a route diagram when it reduces cognitive load |
+| Assumptions and notation | 1--2 | only used assumptions and major symbols, with reason and effect of restrictive assumptions |
+| Data processing | 2--3 when data-driven | source, cleaning, screening, key statistics/visuals, and decisions; move raw or large tables out of the main text |
+| Problem models and solutions | 10--15 total | task, rationale, variables, derivation, algorithm/parameters, results, interpretation, and local validation for each question |
+| Global validation and sensitivity | 2--3 | choose model-appropriate residual, baseline, perturbation, robustness, convergence, or failure-boundary checks |
+| Evaluation, conclusions, and extension | 1--2 | direct answers, evidence-backed strengths/limits, and conditional transfer; avoid empty claims of broad applicability |
+| References | 1--2 as needed | verified, relevant, and cited works only |
+| Code/data appendix | unlimited | complete code, large tables, detailed intermediate outputs, supplementary derivations, and secondary experiments; never a substitute for main-text explanation |
 
 ## Seven-part argument chain for every subproblem
 
@@ -125,6 +127,13 @@ Write briefly or move to an appendix/support package:
   algorithmic decision;
 - duplicate results appearing in abstract, body, and conclusion with no new role.
 
+When the main text approaches its ceiling, move or remove in this order: complete
+code, raw or oversized tables, secondary experiments, duplicate figures,
+overlong algorithm exposition, weak background, repeated interpretation, and
+textbook history. Preserve decisive formulas, parameter choices, core results,
+validation/sensitivity evidence, and direct conclusions. Never make room by
+shrinking the layout or by removing the argument that makes a conclusion auditable.
+
 ## Figure, table, and paragraph discipline
 
 Use a geometry/mechanism diagram before a derivation when it reduces cognitive
@@ -138,8 +147,10 @@ of explanation.
 
 Fail the drafting gate when any numbered task lacks one of the seven argument
 items, when a central conclusion has no result source, when validation exists only
-as a generic final paragraph, or when code appendices are being used to satisfy a
-page target. Run `verify_paper_depth.py` in its default advisory-minimum mode;
+as a generic final paragraph, when the abstract exceeds one page, when a CUMCM
+paper contains a contents page, when main text exceeds the official ceiling, or
+when code appendices are being used to satisfy a page target. Run
+`verify_paper_depth.py` in its default advisory-minimum mode;
 use `--minimum-mode enforce` only when a verified official rule truly imposes a
 minimum. Passing confirms counts and recorded coverage; it does not certify
 mathematical correctness or prose quality.

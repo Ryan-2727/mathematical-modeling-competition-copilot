@@ -23,11 +23,23 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
 
 ## Enforced by `verify_submission.py --profile cumcm-2026`
 
+- Paper version sequence: page 1 is the commitment form, page 2 is the
+  number-only page, page 3 is the abstract-only page, and main text begins on
+  page 4. The abstract is normally no more than one page. The electronic paper
+  starts from the abstract and therefore excludes the first two administrative
+  pages.
 - Electronic paper: one standalone PDF or Word document, at most 20 MB.
 - Support package: one ZIP or RAR archive, at most 20 MB when supplied.
-- Main text: no table of contents; at most 30 pages, excluding appendices.
-  Record the counted main-text pages explicitly because a generic PDF parser
-  cannot reliably distinguish appendices.
+- Main text: do not create a table of contents or a separate contents page;
+  count no more than 30 main-text pages, excluding appendices. Appendices have
+  no page limit. Do not misread the 30-page limit as a total-PDF limit. Record
+  the counted main-text pages explicitly because a generic PDF parser cannot
+  reliably distinguish appendices.
+- Page planning: treat 30 pages as a hard ceiling, not a target. For a normal
+  CUMCM paper, plan about 20--25 main-text pages unless task complexity supports
+  a shorter paper or genuinely requires approaching 30. Prefer information
+  density, complete reasoning, effective figures, and model validation over
+  filler, smaller type, or duplicated prose.
 - Electronic paper starts with the abstract page and excludes the commitment
   and number-only pages. Confirm these by visual inspection.
 - Declare exactly one AI branch with `--ai-mode none|used`. `none` requires the
