@@ -1,7 +1,7 @@
 # Learning paper craft from an exemplar corpus
 
 This module describes an offline learning pass over a folder of excellent
-competition papers. It teaches reusable writing decisions; it does not make
+competition papers. It teaches reusable writing and modeling decisions; it does not make
 excellent papers an input to a live contest solution and it does not require a
 problem-to-paper pairing.
 
@@ -28,6 +28,11 @@ Record only reusable observations in `references/` or a project report:
    single paper or from a fixed figure count.
 4. Convert observations into rules with evidence and exceptions. Keep the source
    PDFs outside the skill repository unless redistribution is authorized.
+5. After the independent baseline is frozen, extract method-pattern cards:
+   problem signal, mechanism/model ladder, promotion trigger, parameter-sharing
+   choice, independent route, diagnostic evidence, failure boundary, and
+   cross-domain exception. Do not preserve task-specific equations, fitted
+   numbers, final answers, or source wording.
 
 Use `scripts/paper_corpus_metrics.py --pdf-dir <corpus> --recursive --out <report.json>` for
 repeatable page-count and page-size measurements. Because many competition papers

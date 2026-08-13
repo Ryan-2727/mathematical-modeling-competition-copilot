@@ -210,6 +210,10 @@ The release and paper workflow then uses deterministic checks:
   requires two independent checks when ground truth is absent, maps every answer
   to a decisive value and limitation, and rejects innovation claims without a
   problem-specific, measured incremental benefit.
+- `verify_model_reasoning_core.py` enforces evidence-led mechanism and model
+  ladders, shared/condition-specific/nuisance parameter roles, identifiability
+  boundaries, genuinely independent routes, joint-inference decisions, and
+  reconciliation of material result disagreement before claim admission.
 - `verify_decision_stability.py`, `verify_figure_numeric_contract.py`, and
   `verify_model_budget.py` require perturbation-aware recommendations, traceable
   figure numbers, and a baseline-first route that fits the remaining contest time.

@@ -11,8 +11,12 @@ inputs during independent solving.
 3. Freeze statement, data, code, result files, figures, paper, and logs.
 4. Score the run with the internal four-dimension reviewer scorecard and record
    concrete failure evidence.
-5. Only then inspect multiple excellent papers for general writing or validation
-   patterns; never copy wording, values, models, or figure designs.
+5. Only then inspect multiple excellent papers for general writing,
+   presentation, validation, or modeling-decision patterns. Create method-pattern
+   cards containing only problem signals, model ladders, promotion triggers,
+   parameter sharing, independent-route structure, diagnostics, failure
+   boundaries, and exceptions. Never copy wording, values, task-specific
+   equations, final models, or figure designs.
 6. Change at most three reusable rules and rerun a different unseen problem.
 
 Track across problems: subproblem completion, baseline completion time,

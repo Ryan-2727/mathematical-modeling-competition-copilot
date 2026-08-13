@@ -89,6 +89,9 @@ Read:
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/problem-structure-playbooks.md`
 - `references/embedded/mechanism-semantics-and-argument.md`
+- `references/embedded/model-reasoning-kernel.md`
+- for physical measurement, system identification, spectroscopy, imaging, or
+  signal inversion, `references/embedded/physics-inverse-modeling-playbook.md`
 
 Required actions:
 
@@ -103,6 +106,14 @@ Required actions:
   `reports/model_decision_log.csv`. Predeclare the candidate's advantage and
   failure test in `reports/model_challenge.json`; reject it or narrow the claim
   when the threshold is not met. Do not stack models for appearance.
+- Build mechanism and candidate-model ladders before optimization. Add one
+  mechanism at a time, register every parameter as shared,
+  condition-specific, nuisance, or fixed, and issue an identifiability verdict
+  of `PASS`, `CONDITIONAL`, or `FAIL`. Simplify, reparameterize, or add data
+  conditions after `FAIL`; an optimizer cannot repair non-identifiability.
+- When repeated conditions exist, compare separate fits with the explicit joint
+  design in `reports/joint_inference_design.json`. Do not silently force or
+  average shared parameters.
 - Classify constraints as local or coupled. For coupled systems, audit input
   decoding and the constraint graph and require joint feasibility; an
   independent node-by-node projection is diagnostic only.
@@ -142,6 +153,7 @@ Read:
 - `references/embedded/award-oriented-evidence-chain.md`
 - `references/embedded/data-units-and-source-quality.md`
 - `references/embedded/stress-testing-and-uncertainty.md`
+- `references/embedded/diagnostics-and-result-reconciliation.md`
 - `references/embedded/evidence-and-quality-gates.md`
 
 Required actions:
@@ -159,6 +171,14 @@ Required actions:
 - Select model-family validation adapters and predeclare proportionate stress
   tests. Without external truth, require at least two independent checks and
   disclose the remaining limitation.
+- Record independent estimation routes in `reports/independent_routes.csv`.
+  Two routes are independent only when they differ in at least two of
+  mathematical principle, data representation, and principal failure mode; a
+  second optimizer for the same objective tests algorithm stability only.
+- Link each added mechanism to a predicted diagnostic signature, run the
+  claim-proportionate diagnostic matrix, reconcile material result conflicts
+  in `reports/result_reconciliation.csv`, and run
+  `scripts/verify_model_reasoning_core.py` before admitting decisive values.
 - Compare expected-value decisions with robust/stochastic/scenario alternatives
   when uncertainty can change the recommendation. Report feasibility, extreme
   outcomes, implementation cost/time, interpretability, failure mode, and
@@ -224,6 +244,9 @@ Required actions:
   result. Begin every subproblem from its direct answer and preserve the chain
   mechanism -> rationale -> variables/assumptions -> derivation -> algorithm ->
   result/interpretation -> local validation -> limitation.
+- Show why the selected model was promoted from its simpler parent, which
+  parameters are shared across conditions, whether an independent route
+  supports the conclusion, and how any material disagreement was resolved.
 - The paper body must contain verified results. If a model cannot produce them, follow
   the user-approved simplification route from phase 2; retain the original
   unverified model only under model optimization.
@@ -302,9 +325,13 @@ Read `references/embedded/submission-and-anonymity.md`.
 
 Read `references/embedded/training-evaluation-loop.md`.
 
-- Learn only reusable, non-copyrightable writing and presentation patterns from
-  offline excellent-paper corpora. Never use a paired paper as an input to a
-  live or blinded solution, and never copy wording, numbers, models, or figures.
+- After freezing an independent solution, learn reusable, non-copyrightable
+  writing, presentation, and modeling-decision patterns from multiple offline
+  excellent papers. Abstract only problem signals, model ladders, promotion
+  triggers, parameter-sharing structures, independent-validation designs,
+  diagnostics, and failure boundaries. Never use a paired paper as an input to
+  a live or blinded solution, and never copy wording, numbers, task-specific
+  equations, final models, or figures.
 - Keep private problems, manifests, artifacts, scores, and copied inputs outside
   Git. Solve from statement/data independently, freeze the baseline, revise no
   more than three generalizable defects, then rerun blindly.

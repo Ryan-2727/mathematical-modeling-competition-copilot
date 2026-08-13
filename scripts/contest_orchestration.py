@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 
 
-CURRENT_PROJECT_SCHEMA_VERSION = 1
-REGISTRY_VERSION = 1
+CURRENT_PROJECT_SCHEMA_VERSION = 2
+REGISTRY_VERSION = 2
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
 PROFILE_DIR = SKILL_ROOT / "assets" / "contestctl" / "profiles"
@@ -46,6 +46,9 @@ NODE_REGISTRY = {
                 "results/**/*",
                 "reports/conclusion_map.csv",
                 "reports/model_decision_log.csv",
+                "reports/parameter_registry.csv",
+                "reports/independent_routes.csv",
+                "reports/result_reconciliation.csv",
                 "reports/stress_tests.csv",
                 "reports/figure_manifest.csv",
             ),
@@ -263,12 +266,29 @@ NODE_REGISTRY = {
             ("reports/decision_quality.json",),
         ),
         Node(
+            "verify-model-reasoning",
+            "freeze",
+            "verify_model_reasoning_core.py",
+            ("--project-dir", "{project}"),
+            (),
+            (
+                "reports/model_decision_log.csv",
+                "reports/parameter_registry.csv",
+                "reports/independent_routes.csv",
+                "reports/result_reconciliation.csv",
+                "reports/joint_inference_design.json",
+                "results/verified_values.csv",
+            ),
+            ("reports/model_reasoning_core.json",),
+        ),
+        Node(
             "verify-modeling-argument",
             "freeze",
             "verify_modeling_argument_quality.py",
             ("--project-dir", "{project}"),
-            ("verify-decision-quality",),
+            ("verify-decision-quality", "verify-model-reasoning"),
             (
+                "reports/mechanism_audit.json",
                 "reports/semantic_audit.csv",
                 "reports/validation_design.csv",
                 "reports/conclusion_map.csv",
@@ -331,6 +351,12 @@ def migration_plan(root: Path) -> dict[str, Any]:
     )
     candidate = json.loads(json.dumps(manifest))
     changes: list[dict[str, Any]] = []
+    required_files = (
+        "reports/parameter_registry.csv",
+        "reports/independent_routes.csv",
+        "reports/result_reconciliation.csv",
+        "reports/joint_inference_design.json",
+    )
     if raw_version < CURRENT_PROJECT_SCHEMA_VERSION:
         candidate["project_schema_version"] = CURRENT_PROJECT_SCHEMA_VERSION
         changes.append(
@@ -358,6 +384,9 @@ def migration_plan(root: Path) -> dict[str, Any]:
         if key not in target:
             target[key] = value
             changes.append({"op": "add", "path": pointer, "value": value})
+    for relative in required_files:
+        if not (root / relative).exists():
+            changes.append({"op": "create_file", "path": relative})
     return {
         "status": "PASS",
         "errors": [],
@@ -372,7 +401,22 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
     payload = migration_plan(root)
     payload["applied"] = False
     if payload["status"] == "PASS" and apply:
-        _write_json(root / "contest_manifest.json", payload.pop("manifest"))
+        manifest = payload.pop("manifest")
+        templates = {
+            "reports/parameter_registry.csv": "subproblem,model_id,parameter,symbol,role,unit,scope,source,bounds,identifiability_status,claim_boundary,status\n",
+            "reports/independent_routes.csv": "subproblem,route_id,route_role,principle,data_representation,failure_mode,result_file,result_value,tolerance,comparison_status,limitation,status\n",
+            "reports/result_reconciliation.csv": "subproblem,comparison_id,primary_route,comparison_route,primary_value,comparison_value,tolerance,disagreement_material,investigation_step,cause,resolution,claim_action,evidence_file,status\n",
+            "reports/joint_inference_design.json": '{\n  "applicable": false,\n  "reason": "migration requires an applicability decision",\n  "subproblems": []\n}\n',
+        }
+        created: list[str] = []
+        for relative, content in templates.items():
+            target = root / relative
+            if not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(content, encoding="utf-8")
+                created.append(relative)
+        _write_json(root / "contest_manifest.json", manifest)
+        payload["created_files"] = created
         payload["applied"] = True
     else:
         payload.pop("manifest", None)

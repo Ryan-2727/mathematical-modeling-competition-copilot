@@ -99,11 +99,17 @@ def generate(root: Path) -> dict[str, Any]:
     conclusion_path = root / "reports" / "conclusion_map.csv"
     comparison_path = root / "reports" / "model_decision_log.csv"
     robustness_path = root / "reports" / "stress_tests.csv"
+    parameter_path = root / "reports" / "parameter_registry.csv"
+    routes_path = root / "reports" / "independent_routes.csv"
+    reconciliation_path = root / "reports" / "result_reconciliation.csv"
     figure_path = root / "reports" / "figure_manifest.csv"
     values = read_rows(values_path)
     conclusions = read_rows(conclusion_path)
     comparisons = read_rows(comparison_path)
     robustness = read_rows(robustness_path)
+    parameters = read_rows(parameter_path)
+    routes = read_rows(routes_path)
+    reconciliations = read_rows(reconciliation_path)
     figures = read_rows(figure_path)
     errors = validate_values(root, values)
     known_values = {str(row.get("key") or "").strip(): row for row in values}
@@ -178,6 +184,51 @@ def generate(root: Path) -> dict[str, Any]:
         source = str(row.get("source_data") or "").strip()
         if label and caption and source:
             note_rows.append([label, caption, source])
+    reasoning_rows = [
+        [
+            str(row.get("subproblem") or ""),
+            str(row.get("candidate") or ""),
+            str(row.get("added_mechanism") or ""),
+            str(row.get("identifiability_status") or ""),
+            str(row.get("expected_diagnostic_signature") or ""),
+        ]
+        for row in comparisons
+        if str(row.get("selected") or "").strip().lower() in {"true", "yes", "1"}
+        and str(row.get("status") or "").strip().lower() in COMPLETE
+    ]
+    parameter_rows = [
+        [
+            str(row.get("subproblem") or ""),
+            str(row.get("parameter") or ""),
+            str(row.get("role") or ""),
+            str(row.get("scope") or ""),
+            str(row.get("identifiability_status") or ""),
+        ]
+        for row in parameters
+        if str(row.get("status") or "").strip().lower() in COMPLETE
+    ]
+    route_rows = [
+        [
+            str(row.get("subproblem") or ""),
+            str(row.get("route_id") or ""),
+            str(row.get("route_role") or ""),
+            str(row.get("result_value") or ""),
+            str(row.get("comparison_status") or ""),
+        ]
+        for row in routes
+        if str(row.get("status") or "").strip().lower() in COMPLETE
+    ]
+    reconciliation_rows = [
+        [
+            str(row.get("subproblem") or ""),
+            str(row.get("primary_route") or ""),
+            str(row.get("comparison_route") or ""),
+            str(row.get("resolution") or ""),
+            str(row.get("claim_action") or ""),
+        ]
+        for row in reconciliations
+        if str(row.get("status") or "").strip().lower() in COMPLETE
+    ]
     files = {
         "core_results.tex": table(
             ["Result key", "Value", "Unit", "Evidence"],
@@ -200,6 +251,25 @@ def generate(root: Path) -> dict[str, Any]:
             note_rows,
             "lll",
         ),
+        "model_reasoning.tex": table(
+            ["Subproblem", "Selected model", "Added mechanism", "Identifiability", "Expected diagnostic"],
+            reasoning_rows,
+            "lllll",
+        ),
+        "parameter_roles.tex": table(
+            ["Subproblem", "Parameter", "Role", "Scope", "Identifiability"],
+            parameter_rows,
+            "lllll",
+        ),
+        "route_reconciliation.tex": table(
+            ["Subproblem", "Route", "Role", "Result", "Comparison"],
+            route_rows,
+            "lllll",
+        ) + "\n" + table(
+            ["Subproblem", "Primary", "Check", "Resolution", "Claim action"],
+            reconciliation_rows,
+            "lllll",
+        ),
     }
     output_hashes: dict[str, str] = {}
     for name, content in files.items():
@@ -212,6 +282,9 @@ def generate(root: Path) -> dict[str, Any]:
         conclusion_path,
         comparison_path,
         robustness_path,
+        parameter_path,
+        routes_path,
+        reconciliation_path,
         figure_path,
     ):
         if path.is_file():

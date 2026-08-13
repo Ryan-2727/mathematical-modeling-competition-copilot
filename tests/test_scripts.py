@@ -33,6 +33,10 @@ class ScriptTests(unittest.TestCase):
             self.assertEqual(manifest["mode"], "training")
             for filename in (
                 "model_decision_log.csv",
+                "parameter_registry.csv",
+                "independent_routes.csv",
+                "result_reconciliation.csv",
+                "joint_inference_design.json",
                 "stress_tests.csv",
                 "units.csv",
                 "reviewer_scorecard.csv",

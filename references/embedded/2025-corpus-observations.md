@@ -7,6 +7,15 @@ it does not store a machine-specific corpus root. The PDFs remain outside this
 repository. They are training reference evidence, not contest-time inputs and
 not templates to copy verbatim.
 
+## Contents
+
+- [Corpus profile](#corpus-profile)
+- [Repeated structure](#repeated-structure)
+- [Repeated writing strengths](#repeated-writing-strengths)
+- [Post-freeze modeling-decision patterns](#post-freeze-modeling-decision-patterns)
+- [Repeated visual roles](#repeated-visual-roles)
+- [Rules learned by the skill](#rules-learned-by-the-skill)
+
 Generate a local manifest without copying papers into the repository:
 
 ```bash
@@ -67,6 +76,31 @@ stable reader path:
 - Results are interpreted in practical language after formulas, tables, and plots.
 - Validation is visible: fitting error, residuals, consistency checks, sensitivity,
   robustness, or a comparison of alternative solution routes.
+
+## Post-freeze modeling-decision patterns
+
+Post-freeze inspection of the two 2025 physical inverse-problem papers supports
+the following cross-paper abstractions. Treat them as method-pattern evidence,
+not as a source of task-specific formulas or answers:
+
+- Build a forward physical observation model before inversion, and progress
+  from a transparent feature or closed-form estimate to a calibrated nonlinear
+  model only when the added mechanism answers an observed defect.
+- Separate shared latent parameters from condition-specific calibration and
+  nuisance parameters; compare separate fits with a genuine joint fit rather
+  than averaging condition-wise estimates by default.
+- Pair a global curve/field fit with a local, algebraic, spectral, invariant, or
+  otherwise independent estimate. Merely changing the optimizer does not make
+  a second route independent.
+- Compare a proxy interaction model with a fuller physical model using residual
+  signatures, parameter stability, physical plausibility, and a predeclared
+  promotion threshold instead of in-sample fit alone.
+- Combine residual-domain, parameter-domain, subrange/condition, sensitivity,
+  and synthetic-recovery evidence; reconcile material route disagreement before
+  reporting a precise final value.
+
+Do not promote a pattern from one paper alone. Preserve exceptions, and blind
+test the abstraction on a different task type before releasing it as a rule.
 
 ## Repeated visual roles
 

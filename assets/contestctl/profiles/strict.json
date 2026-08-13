@@ -23,6 +23,7 @@
       "verify-latex-lock",
       "verify-evidence-chain",
       "verify-decision-quality",
+      "verify-model-reasoning",
       "verify-modeling-argument"
     ]
   }

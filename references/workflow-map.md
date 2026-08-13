@@ -27,6 +27,14 @@ The following formerly separate skills or helper workflows are embedded as refer
   artifacts.
 - `cumcm-model-selection.md`: CUMCM / 中国大学生数学建模竞赛 routing guide sourced from the local model library. It maps task signals to methods, gives Python/MATLAB/LINGO selection boundaries, and states method-specific validation gates.
 - `problem-structure-playbooks.md`: route selection for evaluation, forecasting, optimization, mechanism, classification, and simulation problems.
+- `model-reasoning-kernel.md`: evidence contracts, mechanism/model ladders,
+  identifiability, parameter roles, joint inference, and safe fallbacks.
+- `physics-inverse-modeling-playbook.md`: conditionally loaded physical
+  measurement and inverse-problem route from observation equations through
+  joint inference and proxy-versus-complete-model competition.
+- `diagnostics-and-result-reconciliation.md`: independent-route test,
+  claim-based diagnostic matrix, conflict investigation, and conclusion
+  admission rules.
 - `mathmodel-six-phase.md`: contest-specific six-phase workflow: setup, analysis/modeling, coding/visualization, diagrams, paper writing, and verification.
 - `llm-mm-agent-methodology.md`: LLM-MM-Agent-inspired four-stage loop and HMML/MLE-Solver-style method selection.
 - `literature-fetch-and-explain.md`: embedded `paper-fetch-skill` and `paper-explainer` workflow for source search, paper explanation, and source notes.
@@ -80,9 +88,9 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Compliance | `contest_manifest.json`, `rules.lock.json`, saved official snapshots, AI log, selected template/profile | Rule URLs, hashes, validity and structured fields pass; live-mode boundary recorded |
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
 | Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
-| Modeling | `reports/model_design.md`, `reports/model_decision_log.csv` | Variables and assumptions defined; route selection justified against a baseline |
+| Modeling | `reports/model_design.md`, `reports/model_decision_log.csv`, `reports/parameter_registry.csv`, conditional `reports/joint_inference_design.json` | Model ladder is evidence-led; parameters and identifiability are explicit; route selection is justified against a baseline |
 | Literature | `reports/bibliography.csv`, metadata snapshots, passage evidence, `paper/references.bib` | At least 10 uniquely cited works have hash-bound authoritative metadata, exact-title Scholar queries, retraction-check records, and checked source passages |
-| Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, stress/units ledgers | Executed; hashes and units reconcile; model-family evidence and decisive claims are challenged |
+| Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, `reports/independent_routes.csv`, `reports/result_reconciliation.csv`, stress/units ledgers | Executed; hashes and units reconcile; independent routes, diagnostics, conflicts, and decisive claims are challenged |
 | Figures/tables | `figures/`, tables, figure manifests, page overview | Hash-bound at insertion size; text, lines, resolution, clipping, hierarchy, grayscale, and color-vision reviews are recorded |
 | Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, notation/dimension registry, complete portable LaTeX source tree | Results remain traceable; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
 | Final check | verification report, paper-depth report, argument coverage, claim report, model/value reports, `reports/latex_compatibility.json`, PDF visual report, portable-source ZIP report, `reports/paper_delivery.json` | Depth, compile, visual, anonymity, numeric, reproduction, and delivery gates pass or name scoped limitations |

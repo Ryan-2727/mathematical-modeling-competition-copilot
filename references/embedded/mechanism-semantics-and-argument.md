@@ -17,6 +17,13 @@ assumptions, semantic IDs, falsifiable implication, and result artifact. A data
 encoding is not a modeling assumption until its meaning and consequence are
 explicit. Preserve alternate credible treatments in sensitivity analysis.
 
+Before solving, apply `model-reasoning-kernel.md`. Record the mechanism and
+candidate-model ladders in `reports/model_decision_log.csv`, every estimated or
+fixed parameter in `reports/parameter_registry.csv`, and any repeated-condition
+sharing decision in `reports/joint_inference_design.json`. Promote a model only
+when its added mechanism has evidence, a predicted diagnostic signature, and an
+identifiability status other than `FAIL`.
+
 ## Small-sample or no-ground-truth validation
 
 Use `reports/validation_design.csv` to state whether truth is external, partial,
@@ -25,6 +32,8 @@ conservation/invariant, small-case enumeration, historical backtest, cross-model
 agreement, synthetic recovery, expert rule, or stress test. Record a metric,
 baseline/invariant, acceptance rule, result artifact, and remaining limitation.
 These checks restrict a claim; they never manufacture an accuracy label.
+Name the routes in `reports/independent_routes.csv`; a numeric count alone does
+not establish independence.
 
 ## Conclusion-first paper chain
 

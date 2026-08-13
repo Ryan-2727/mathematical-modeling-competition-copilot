@@ -99,10 +99,40 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             encoding="utf-8",
         )
         (root / "reports" / "model_decision_log.csv").write_text(
-            "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,"
-            "validation_cost,selected,selection_evidence,status\n"
-            "Q1,mean,robust optimization,fit,documented,stress test,low,true,"
+            "subproblem,model_level,parent_model,baseline,candidate,added_mechanism,"
+            "mechanism_fit,assumptions,new_parameters,expected_diagnostic_signature,"
+            "failure_test,validation_cost,identifiability_status,selected,selection_evidence,status\n"
+            "Q1,C1,mean,mean,robust optimization,resource uncertainty,fit,documented,"
+            "uncertainty radius,worst-case feasibility,stress test,low,PASS,true,"
             "results/source.csv,verified\n",
+            encoding="utf-8",
+        )
+        (root / "reports" / "parameter_registry.csv").write_text(
+            "subproblem,model_id,parameter,symbol,role,unit,scope,source,bounds,"
+            "identifiability_status,claim_boundary,status\n"
+            "Q1,robust optimization,uncertainty radius,rho,shared,kg,all scenarios,"
+            "data,0..10,PASS,supported,verified\n",
+            encoding="utf-8",
+        )
+        (root / "reports" / "independent_routes.csv").write_text(
+            "subproblem,route_id,route_role,principle,data_representation,failure_mode,"
+            "result_file,result_value,tolerance,comparison_status,limitation,status\n"
+            "Q1,opt,primary,robust optimization,scenario matrix,solver convergence,"
+            "results/source.csv,12.5,0.1,agree,none,verified\n"
+            "Q1,enum,independent_check,enumeration,small-case states,state truncation,"
+            "results/source.csv,12.5,0.1,agree,small case only,verified\n",
+            encoding="utf-8",
+        )
+        (root / "reports" / "result_reconciliation.csv").write_text(
+            "subproblem,comparison_id,primary_route,comparison_route,primary_value,"
+            "comparison_value,tolerance,disagreement_material,investigation_step,cause,"
+            "resolution,claim_action,evidence_file,status\n"
+            "Q1,R1,opt,enum,12.5,12.5,0.1,false,not_applicable,within tolerance,"
+            "retain primary,admit,results/source.csv,verified\n",
+            encoding="utf-8",
+        )
+        (root / "reports" / "joint_inference_design.json").write_text(
+            json.dumps({"applicable": False, "reason": "one scenario system", "subproblems": []}),
             encoding="utf-8",
         )
         (root / "reports" / "stress_tests.csv").write_text(
@@ -155,7 +185,7 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             self.init_project(root)
             manifest_path = root / "contest_manifest.json"
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(manifest["project_schema_version"], 1)
+            self.assertEqual(manifest["project_schema_version"], 2)
             self.assertEqual(manifest["quality_profile"], "standard")
             for name in (
                 "rendered_figure_manifest.csv",
@@ -163,6 +193,7 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
                 "equation_dimensions.csv",
             ):
                 self.assertTrue((root / "reports" / name).is_file())
+            (root / "reports" / "parameter_registry.csv").unlink()
             legacy = {"contest": "CUMCM", "unknown_evidence": {"keep": True}}
             manifest_path.write_text(json.dumps(legacy), encoding="utf-8")
             self.run_script(
@@ -181,6 +212,7 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             )
             self.assertFalse(preview["applied"])
             self.assertTrue(preview["changes"])
+            self.assertTrue(any(item["op"] == "create_file" for item in preview["changes"]))
             self.run_script(
                 "contestctl.py",
                 "migrate",
@@ -190,7 +222,14 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             )
             migrated = json.loads(manifest_path.read_text(encoding="utf-8"))
             self.assertTrue(migrated["unknown_evidence"]["keep"])
-            self.assertEqual(migrated["project_schema_version"], 1)
+            self.assertEqual(migrated["project_schema_version"], 2)
+            for name in (
+                "parameter_registry.csv",
+                "independent_routes.csv",
+                "result_reconciliation.csv",
+                "joint_inference_design.json",
+            ):
+                self.assertTrue((root / "reports" / name).is_file())
             self.run_script(
                 "contestctl.py",
                 "migrate",
@@ -252,6 +291,9 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
                     "\\input{generated/robustness.tex}\n"
                     "\\input{generated/conclusion_snippets.tex}\n"
                     "\\input{generated/figure_notes.tex}\n"
+                    "\\input{generated/model_reasoning.tex}\n"
+                    "\\input{generated/parameter_roles.tex}\n"
+                    "\\input{generated/route_reconciliation.tex}\n"
                     "\\end{document}\n",
                     encoding="utf-8",
                 )

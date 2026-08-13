@@ -31,6 +31,16 @@ identify parameter sources and identifiability limits; calibrate separately from
 validation; test initial/boundary conditions and numerical convergence; explain
 what intervention the dynamics support.
 
+## Physical measurement and inverse problems
+
+Read `physics-inverse-modeling-playbook.md`. Map observable data to a latent
+quantity through an explicit observation equation; begin with an identifiable
+proxy, then add material, calibration, boundary, absorption, or multi-path
+mechanisms only when a predeclared diagnostic supports promotion. Separate
+shared, condition-specific, and nuisance parameters; compare separate and joint
+fits; pair the global fit with a genuinely independent local, algebraic, or
+alternative-representation estimate when feasible.
+
 ## Classification, clustering, and statistical explanation
 
 Define the target or similarity meaning; separate preprocessing fitted on train

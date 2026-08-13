@@ -66,7 +66,7 @@ def main() -> int:
     else:
         scaffold_latex_paper(root, template=selected_template)
     manifest = {
-        "project_schema_version": 1,
+        "project_schema_version": 2,
         "contest": args.contest,
         "year": args.year,
         "mode": args.mode,
@@ -178,10 +178,14 @@ def main() -> int:
         root / "reports/table_manifest.csv",
         "table,label,source_data,caption_insight,units,precision,emphasis,continuation_check,claim_id,question_answered,reader_takeaway,decision_relevance,style_profile,legibility_evidence,status\n",
     )
-    write_if_missing(root / "reports/model_decision_log.csv", "subproblem,baseline,candidate,mechanism_fit,assumptions,failure_test,validation_cost,selected,selection_evidence,status\n")
+    write_if_missing(root / "reports/model_decision_log.csv", "subproblem,model_level,parent_model,baseline,candidate,added_mechanism,mechanism_fit,assumptions,new_parameters,expected_diagnostic_signature,failure_test,validation_cost,identifiability_status,selected,selection_evidence,status\n")
     write_if_missing(root / "reports/semantic_audit.csv", "semantic_id,dataset,field,raw_representation,semantic_type,decision_impact,evidence,alternative_treatment,sensitivity_needed,used_by,status\n")
     write_if_missing(root / "reports/mechanism_audit.json", '{\n  "status": "pending",\n  "subproblems": []\n}\n')
     write_if_missing(root / "reports/validation_design.csv", "subproblem,truth_availability,validation_strategy,independent_checks,primary_metric,baseline_or_invariant,split_or_scenario,acceptance_criterion,limitation,result_file,status\n")
+    write_if_missing(root / "reports/parameter_registry.csv", "subproblem,model_id,parameter,symbol,role,unit,scope,source,bounds,identifiability_status,claim_boundary,status\n")
+    write_if_missing(root / "reports/independent_routes.csv", "subproblem,route_id,route_role,principle,data_representation,failure_mode,result_file,result_value,tolerance,comparison_status,limitation,status\n")
+    write_if_missing(root / "reports/result_reconciliation.csv", "subproblem,comparison_id,primary_route,comparison_route,primary_value,comparison_value,tolerance,disagreement_material,investigation_step,cause,resolution,claim_action,evidence_file,status\n")
+    write_if_missing(root / "reports/joint_inference_design.json", '{\n  "applicable": false,\n  "reason": "",\n  "subproblems": []\n}\n')
     write_if_missing(root / "reports/conclusion_map.csv", "subproblem,question,answer_or_recommendation,decisive_value_key,method_rationale_location,validation_location,limitation_location,figure_or_table,paper_location,status\n")
     write_if_missing(root / "reports/innovation_ledger.csv", "subproblem,baseline,problem_specific_change,mechanism_target,added_assumption,incremental_cost,comparison_metric,baseline_value,innovation_value,metric_direction,predeclared_minimum_improvement,relative_improvement,validation_artifact,claim_boundary,status\n")
     write_if_missing(root / "reports/model_challenge.json", '{\n  "status": "pending",\n  "subproblems": [],\n  "errors": []\n}\n')

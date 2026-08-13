@@ -31,6 +31,10 @@ FILES = {
     "modeling": (
         "reports/traceability.md",
         "reports/model_decision_log.csv",
+        "reports/parameter_registry.csv",
+        "reports/independent_routes.csv",
+        "reports/result_reconciliation.csv",
+        "reports/joint_inference_design.json",
         "reports/stress_tests.csv",
         "reports/claims.csv",
         "results/verified_values.csv",
@@ -77,6 +81,7 @@ REPORTS = {
         "reports/figure_narrative_verification.json",
         "reports/page_readability_verification.json",
         "reports/modeling_argument_quality.json",
+        "reports/model_reasoning_core.json",
         "reports/answer_density.json",
         "reports/visual_design_system.json",
         "reports/paper_presentation.json",
@@ -92,6 +97,9 @@ REPORTS = {
 CSV_LEDGERS = {
     "modeling": (
         "reports/model_decision_log.csv",
+        "reports/parameter_registry.csv",
+        "reports/independent_routes.csv",
+        "reports/result_reconciliation.csv",
         "reports/stress_tests.csv",
         "reports/claims.csv",
     ),
@@ -103,6 +111,14 @@ REPORT_BINDINGS = {
     ),
     "reports/model_validation_report.json": (
         ("manifest_sha256", "reports/model_validation.json", "file"),
+    ),
+    "reports/model_reasoning_core.json": (
+        ("model_decision_log_sha256", "reports/model_decision_log.csv", "file"),
+        ("parameter_registry_sha256", "reports/parameter_registry.csv", "file"),
+        ("independent_routes_sha256", "reports/independent_routes.csv", "file"),
+        ("result_reconciliation_sha256", "reports/result_reconciliation.csv", "file"),
+        ("joint_inference_design_sha256", "reports/joint_inference_design.json", "file"),
+        ("verified_values_sha256", "results/verified_values.csv", "file"),
     ),
     "reports/verified_values_verification.json": (
         ("registry_sha256", "results/verified_values.csv", "file"),

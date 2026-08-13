@@ -17,6 +17,14 @@ outcome; otherwise the test risks becoming decorative.
   convergence with run length or sample count.
 - Mechanistic claim: initial/boundary perturbation, parameter identifiability,
   and step-size or grid refinement.
+- Inverse physical claim: residual trend/correlation/frequency structure,
+  parameter correlation or profile stability, condition holdout, proxy versus
+  complete-model comparison, and synthetic recovery when a simulator exists.
+
+Use `diagnostics-and-result-reconciliation.md` to select only diagnostics that
+can change the claim. Record the predicted signature before testing and the
+observed outcome afterward. Do not count a Boolean such as
+`residual_diagnostics=true` as evidence without a metric and result artifact.
 
 ## Decision uncertainty
 
