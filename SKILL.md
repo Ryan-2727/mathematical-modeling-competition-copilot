@@ -109,8 +109,8 @@ Required actions:
   censored, missing, and not-observed meanings in `reports/semantic_audit.csv`
   and `reports/mechanism_audit.json`. Do not disguise unknown semantics as an
   assumption.
-- Validate the bundled B/C cards with `scripts/verify_model_library.py`. Use a card only after multiple structural signals match; execute its baseline first and
-  keep the stronger route only after its diagnostic, falsification, and predeclared promotion threshold pass.
+- Validate the B/C cards with `scripts/verify_model_library.py`. When using a bundled kernel, run its synthetic regression and bind actual input/output in
+  `reports/model_kernel_usage.csv`; still require structural fit, the baseline, diagnostics, falsification, and the predeclared promotion threshold.
 - Compare one credible baseline with a stronger candidate in
   `reports/model_decision_log.csv`. Predeclare the candidate's advantage and
   failure test in `reports/model_challenge.json`; reject it or narrow the claim
@@ -168,8 +168,9 @@ Read:
 
 Required actions:
 
-- Probe and lock observed runtime/solver capabilities before execution. Do not
-  install dependencies or silently substitute a solver in contest mode.
+- Probe and lock observed runtime/solver capabilities before execution. Profile
+  actual primary and fallback commands with `scripts/profile_compute_run.py`
+  and verify `reports/compute_budget.csv`. Do not install dependencies or silently substitute a solver in contest mode.
 - Produce every numeric conclusion from executed code, a spreadsheet formula,
   or a cited source. Maintain claims, units, commands, hashes, validation
   manifests, and a frozen reproduction run.
@@ -270,6 +271,7 @@ Required actions:
   the model, key parameters, core results, and model-appropriate validation in
   the body. Use current official page limits; corpus-derived ranges are advisory
   and never justify padding.
+- For Chinese LaTeX, run the advisory `scripts/verify_chinese_academic_style.py`; review or bind exceptions, but never auto-rewrite prose.
 - Produce `paper/main.pdf` and a rebuildable UTF-8 XeLaTeX/latexmk source tree
   with relative paths, `main.tex`, bibliography, sections, generated values,
   figures, styles, `.latexmkrc`, and `.vscode/`. The same portable root ZIP must
@@ -294,8 +296,8 @@ Required gates:
 
 - Run the paper profile during writing and the strict freeze profile before
   submission. Under strict, unresolved `LIMITED` evidence blocks release.
-- Verify claims/evidence chains, semantic and modeling arguments, model
-  validation, uncertainty/decision quality, causal boundaries, abstract/result
+- Verify claims/evidence chains, semantic and modeling arguments, executable
+  kernel evidence, compute budgets, model validation, Chinese prose advisories, uncertainty/decision quality, causal boundaries, abstract/result
   story, bibliography, manuscript, figures/tables, notation/dimensions, and
   verified values.
 - Compile both project-root and `build/` outputs; verify the rendered PDF,

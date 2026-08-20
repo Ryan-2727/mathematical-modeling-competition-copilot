@@ -36,6 +36,13 @@ restating their detailed checks here.
   content, or locators and never pad the bibliography with uncited sources.
 - Keep limitations honest but not self-defeating.
 - Preserve the contest's anonymity and submission rules over generic writing preferences.
+- For a Chinese LaTeX paper, run
+  `scripts/verify_chinese_academic_style.py` after drafting. Review its located
+  warnings for undefined abbreviations, long prose, duplicate conclusions,
+  unsupported evaluative or causal wording, raw precision inconsistency, and
+  excessive self-reference. The default is advisory and never rewrites prose.
+  Record a deliberate exception only in `reports/prose_style_exemptions.csv`;
+  use training-only `--fail-on` when the team explicitly wants a blocking lint.
 
 ## Output Discipline
 
@@ -51,5 +58,6 @@ Record the selected branch in `reports/verification_report.md`:
 - AI disclosure and submission-state evidence
 - authoritative bibliography ledger and exact-title Google Scholar checks
 - compiled `paper/main.pdf` plus complete LaTeX source
+- `reports/chinese_academic_style.json`, including unresolved and human-exempted findings
 - verified `support.zip` containing code, data or retrieval evidence, environment,
   exact commands, results, licenses, and hashes

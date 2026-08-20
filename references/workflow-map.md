@@ -32,7 +32,8 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `cumcm-bc-model-library.md`: targeted B/C routing for designed experiments,
   localization, coverage, sequential decisions, compositional data, robust
   planning, price-demand, longitudinal timing, and calibrated imbalance;
-  validate the bundled JSON with `verify_model_library.py`.
+  validate the bundled JSON with `verify_model_library.py`; five cards also
+  expose bounded executable kernels with synthetic truth and metamorphic tests.
 - `physics-inverse-modeling-playbook.md`: conditionally loaded physical
   measurement and inverse-problem route from observation equations through
   joint inference and proxy-versus-complete-model competition.
@@ -94,9 +95,9 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md`, `reports/model_decision_log.csv`, `reports/parameter_registry.csv`, conditional `reports/joint_inference_design.json` | Model ladder is evidence-led; parameters and identifiability are explicit; route selection is justified against a baseline |
 | Literature | `reports/bibliography.csv`, metadata snapshots, passage evidence, `paper/references.bib` | At least 10 uniquely cited, relevant works have hash-bound authoritative metadata, exact-title Scholar queries, retraction checks, checked passages, claim IDs, reachable paper locations, and removal-impact evidence |
-| Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, `reports/independent_routes.csv`, `reports/result_reconciliation.csv`, stress/units ledgers | Executed; hashes and units reconcile; independent routes, diagnostics, conflicts, and decisive claims are challenged |
+| Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, optional `reports/model_kernel_usage.csv`, `reports/compute_budget.csv`, `reports/compute_runs.jsonl`, independent routes, reconciliation, stress/units ledgers | Executed; hashes and units reconcile; synthetic kernel checks stay separate from contest evidence; primary/fallback runtime, memory scope, timeout, solver evidence, diagnostics, conflicts, and decisive claims are challenged |
 | Figures/tables | `figures/`, tables, figure manifests, page overview | Hash-bound at insertion size; text, lines, resolution, clipping, hierarchy, grayscale, and color-vision reviews are recorded |
-| Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, `reports/numeric_exemptions.csv`, notation/dimension registry, complete portable LaTeX source tree | Every abstract/conclusion number is a verified macro or narrow structural exemption; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
+| Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, numeric and prose exception ledgers, notation/dimension registry, complete portable LaTeX source tree | Every abstract/conclusion number is a verified macro or narrow structural exemption; Chinese prose findings are located for human review; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
 | Final check | verification report, paper-depth report, argument coverage, claim report, model/value reports, `reports/latex_compatibility.json`, PDF visual report, portable-source ZIP report, `reports/paper_delivery.json` | Depth, compile, visual, anonymity, numeric, reproduction, and delivery gates pass or name scoped limitations |
 | Optional review | blinded reviewer reports, aggregation, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; objections cite artifacts, vetoes are resolved or disclosed, and final checks rerun after changes |
 | Skill release | blinded benchmark manifest and regression report | No score exceeds its accepted regression tolerance; baselines are never changed automatically |

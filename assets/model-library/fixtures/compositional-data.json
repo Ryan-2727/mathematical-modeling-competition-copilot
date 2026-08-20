@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "kernel": "compositional-data",
+  "seed": 20260820,
+  "base_input": {
+    "compositions": [[2, 3, 5], [0, 2, 8]],
+    "zero_replacement": 0.01
+  },
+  "hidden_truth": {
+    "first_closed_row": [0.2, 0.3, 0.5],
+    "second_replaced_row": [0.01, 0.198, 0.792]
+  },
+  "metric": "closure_and_log_ratio_invariance",
+  "tolerance": 1e-10,
+  "transformations": [
+    {"id": "row_scaling", "factors": [10, 0.5]},
+    {"id": "component_permutation", "order": [2, 0, 1]}
+  ],
+  "degenerate_input": {
+    "compositions": [[0, 0, 0]],
+    "zero_replacement": 0.01
+  }
+}

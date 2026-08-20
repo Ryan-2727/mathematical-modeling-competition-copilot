@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kernel": "interval-censored-timing",
+  "seed": 20260820,
+  "base_input": {
+    "support": [1, 2, 3, 4, 5],
+    "intervals": [
+      {"lower": 1, "upper": 1},
+      {"lower": 2, "upper": 2},
+      {"lower": 2, "upper": 2},
+      {"lower": 3, "upper": 3},
+      {"lower": 3, "upper": 3},
+      {"lower": 3, "upper": 3},
+      {"lower": 3, "upper": 3},
+      {"lower": 4, "upper": 4},
+      {"lower": 4, "upper": 4},
+      {"lower": 5, "upper": 5}
+    ],
+    "tolerance": 1e-12,
+    "max_iterations": 1000
+  },
+  "hidden_truth": {
+    "probabilities": [0.1, 0.2, 0.4, 0.2, 0.1],
+    "median": 3
+  },
+  "metric": "discrete_distribution_recovery",
+  "tolerance": 1e-10,
+  "transformations": [
+    {"id": "input_order_reversal"},
+    {"id": "unit_scaling", "factor": 10},
+    {"id": "weaker_information", "interval": {"lower": 1, "upper": 5}}
+  ],
+  "degenerate_input": {
+    "support": [1, 2, 3, 4, 5],
+    "intervals": [
+      {"lower": 1, "upper": 5},
+      {"lower": 1, "upper": 5},
+      {"lower": 1, "upper": 5}
+    ]
+  }
+}

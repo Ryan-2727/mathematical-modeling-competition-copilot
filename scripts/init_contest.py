@@ -256,6 +256,10 @@ def main() -> int:
         root / "reports/numeric_exemptions.csv",
         "source_file,line,literal,occurrence,category,reason,status\n",
     )
+    write_if_missing(
+        root / "reports/prose_style_exemptions.csv",
+        "finding_sha256,rule,source_file,line,reason,reviewer,status\n",
+    )
     write_if_missing(root / "reports/innovation_ledger.csv", "subproblem,baseline,problem_specific_change,mechanism_target,added_assumption,incremental_cost,comparison_metric,baseline_value,innovation_value,metric_direction,predeclared_minimum_improvement,relative_improvement,validation_artifact,claim_boundary,status\n")
     write_if_missing(root / "reports/model_challenge.json", '{\n  "status": "pending",\n  "subproblems": [],\n  "errors": []\n}\n')
     write_if_missing(root / "reports/model_simplification_log.csv", "subproblem,primary_route,failure_diagnostic,decision_state,retained_core_factors,removed_noncritical_factors,simplified_route,user_authorization,original_model_treatment,result_file,paper_location,status\n")
@@ -269,6 +273,18 @@ def main() -> int:
         "comparison_metric,metric_direction,baseline_value,candidate_value,"
         "minimum_advantage,validation_artifact,paper_treatment,status\n",
     )
+    write_if_missing(
+        root / "reports/model_kernel_usage.csv",
+        "model_id,card_id,kernel_id,used,backend,input_file,input_sha256,"
+        "output_file,output_sha256,synthetic_regression_report,"
+        "synthetic_regression_sha256,adaptation_note,status\n",
+    )
+    write_if_missing(
+        root / "reports/compute_budget.csv",
+        "model_id,selected,primary_run_ids,fallback_run_id,required_scale_count,"
+        "single_scale_reason,remaining_time_seconds,solver_gap_required,status\n",
+    )
+    write_if_missing(root / "reports/compute_runs.jsonl", "")
     write_if_missing(
         root / "reports/problem_audition.csv",
         "problem_id,attachment_status,attachment_evidence,attachment_parse_command,"

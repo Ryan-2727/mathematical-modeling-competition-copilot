@@ -88,10 +88,13 @@ REPORTS = {
         "reports/visual_design_system.json",
         "reports/paper_presentation.json",
         "reports/abstract_structure.json",
+        "reports/chinese_academic_style.json",
         "reports/result_story.json",
         "reports/decision_stability.json",
         "reports/figure_numeric_contract.json",
         "reports/model_budget.json",
+        "reports/model_kernel_evidence.json",
+        "reports/compute_budget_verification.json",
         "reports/three_minute_review.json",
         "reports/latex_dependency_lock.json",
     ),
@@ -163,6 +166,9 @@ REPORT_BINDINGS = {
     "reports/abstract_structure.json": (
         ("source_sha256", "paper/sections/abstract.tex", "file"),
     ),
+    "reports/chinese_academic_style.json": (
+        ("paper_source_sha256", "paper", "paper_source"),
+    ),
     "reports/result_story.json": (
         ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
         ("verified_values_sha256", "results/verified_values.csv", "file"),
@@ -180,6 +186,13 @@ REPORT_BINDINGS = {
     ),
     "reports/model_budget.json": (
         ("model_budget_sha256", "reports/model_budget.csv", "file"),
+    ),
+    "reports/model_kernel_evidence.json": (
+        ("model_kernel_usage_sha256", "reports/model_kernel_usage.csv", "file"),
+    ),
+    "reports/compute_budget_verification.json": (
+        ("compute_budget_sha256", "reports/compute_budget.csv", "file"),
+        ("compute_runs_sha256", "reports/compute_runs.jsonl", "file"),
     ),
     "reports/three_minute_review.json": (
         ("review_sha256", "reports/three_minute_review.csv", "file"),

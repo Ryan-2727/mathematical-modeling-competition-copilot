@@ -46,6 +46,33 @@ jobs:
             throw "LaTeX scaffold was not created under the non-ASCII path"
           }
 
+  scientific-kernel-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install bounded scientific-kernel dependencies
+        run: python -m pip install -r requirements-scientific-kernels.txt
+      - name: Run scientific hidden-truth and metamorphic regression
+        run: |
+          python scripts/run_model_kernel_regression.py \
+            --backend scientific \
+            --out "$RUNNER_TEMP/model-kernel-regression-scientific.json"
+      - name: Run kernel, compute-budget, and prose-audit tests
+        run: |
+          python -m unittest \
+            tests.test_executable_model_kernels \
+            tests.test_compute_budget \
+            tests.test_chinese_academic_style \
+            tests.test_executable_quality_integration -v
+      - name: Upload scientific regression evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: scientific-kernel-qa
+          path: ${{ runner.temp }}/model-kernel-regression-scientific.json
+
   latex-artifact-qa:
     runs-on: ubuntu-latest
     steps:

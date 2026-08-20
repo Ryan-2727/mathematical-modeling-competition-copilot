@@ -4,6 +4,14 @@ These audits turn common contest failure modes into visible evidence. They do
 not prove mathematical truth and they never authorize copying a historical
 answer, a filled workbook, or a paired paper.
 
+## Contents
+
+- [Runtime and solver lock](#runtime-and-solver-lock)
+- [Measured compute budget](#measured-compute-budget)
+- [Result-template isolation](#result-template-isolation)
+- [Predictive versus causal claims](#predictive-versus-causal-claims)
+- [Private regression evidence rubric](#private-regression-evidence-rubric)
+
 ## Runtime and solver lock
 
 Before finalizing a method that requires a particular solver/runtime, probe it:
@@ -18,6 +26,43 @@ package versions, requested profiles, and missing capabilities. If a required
 capability is absent, choose a method that is genuinely supported, or record a
 limited/blocked result. Do not install packages in contest mode and do not call a
 different algorithm the same model merely because its original solver is absent.
+
+## Measured compute budget
+
+After selecting the primary and fallback routes, profile their real tokenized
+commands without a shell. Record at least a small and representative/full run
+unless the ledger gives a reviewed reason only one scale exists:
+
+```powershell
+python scripts/profile_compute_run.py --project-dir . `
+  --run-id primary-representative --model-id route-a --role primary `
+  --scale-label representative --input-size 10000 `
+  --timeout-seconds 900 --remaining-time-seconds 7200 `
+  --result-artifact results/route-a.json --solver-status optimal `
+  --solver-gap 0.001 -- python code/run_route_a.py
+```
+
+The profiler appends an immutable record to `reports/compute_runs.jsonl` with
+wall time, timeout, exit code, stdout/stderr hashes, result hash, repetitions,
+solver evidence, and peak resident memory. It uses process-tree measurement
+when supported; otherwise memory is explicitly `LIMITED`, never recorded as
+zero. Absolute command tokens become project-relative locators or
+`<external:basename>` markers, while `command_sha256` binds the original argv
+without exposing a local identity path. It never infers global optimality from
+a successful process.
+
+Complete `reports/compute_budget.csv`, link a successful fallback run, and run:
+
+```powershell
+python scripts/verify_compute_budget.py --project-dir . `
+  --out reports/compute_budget_verification.json
+```
+
+The gate rejects stale artifacts, unmeasured declared scales, missing
+representative runs, absent optimizer status/gap when required, and primary or
+fallback wall time beyond the declared remaining contest budget. Two measured
+scales describe observed growth only; they do not establish asymptotic
+complexity.
 
 For a reused event-data aggregate, run `scripts/verify_data_cache.py` against a
 manifest that binds raw and cached file hashes, its aggregation rule, and a

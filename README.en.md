@@ -34,6 +34,9 @@ A new computer can install only this repository and still get the full mathemati
   experiments, bearing-only localization, coverage, sequential decisions,
   compositional data, robust planning, price-demand, longitudinal timing, and
   calibrated imbalanced classification
+- five bounded executable B/C reference kernels with explicit standard-library
+  and scientific backends, synthetic hidden-truth recovery, metamorphic
+  invariance, degradation, feasibility, and degenerate-case checks
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
 - source-scope and unit checks plus predeclared, failure-oriented stress tests
@@ -170,10 +173,20 @@ The release and paper workflow then uses deterministic checks:
   mechanism/dynamics, causal/econometric, unsupervised, queueing/reliability,
   spatial/spatiotemporal, and multi-objective/dynamic optimization models. It
   does not certify mathematical truth.
+- `run_model_kernel.py` and `run_model_kernel_regression.py` provide five
+  auditable micro-implementations; `verify_model_kernel_evidence.py` keeps their
+  synthetic results separate from contest evidence and binds actual inputs,
+  outputs, backends, and hashes.
+- `profile_compute_run.py` measures real primary/fallback commands, timeouts,
+  wall time, memory scope, solver evidence, logs, and result hashes;
+  machine-specific command paths are redacted but hash-bound, and
+  `verify_compute_budget.py` rejects stale, unscaled, or deadline-infeasible runs.
 - `verify_abstract_quality.py`, `verify_summary_numeric_traceability.py`,
   `verify_bibliography_metadata.py`, and
   `verify_manuscript_quality.py` check answer coverage, saved source evidence,
   references, captions, labels, figure manifests, and LaTeX logs.
+- `verify_chinese_academic_style.py` emits advisory, line-located Chinese prose
+  findings and hash-bound human exceptions without automatically rewriting LaTeX.
 - `verify_delivery_profiles.py` verifies the full user handoff separately from
   the files allowed in the official contest submission.
 - `run_reproduction.py` runs argv-based commands in a clean copy, retains

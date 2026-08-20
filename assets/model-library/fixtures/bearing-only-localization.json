@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kernel": "bearing-only-localization",
+  "seed": 20260820,
+  "base_input": {
+    "angle_unit": "degree",
+    "maximum_condition_number": 100000000,
+    "observations": [
+      {"x": 0, "y": 0, "bearing_deg": 36.86989764584402},
+      {"x": 8, "y": 0, "bearing_deg": 143.13010235415598},
+      {"x": 4, "y": 8, "bearing_deg": -90}
+    ]
+  },
+  "hidden_truth": {"position": [4, 3]},
+  "metric": "euclidean_position_error",
+  "tolerance": 1e-8,
+  "transformations": [
+    {"id": "translation", "offset": [10, -2]},
+    {"id": "rotation", "angle_deg": 30},
+    {"id": "noise", "bearing_offsets_deg": [2, -2, 1]}
+  ],
+  "degenerate_input": {
+    "angle_unit": "degree",
+    "observations": [
+      {"x": 0, "y": 0, "bearing_deg": 45},
+      {"x": 1, "y": 1, "bearing_deg": 45}
+    ]
+  }
+}

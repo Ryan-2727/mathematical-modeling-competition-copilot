@@ -1,7 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "library_id": "cumcm-bc-targeted",
-  "library_version": "2026-08-20",
+  "library_version": "2026-08-20-kernels",
   "verified_at": "2026-08-20",
   "scope": "Targeted routing support for recurring CUMCM B/C problem structures; model selection still requires problem-specific evidence.",
   "required_archetypes": [
@@ -29,6 +29,10 @@
       "fallback": "Retain the main-effects model, report a bounded local recommendation, and place the unsupported optimum in model optimization.",
       "deliverables": ["factor-effect plot", "response surface or contour plot", "feasible optimum table", "confirmation-experiment plan"],
       "implementation_notes": ["Respect hierarchy when an interaction is retained.", "Do not optimize outside the supported factor region without an explicit extrapolation warning."],
+      "implementation": {
+        "bundled": false,
+        "reason": "A trustworthy design-of-experiments kernel depends on the problem-specific design matrix, replication, and factor region; use the card contract and project-level code."
+      },
       "primary_sources": [
         {
           "title": "On the Experimental Attainment of Optimum Conditions",
@@ -51,6 +55,17 @@
       "fallback": "Return the identifiable locus or interval and prescribe an additional bearing or maneuver rather than inventing range information.",
       "deliverables": ["geometry and coordinate diagram", "observability heatmap", "localization-error distribution", "formation-correction trajectory"],
       "implementation_notes": ["Separate coordinate convention errors from estimator errors.", "Use angle wrapping consistently and report units."],
+      "implementation": {
+        "bundled": true,
+        "kernel_id": "bearing-only-localization",
+        "dispatcher": "scripts/run_model_kernel.py",
+        "fixture": "assets/model-library/fixtures/bearing-only-localization.json",
+        "supported_backends": ["stdlib", "scientific"],
+        "fallback_backend": "stdlib",
+        "input_contract": "JSON observations with observer x/y, bearing, angle unit, and an optional maximum condition number.",
+        "output_contract": "Hash-bound JSON position estimate, rank, condition number, angular residual, and typed observability status.",
+        "required_diagnostics": ["rank", "condition_number", "position_error_proxy", "maximum_angular_residual_deg"]
+      },
       "primary_sources": [
         {
           "title": "Kalman Filter Behavior in Bearings-Only Tracking Applications",
@@ -79,6 +94,17 @@
       "fallback": "Use a conservative parallel sweep with documented redundancy and guaranteed coverage.",
       "deliverables": ["footprint geometry diagram", "coverage heatmap", "path map", "length-coverage trade-off curve"],
       "implementation_notes": ["Distinguish line spacing from true footprint overlap.", "Include transit and turning segments when the problem asks for an executable route."],
+      "implementation": {
+        "bundled": true,
+        "kernel_id": "coverage-path-planning",
+        "dispatcher": "scripts/run_model_kernel.py",
+        "fixture": "assets/model-library/fixtures/coverage-path-planning.json",
+        "supported_backends": ["stdlib", "scientific"],
+        "fallback_backend": "stdlib",
+        "input_contract": "JSON rectangular region, swath width, sweep spacing, axis, origin, coverage target, and grid resolution.",
+        "output_contract": "Hash-bound JSON sweep route, path length, exact interval coverage, and independent grid coverage.",
+        "required_diagnostics": ["coverage_ratio", "independent_grid_coverage", "uncovered_ratio", "target_met"]
+      },
       "primary_sources": [
         {
           "title": "Coverage for Robotics—A Survey of Recent Results",
@@ -101,6 +127,10 @@
       "fallback": "Use the fixed-sample plan and a transparent finite decision tree with conservative parameter bounds.",
       "deliverables": ["sampling boundary plot", "operating-characteristic curve", "decision tree or policy map", "cost-risk comparison"],
       "implementation_notes": ["Separate evidence acquisition from downstream actions.", "Do not reuse a point estimate as if it were known in later decision stages."],
+      "implementation": {
+        "bundled": false,
+        "reason": "Stopping boundaries and downstream losses are inseparable from the declared hypotheses, risks, and action timing; implement them in the project after those quantities are fixed."
+      },
       "primary_sources": [
         {
           "title": "Sequential Tests of Statistical Hypotheses",
@@ -123,6 +153,17 @@
       "fallback": "Report robust ratios or grouped compositions and avoid ordinary correlations on closed raw percentages.",
       "deliverables": ["ternary or balance plot", "log-ratio heatmap", "cluster stability plot", "classification error analysis"],
       "implementation_notes": ["State whether zeros are rounded, below detection, or structural.", "Interpret log-ratio coordinates, not raw Euclidean distance."],
+      "implementation": {
+        "bundled": true,
+        "kernel_id": "compositional-data",
+        "dispatcher": "scripts/run_model_kernel.py",
+        "fixture": "assets/model-library/fixtures/compositional-data.json",
+        "supported_backends": ["stdlib", "scientific"],
+        "fallback_backend": "stdlib",
+        "input_contract": "JSON nonnegative composition matrix and a declared positive zero-replacement value.",
+        "output_contract": "Hash-bound JSON closed compositions, zero-replaced compositions, CLR coordinates, and closure diagnostics.",
+        "required_diagnostics": ["zero_count", "maximum_closure_error", "maximum_clr_sum_abs"]
+      },
       "primary_sources": [
         {
           "title": "The Statistical Analysis of Compositional Data",
@@ -145,6 +186,17 @@
       "fallback": "Use the deterministic plan with safety margins and an explicit contingency rule.",
       "deliverables": ["network or allocation diagram", "schedule heatmap", "cost-risk frontier", "binding-constraint table"],
       "implementation_notes": ["Model recourse only when its timing is operationally possible.", "Report implementation cost and a readable policy, not only the optimum."],
+      "implementation": {
+        "bundled": true,
+        "kernel_id": "robust-binary-allocation",
+        "dispatcher": "scripts/run_model_kernel.py",
+        "fixture": "assets/model-library/fixtures/robust-binary-allocation.json",
+        "supported_backends": ["stdlib", "scientific"],
+        "fallback_backend": "stdlib",
+        "input_contract": "JSON binary items with cost, nominal and worst-case value, budget, and optional minimum-item or worst-value constraints.",
+        "output_contract": "Hash-bound JSON nominal and robust allocations, independently recomputed feasibility, objective comparison, solver status, and gap.",
+        "required_diagnostics": ["feasible", "maximum_feasibility_residual", "robust_solver_status", "robust_solver_gap"]
+      },
       "primary_sources": [
         {
           "title": "The Price of Robustness",
@@ -167,6 +219,10 @@
       "fallback": "Use conservative replenishment quantiles and a small interpretable price grid with conditional recommendations.",
       "deliverables": ["price-demand curve with uncertainty", "replenishment calendar", "assortment matrix", "profit-waste-service frontier"],
       "implementation_notes": ["Do not infer causal price response from confounded observational data without an identification argument.", "Treat lost sales and censoring explicitly."],
+      "implementation": {
+        "bundled": false,
+        "reason": "A safe price-demand kernel requires task-specific censoring, timing, substitution, and causal assumptions; retain the baseline/candidate contract and implement locally."
+      },
       "primary_sources": [
         {
           "title": "Optimal Dynamic Pricing of Inventories with Stochastic Demand over Finite Horizons",
@@ -189,6 +245,17 @@
       "fallback": "Use empirical subject-level quantiles or Turnbull-type intervals and state that individual timing is not precisely identifiable.",
       "deliverables": ["spaghetti and fitted-trajectory plot", "threshold-crossing distribution", "timing loss curve", "group recommendation table"],
       "implementation_notes": ["Never split repeated observations from one subject across train and test.", "Distinguish measurement time from latent crossing time."],
+      "implementation": {
+        "bundled": true,
+        "kernel_id": "interval-censored-timing",
+        "dispatcher": "scripts/run_model_kernel.py",
+        "fixture": "assets/model-library/fixtures/interval-censored-timing.json",
+        "supported_backends": ["stdlib", "scientific"],
+        "fallback_backend": "stdlib",
+        "input_contract": "JSON ordered event-time support with exact, left-, right-, or interval-censored observations.",
+        "output_contract": "Hash-bound JSON discrete event-time distribution, CDF, median, convergence, entropy, and weak-identification status.",
+        "required_diagnostics": ["iterations", "converged", "entropy", "weakly_identified"]
+      },
       "primary_sources": [
         {
           "title": "Random-Effects Models for Longitudinal Data",
@@ -217,6 +284,10 @@
       "fallback": "Use calibrated logistic risk with a transparent threshold and report uncertainty or an abstention region.",
       "deliverables": ["precision-recall curve", "calibration plot", "threshold-cost curve", "confusion matrix with counts"],
       "implementation_notes": ["Fit resampling and calibration only inside training folds.", "A complex classifier without a significant calibrated decision benefit stays out of the main model."],
+      "implementation": {
+        "bundled": false,
+        "reason": "Calibration and imbalance handling must be nested inside the task-specific grouping or time split and decision loss; implement them after the validation design is frozen."
+      },
       "primary_sources": [
         {
           "title": "Predicting Good Probabilities with Supervised Learning",

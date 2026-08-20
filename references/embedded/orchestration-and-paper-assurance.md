@@ -95,7 +95,12 @@ Status meanings:
 - `LIMITED`: an optional semantic, rendering, or compilation check could not be
   completed.
 - `SKIPPED`: a prerequisite failed, a dry run was requested, or an unchanged
-  passing result was reused.  Read the recorded reason.
+passing result was reused.  Read the recorded reason.
+
+The standard and strict graphs also run the advisory Chinese-prose audit. Their
+freeze graph binds any declared bundled-kernel use to synthetic regression and
+requires measured primary/fallback compute-budget evidence. The prose node may
+pass with review warnings; missing or stale compute evidence is blocking.
 
 ## Rendered-figure contract
 
@@ -179,8 +184,8 @@ Code-style compilation after regeneration.
 
 1. Run `doctor` with the intended profile.
 2. Preview and, if reviewed, apply any migration.
-3. Freeze verified values, model comparisons, stress tests, conclusions,
-   notation, and figure manifests.
+3. Freeze verified values, model comparisons, kernel-use evidence, measured
+   primary/fallback runs, stress tests, conclusions, notation, and figure manifests.
 4. Run the `paper` phase and resolve all failures.
 5. Compile `paper/main.pdf`; inspect the page overview and every full-resolution
    page.

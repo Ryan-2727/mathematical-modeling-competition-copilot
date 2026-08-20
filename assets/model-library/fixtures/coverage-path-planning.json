@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kernel": "coverage-path-planning",
+  "seed": 20260820,
+  "base_input": {
+    "width": 10,
+    "height": 6,
+    "swath_width": 2,
+    "sweep_spacing": 2,
+    "sweep_axis": "y",
+    "origin": [0, 0],
+    "include_connectors": true,
+    "minimum_coverage": 1,
+    "grid_points": 2001
+  },
+  "hidden_truth": {
+    "coverage_ratio": 1,
+    "line_count": 5,
+    "path_length": 38
+  },
+  "metric": "coverage_and_route_length",
+  "tolerance": 1e-9,
+  "transformations": [
+    {"id": "translation", "offset": [100, -50]},
+    {"id": "unit_scaling", "factor": 3}
+  ],
+  "degenerate_input": {
+    "width": 10,
+    "height": 6,
+    "swath_width": 2,
+    "sweep_spacing": 3,
+    "sweep_axis": "y",
+    "origin": [0, 0],
+    "include_connectors": true,
+    "minimum_coverage": 1,
+    "grid_points": 2001
+  }
+}

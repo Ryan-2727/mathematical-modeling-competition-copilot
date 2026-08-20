@@ -37,6 +37,15 @@ The verification loop:
   invalid types or units, unused decisive macros, and conflicting manual values.
 - Run `scripts/verify_model_validation.py` for every declared primary model
   family. Preserve the actual diagnostic artifacts and predeclared thresholds.
+- If a bundled B/C reference kernel was used, run its standard-library or
+  scientific synthetic regression, bind the actual input/output in
+  `reports/model_kernel_usage.csv`, and run
+  `scripts/verify_model_kernel_evidence.py`. Synthetic truth is implementation
+  evidence only, not contest-result evidence.
+- Profile selected primary and fallback commands with
+  `scripts/profile_compute_run.py`, complete `reports/compute_budget.csv`, and
+  run `scripts/verify_compute_budget.py`. Require representative runtime,
+  timeout, result hash, peak-memory scope, and solver status/gap when applicable.
 - Every decisive subproblem claim has a completed, failure-oriented entry in `reports/stress_tests.csv` and a preserved result file.
 - Figures match source data and are referenced.
 - At least 10 unique, genuinely relevant scholarly works are cited in the LaTeX body; each
@@ -57,6 +66,10 @@ The verification loop:
 - Run `scripts/verify_manuscript_quality.py`; resolve missing captions/labels,
   unreferenced figures, undefined citations/references, figure-manifest gaps, and
   material LaTeX log warnings.
+- For a Chinese paper, run `scripts/verify_chinese_academic_style.py`. Review
+  every located advisory finding or bind a human exception. Do not use the
+  checker to rewrite the paper automatically; unreadable sources and stale
+  exceptions remain hard failures.
 - Submission format matches contest requirements.
 - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix

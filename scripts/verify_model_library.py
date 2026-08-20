@@ -25,9 +25,21 @@ CARD_FIELDS = {
     "fallback",
     "deliverables",
     "implementation_notes",
+    "implementation",
     "primary_sources",
 }
 SOURCE_FIELDS = {"title", "authors", "year", "doi_url"}
+IMPLEMENTATION_FIELDS = {
+    "bundled",
+    "kernel_id",
+    "dispatcher",
+    "fixture",
+    "supported_backends",
+    "fallback_backend",
+    "input_contract",
+    "output_contract",
+    "required_diagnostics",
+}
 DOI_URL = re.compile(r"https://doi\.org/10\.[^\s]+", re.IGNORECASE)
 
 
@@ -54,8 +66,8 @@ def validate(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         payload = {}
         errors.append("model library must be a JSON object")
-    if payload.get("schema_version") != 1:
-        errors.append("model library schema_version must be 1")
+    if payload.get("schema_version") != 2:
+        errors.append("model library schema_version must be 2")
     for field in ("library_id", "library_version", "verified_at", "scope"):
         if not isinstance(payload.get(field), str) or not payload[field].strip():
             errors.append(f"model library field {field} is missing")
@@ -71,6 +83,7 @@ def validate(path: Path) -> dict[str, Any]:
         cards = []
     card_ids: set[str] = set()
     source_dois: set[str] = set()
+    bundled_kernels: set[str] = set()
     contest_coverage: set[str] = set()
     for index, card in enumerate(cards, 1):
         prefix = f"cards[{index}]"
@@ -108,6 +121,77 @@ def validate(path: Path) -> dict[str, Any]:
         for field in ("signals", "diagnostics", "deliverables", "implementation_notes"):
             if not nonempty_strings(card.get(field)):
                 errors.append(f"{prefix}.{field} must be a non-empty string list")
+        implementation = card.get("implementation")
+        if not isinstance(implementation, dict) or not isinstance(
+            implementation.get("bundled") if isinstance(implementation, dict) else None,
+            bool,
+        ):
+            errors.append(f"{prefix}.implementation must declare boolean bundled")
+        elif implementation["bundled"]:
+            missing_implementation = IMPLEMENTATION_FIELDS - set(implementation)
+            if missing_implementation:
+                errors.append(
+                    f"{prefix}.implementation missing fields: "
+                    + ", ".join(sorted(missing_implementation))
+                )
+            kernel_id = str(implementation.get("kernel_id") or "").strip()
+            if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", kernel_id):
+                errors.append(f"{prefix}.implementation.kernel_id is invalid")
+            elif kernel_id in bundled_kernels:
+                errors.append(f"{prefix} duplicates bundled kernel {kernel_id}")
+            bundled_kernels.add(kernel_id)
+            backends = implementation.get("supported_backends")
+            if not nonempty_strings(backends) or set(backends) != {
+                "stdlib",
+                "scientific",
+            }:
+                errors.append(
+                    f"{prefix}.implementation.supported_backends must contain "
+                    "stdlib and scientific"
+                )
+            if implementation.get("fallback_backend") != "stdlib":
+                errors.append(
+                    f"{prefix}.implementation.fallback_backend must be stdlib"
+                )
+            for field in ("input_contract", "output_contract"):
+                if not isinstance(implementation.get(field), str) or not str(
+                    implementation[field]
+                ).strip():
+                    errors.append(f"{prefix}.implementation.{field} must be non-empty")
+            if not nonempty_strings(implementation.get("required_diagnostics")):
+                errors.append(
+                    f"{prefix}.implementation.required_diagnostics must not be empty"
+                )
+            for field in ("dispatcher", "fixture"):
+                relative = str(implementation.get(field) or "").strip()
+                target = (ROOT / relative).resolve()
+                try:
+                    target.relative_to(ROOT.resolve())
+                except ValueError:
+                    errors.append(f"{prefix}.implementation.{field} escapes the Skill root")
+                    continue
+                if not target.is_file():
+                    errors.append(f"{prefix}.implementation.{field} is missing: {relative}")
+            fixture_relative = str(implementation.get("fixture") or "").strip()
+            fixture_path = (ROOT / fixture_relative).resolve()
+            if fixture_path.is_file():
+                try:
+                    fixture_payload = json.loads(
+                        fixture_path.read_text(encoding="utf-8-sig")
+                    )
+                    if not isinstance(fixture_payload, dict) or fixture_payload.get(
+                        "kernel"
+                    ) != kernel_id:
+                        errors.append(
+                            f"{prefix}.implementation.fixture kernel does not match "
+                            f"{kernel_id}"
+                        )
+                except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+                    errors.append(f"{prefix}.implementation.fixture is unreadable: {exc}")
+        elif not isinstance(implementation.get("reason"), str) or not str(
+            implementation.get("reason")
+        ).strip():
+            errors.append(f"{prefix}.implementation requires a reason when unbundled")
         sources = card.get("primary_sources")
         if not isinstance(sources, list) or not sources:
             errors.append(f"{prefix}.primary_sources must not be empty")
@@ -140,6 +224,8 @@ def validate(path: Path) -> dict[str, Any]:
         warnings.append("unlisted additional model cards: " + ", ".join(extra_cards))
     if contest_coverage != {"B", "C"}:
         errors.append("model library must cover both B and C routing")
+    if len(bundled_kernels) != 5:
+        errors.append("model library must expose exactly five bounded executable kernels")
     return {
         "status": "FAIL" if errors else ("LIMITED" if warnings else "PASS"),
         "scope": (
@@ -152,6 +238,7 @@ def validate(path: Path) -> dict[str, Any]:
         "counts": {
             "required_archetypes": len(required),
             "cards": len(cards),
+            "bundled_kernels": len(bundled_kernels),
             "primary_sources": len(source_dois),
         },
         "errors": errors,

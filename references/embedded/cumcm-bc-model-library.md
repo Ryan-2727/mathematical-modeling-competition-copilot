@@ -9,6 +9,7 @@ that a future problem requires a named method.
 ## Contents
 
 - [Routing protocol](#routing-protocol)
+- [Executable reference kernels](#executable-reference-kernels)
 - [Fast routing table](#fast-routing-table)
 - [Designed experiments and response surfaces](#designed-experiments-and-response-surfaces)
 - [Bearing-only localization](#bearing-only-localization)
@@ -33,6 +34,37 @@ that a future problem requires a named method.
 6. If promotion fails, retain the baseline in the main paper and place the
    candidate in model optimization or rejected alternatives.
 7. Build figures from executed results. A suggested deliverable is not a quota.
+
+## Executable reference kernels
+
+Five high-risk cards include bounded reference implementations: bearing-only
+localization, rectangular coverage sweeps, compositional closure/CLR,
+interval-censored timing, and small robust binary allocation. First verify all
+bundled synthetic truth and metamorphic cases:
+
+```bash
+python scripts/run_model_kernel_regression.py --backend stdlib \
+  --out reports/kernel-regression-stdlib.json
+```
+
+When NumPy and SciPy are already available, rerun with `--backend scientific`.
+Do not install them silently in contest mode. Execute one declared kernel with:
+
+```bash
+python scripts/run_model_kernel.py \
+  --kernel bearing-only-localization \
+  --input code/bearing-input.json \
+  --output results/bearing-output.json \
+  --backend auto
+```
+
+Record project use in `reports/model_kernel_usage.csv`, including the exact
+input/output and regression hashes, then run
+`scripts/verify_model_kernel_evidence.py`. The dispatcher reports the backend
+actually used and returns `LIMITED` for degenerate or unsupported cases. A
+synthetic pass verifies only the reference implementation. It is not evidence
+that the card fits the contest problem, that assumptions hold, or that fixture
+values may be copied into the paper.
 
 ## Fast routing table
 

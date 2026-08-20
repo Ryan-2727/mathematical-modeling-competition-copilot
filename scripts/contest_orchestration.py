@@ -14,7 +14,7 @@ from typing import Any
 
 
 CURRENT_PROJECT_SCHEMA_VERSION = 2
-REGISTRY_VERSION = 2
+REGISTRY_VERSION = 3
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
 PROFILE_DIR = SKILL_ROOT / "assets" / "contestctl" / "profiles"
@@ -84,6 +84,24 @@ NODE_REGISTRY = {
             (),
             ("paper/sections/abstract.tex",),
             ("reports/abstract_structure.json",),
+        ),
+        Node(
+            "verify-chinese-style",
+            "paper",
+            "verify_chinese_academic_style.py",
+            (
+                "--project-dir",
+                "{project}",
+                "--out",
+                "{project}/reports/chinese_academic_style.json",
+            ),
+            (),
+            (
+                "contest_manifest.json",
+                "paper/**/*.tex",
+                "reports/prose_style_exemptions.csv",
+            ),
+            ("reports/chinese_academic_style.json",),
         ),
         Node(
             "verify-answer-density",
@@ -222,6 +240,43 @@ NODE_REGISTRY = {
             (),
             ("reports/model_budget.csv",),
             ("reports/model_budget.json",),
+        ),
+        Node(
+            "verify-model-kernel-evidence",
+            "freeze",
+            "verify_model_kernel_evidence.py",
+            (
+                "--project-dir",
+                "{project}",
+                "--out",
+                "{project}/reports/model_kernel_evidence.json",
+            ),
+            (),
+            (
+                "reports/model_kernel_usage.csv",
+                "code/**/*",
+                "results/**/*",
+                "reports/*kernel*regression*.json",
+            ),
+            ("reports/model_kernel_evidence.json",),
+        ),
+        Node(
+            "verify-compute-budget",
+            "freeze",
+            "verify_compute_budget.py",
+            (
+                "--project-dir",
+                "{project}",
+                "--out",
+                "{project}/reports/compute_budget_verification.json",
+            ),
+            ("verify-model-kernel-evidence",),
+            (
+                "reports/compute_budget.csv",
+                "reports/compute_runs.jsonl",
+                "results/**/*",
+            ),
+            ("reports/compute_budget_verification.json",),
         ),
         Node(
             "verify-three-minute-review",
@@ -370,6 +425,10 @@ def migration_plan(root: Path) -> dict[str, Any]:
         "reports/independent_routes.csv",
         "reports/result_reconciliation.csv",
         "reports/joint_inference_design.json",
+        "reports/model_kernel_usage.csv",
+        "reports/compute_budget.csv",
+        "reports/compute_runs.jsonl",
+        "reports/prose_style_exemptions.csv",
     )
     if raw_version < CURRENT_PROJECT_SCHEMA_VERSION:
         candidate["project_schema_version"] = CURRENT_PROJECT_SCHEMA_VERSION
@@ -421,6 +480,10 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
             "reports/independent_routes.csv": "subproblem,route_id,route_role,principle,data_representation,failure_mode,result_file,result_value,tolerance,comparison_status,limitation,status\n",
             "reports/result_reconciliation.csv": "subproblem,comparison_id,primary_route,comparison_route,primary_value,comparison_value,tolerance,disagreement_material,investigation_step,cause,resolution,claim_action,evidence_file,status\n",
             "reports/joint_inference_design.json": '{\n  "applicable": false,\n  "reason": "migration requires an applicability decision",\n  "subproblems": []\n}\n',
+            "reports/model_kernel_usage.csv": "model_id,card_id,kernel_id,used,backend,input_file,input_sha256,output_file,output_sha256,synthetic_regression_report,synthetic_regression_sha256,adaptation_note,status\n",
+            "reports/compute_budget.csv": "model_id,selected,primary_run_ids,fallback_run_id,required_scale_count,single_scale_reason,remaining_time_seconds,solver_gap_required,status\n",
+            "reports/compute_runs.jsonl": "",
+            "reports/prose_style_exemptions.csv": "finding_sha256,rule,source_file,line,reason,reviewer,status\n",
         }
         created: list[str] = []
         for relative, content in templates.items():

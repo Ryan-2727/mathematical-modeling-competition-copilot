@@ -26,6 +26,8 @@
 - 按问题结构选路，以及可审计的“基线—候选模型”取舍日志
 - 可机器校验的 B/C 题定向模型卡：试验设计、纯方位定位、覆盖路径、序贯
   决策、成分数据、鲁棒规划、价格—需求、纵向/区间删失和不平衡校准
+- 五个有边界的 B/C 题可执行参考内核，明确区分标准库/科学计算后端，并用
+  合成隐藏真值、变形不变量、信息退化、可行性和退化情形进行回归测试
 - 数学建模六阶段流程
 - LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
 - 文献检索和论文解释流程
@@ -148,10 +150,19 @@ python scripts/contestctl.py summary --project-dir <project>
 - `verify_model_validation.py` 检查回归/预测、分类、优化、随机仿真、
   网络/排序、机理/动力学、因果/计量、无监督、排队/可靠性、空间/时空及
   多目标/动态优化模型声明的验证证据，但不宣称证明数学正确性。
+- `run_model_kernel.py` 与 `run_model_kernel_regression.py` 提供五个可审计
+  微型实现；`verify_model_kernel_evidence.py` 将合成测试与真实赛题证据分离，
+  并绑定实际输入、输出、后端和哈希。
+- `profile_compute_run.py` 实测主路线/降级路线的超时、墙钟时间、内存范围、
+  求解器证据、日志和结果哈希；机器相关命令路径会脱敏但保留哈希绑定，
+  `verify_compute_budget.py` 拒绝过期、缺少多规模证据或无法在剩余比赛
+  时间内完成的运行。
 - `verify_abstract_quality.py`、`verify_summary_numeric_traceability.py`、
   `verify_bibliography_metadata.py` 和
   `verify_manuscript_quality.py` 检查摘要逐问答案、保存的来源证据、引用、
   题注、标签、图表清单和 LaTeX 日志。
+- `verify_chinese_academic_style.py` 只输出带文件与行号的中文论文语言建议和
+  哈希绑定的人工豁免，不自动改写 LaTeX 正文。
 - `verify_delivery_profiles.py` 将完整用户交付与比赛官方允许提交的文件分开核验。
 - `run_reproduction.py` 在干净副本中执行 argv 命令，保存每次运行日志，
   并按哈希或声明的数值容差比较重复运行；shell 执行必须显式启用。
