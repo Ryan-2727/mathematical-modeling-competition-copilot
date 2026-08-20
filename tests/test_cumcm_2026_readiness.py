@@ -37,9 +37,12 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
         self.assertEqual(profile["competition_start"], "2026-09-10T18:00:00+08:00")
         self.assertEqual(profile["competition_end"], "2026-09-13T20:00:00+08:00")
         self.assertEqual(profile["registration_deadline"], "2026-09-07T20:00:00+08:00")
+        self.assertEqual(profile["hash_deadline"], "2026-09-13T20:00:00+08:00")
+        self.assertEqual(profile["upload_open"], "2026-09-13T20:30:00+08:00")
+        self.assertEqual(profile["upload_deadline"], "2026-09-14T14:00:00+08:00")
         self.assertEqual(profile["freshness_checkpoints"], lock_contest_rules.CUMCM_2026_CHECKPOINTS)
         self.assertEqual(set(profile["source_urls"]), lock_contest_rules.CUMCM_2026_SOURCE_ROLES)
-        self.assertEqual(profile["verified_at"], "2026-08-12")
+        self.assertEqual(profile["verified_at"], "2026-08-20")
         self.assertIn("2026年试行", "全国大学生数学建模竞赛人工智能工具使用规定（2026年试行）")
         self.assertIn("fef94648", profile["source_urls"]["ai_policy"])
         self.assertEqual(
@@ -96,7 +99,7 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             "year": 2026,
             "profile": "cumcm-2026",
             "created_at_utc": checked_at,
-            "valid_through": "2026-09-13",
+            "valid_through": "2026-09-14",
             "sources": sources,
             "freshness_checkpoints": ["2026-08-11", "2026-09-03", "2026-09-09"],
             "rules": {
@@ -109,6 +112,9 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 "competition_start": "2026-09-10T18:00:00+08:00",
                 "competition_end": "2026-09-13T20:00:00+08:00",
                 "registration_deadline": "2026-09-07T20:00:00+08:00",
+                "hash_deadline": "2026-09-13T20:00:00+08:00",
+                "upload_open": "2026-09-13T20:30:00+08:00",
+                "upload_deadline": "2026-09-14T14:00:00+08:00",
                 "timezone": "Asia/Shanghai",
                 "submission_channel": "CNKI competition management system",
             },
@@ -139,7 +145,43 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 self.assertTrue((root / relative).is_file(), relative)
             milestones = (root / "reports" / "milestones.csv").read_text(encoding="utf-8")
             self.assertIn("selection-lock,6", milestones)
-            self.assertIn("receipt-lock,74", milestones)
+            self.assertIn("hash-lock,74", milestones)
+            self.assertIn("upload-open,74.5", milestones)
+            self.assertIn("receipt-lock,92", milestones)
+
+    def test_live_initialization_forces_ai_used_and_records_runtime_boundary(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            self.run_script(
+                "init_contest.py",
+                "--project-dir", str(root),
+                "--contest", "CUMCM",
+                "--year", "2026",
+                "--mode", "live",
+                expect=2,
+            )
+            self.run_script(
+                "init_contest.py",
+                "--project-dir", str(root),
+                "--contest", "CUMCM",
+                "--year", "2026",
+                "--mode", "live",
+                "--ai-tool", "OpenAI Codex",
+                "--ai-version", "runtime-recorded-version",
+                "--ai-runtime-boundary", "external_service",
+            )
+            manifest = json.loads(
+                (root / "contest_manifest.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(manifest["ai_mode"], "used")
+            self.assertEqual(manifest["contest_material_ai_access"], "forbidden")
+            self.assertEqual(
+                manifest["submission_schedule"]["upload_open"],
+                "2026-09-13T20:30:00+08:00",
+            )
+            main_tex = (root / "paper" / "main.tex").read_text(encoding="utf-8")
+            self.assertIn(r"\cumcmaiusedtrue", main_tex)
+            self.assertNotIn(r"\cumcmaiusedfalse", main_tex)
 
     def test_rule_lock_enforces_2026_schedule_roles_and_checkpoint(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -457,6 +499,7 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             self.run_script(
                 "verify_online_actions.py", "--project-dir", str(root), "--out", str(out), expect=1
             )
+
             payload = json.loads(out.read_text(encoding="utf-8"))
             self.assertTrue(any("ask the user" in item for item in payload["errors"]))
 
@@ -478,6 +521,20 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             self.run_script(
                 "verify_online_actions.py", "--project-dir", str(root), "--out", str(out), expect=1
             )
+
+    def test_targeted_bc_model_library_is_complete_and_machine_validated(self) -> None:
+        library = ROOT / "assets" / "model-library" / "cumcm-bc-model-cards.json"
+        payload = json.loads(library.read_text(encoding="utf-8"))
+        self.assertEqual(len(payload["required_archetypes"]), 9)
+        self.assertEqual(
+            set(payload["required_archetypes"]),
+            {card["id"] for card in payload["cards"]},
+        )
+        self.assertEqual(
+            {fit for card in payload["cards"] for fit in card["contest_fit"]},
+            {"B", "C"},
+        )
+        self.run_script("verify_model_library.py")
 
 
 if __name__ == "__main__":

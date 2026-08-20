@@ -28,7 +28,12 @@ A new computer can install only this repository and still get the full mathemati
 - literature search and paper explanation workflows
 - a verified bibliography ledger: at least 10 real, relevant, uniquely cited
   scholarly works, authoritative metadata, exact-title Google Scholar queries,
-  and checked source passages
+  checked source passages, complete claim IDs, reachable manuscript locations,
+  and an explicit removal-impact check that rejects count-padding citations
+- a targeted, machine-validated CUMCM B/C model-card library covering designed
+  experiments, bearing-only localization, coverage, sequential decisions,
+  compositional data, robust planning, price-demand, longitudinal timing, and
+  calibrated imbalanced classification
 - narrow paper and reproduction detail resolution
 - code, notebooks, result tables, and data-driven figures
 - source-scope and unit checks plus predeclared, failure-oriented stress tests
@@ -46,13 +51,19 @@ A new computer can install only this repository and still get the full mathemati
 - data audit, traceability, environment capture, anonymity scanning, and hashing
 - A single machine-readable CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, official
   locator/page/PDF snapshots, the 2026 AI declarations, an H6 weight-sensitivity
-  problem audition, and P90/trend/two-full-pass readiness scoring
+  problem audition, the 20:00 MD5 deadline, the 20:30-to-next-day-14:00 upload
+  window, and P90/trend/two-full-pass readiness scoring
 - a local-only live-contest boundary: internet search is allowed, contest work is
   never uploaded by the skill, and privacy-ambiguous actions pause for user input
 - executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
   templates selected automatically at project initialization
 - a decisive-value registry that generates LaTeX macros from hashed computation
   outputs, plus 11 model-family validation adapters
+- literal-level abstract/conclusion number checks: every result number comes
+  from a verified macro, while narrow structural exceptions need a line-bound
+  exemption record
+- an evidence-based complexity gate: a stronger candidate remains out of the
+  main model unless its measured advantage reaches a positive predeclared threshold
 - answer-oriented abstract, authoritative bibliography snapshot, supporting-passage,
   LaTeX-log, caption/label, and figure-manifest checks
 - clean-copy, repeated-run reproduction without implicit shell execution
@@ -82,7 +93,11 @@ is recorded in `reports/bibliography.csv`, checked against authoritative metadat
 confirmed by an observed exact-title Google Scholar result, and read at the passage supporting the
 paper's claim. `verification_source` must be a record-specific HTTPS Crossref,
 DOI, or OpenAlex URL, and Scholar queries use the canonical
-`https://scholar.google.com/scholar?q=...` endpoint. Fabricated metadata or source content is prohibited. Run
+`https://scholar.google.com/scholar?q=...` endpoint. Each row also names a
+completed claim, reachable paper location, evidence role, relevance reason, and
+what support would be lost if the source were removed. If ten relevant sources
+are not available, the workflow reports a gap instead of inserting an unrelated
+paper. Fabricated metadata or source content is prohibited. Run
 `scripts/verify_bibliography_metadata.py` against saved authoritative metadata
 and supporting-passage hashes, then run
 `scripts/verify_paper_delivery.py` before claiming completion; its pass is a
@@ -143,6 +158,9 @@ The release and paper workflow then uses deterministic checks:
   `verify_online_actions.py` audits the declared local-only online boundary.
 - `verify_submission.py --profile cumcm-2026 --ai-mode none|used` checks the
   exact pre-reference 2026 declaration or the complete AI-use evidence chain.
+  A live project initialized through this AI skill is forced to `used`; its
+  declaration purpose remains an editable LaTeX block and is not overwritten
+  after a human edit.
 - `results/verified_values.csv` is the single source of truth for decisive
   computed values; `generate_verified_values.py` creates
   `paper/generated/results.tex`, and `verify_verified_values.py` checks hashes,
@@ -152,7 +170,8 @@ The release and paper workflow then uses deterministic checks:
   mechanism/dynamics, causal/econometric, unsupervised, queueing/reliability,
   spatial/spatiotemporal, and multi-objective/dynamic optimization models. It
   does not certify mathematical truth.
-- `verify_abstract_quality.py`, `verify_bibliography_metadata.py`, and
+- `verify_abstract_quality.py`, `verify_summary_numeric_traceability.py`,
+  `verify_bibliography_metadata.py`, and
   `verify_manuscript_quality.py` check answer coverage, saved source evidence,
   references, captions, labels, figure manifests, and LaTeX logs.
 - `verify_delivery_profiles.py` verifies the full user handoff separately from

@@ -16,6 +16,7 @@ BLOCKS = {
     "result": re.compile(r"(?:主要结果|结果|results?)\s*[:：]", re.I),
 }
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?\s*(?:%|[A-Za-z]+)?")
+VERIFIED_NUMBER = re.compile(r"\\VerifiedValue(?:WithUnit)?\s*\{[^{}]+\}")
 
 
 def plain_tex(text: str) -> str:
@@ -38,17 +39,21 @@ def main() -> int:
     if args.maximum_content_units < 1:
         errors.append("maximum-content-units must be positive")
     if not path.is_file():
+        raw_text = ""
         text = ""
         errors.append("abstract source is missing")
     else:
-        text = plain_tex(path.read_text(encoding="utf-8", errors="replace"))
+        raw_text = path.read_text(encoding="utf-8", errors="replace")
+        text = plain_tex(raw_text)
     checks = {name: bool(pattern.search(text)) for name, pattern in BLOCKS.items()}
     for name, passed in checks.items():
         if not passed:
             errors.append(f"abstract lacks an explicit {name} block")
     result_match = BLOCKS["result"].search(text)
     result_text = text[result_match.end():] if result_match else ""
-    if result_match and not NUMBER.search(result_text):
+    if result_match and not (
+        NUMBER.search(result_text) or VERIFIED_NUMBER.search(raw_text)
+    ):
         errors.append("abstract result block lacks a quantitative result")
     units = len(re.findall(r"[\u4e00-\u9fff]|[A-Za-z0-9]+", text))
     if args.maximum_content_units > 0 and units > args.maximum_content_units:

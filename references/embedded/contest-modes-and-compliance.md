@@ -30,6 +30,14 @@ outside the paper when the contest requires it. Generate the required declaratio
 inline citations, bibliography entries, and support-material report from the log
 with `scripts/render_ai_use_report.py`.
 
+For a live CUMCM 2026 project, invoking this AI skill itself means that AI was
+used: initialize with `ai_mode=used`, the actual tool/version, and a declared
+`local_offline` or `external_service` runtime boundary. An external runtime must
+not receive the current statement or solution artifacts when the user's boundary
+requires them to stay local. Generate the declaration with `--declaration-out`;
+its delimited purpose text is a normal editable LaTeX source block, and a later
+render preserves a non-placeholder human edit.
+
 If AI is not used, create the contest-required non-use declaration. Do not claim
 that an AI-generated result is independently verified until the team has checked
 the data, code, equations, references, and conclusion.

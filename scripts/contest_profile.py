@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,34 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILE_DIR = ROOT / "assets" / "contest-profiles"
+
+
+def _validate_cumcm_2026_timing(payload: dict[str, Any]) -> None:
+    fields = (
+        "registration_deadline",
+        "competition_start",
+        "competition_end",
+        "hash_deadline",
+        "upload_open",
+        "upload_deadline",
+    )
+    parsed: dict[str, datetime] = {}
+    for field in fields:
+        try:
+            value = datetime.fromisoformat(str(payload[field]).replace("Z", "+00:00"))
+        except (KeyError, ValueError) as exc:
+            raise RuntimeError(f"invalid CUMCM 2026 timing field: {field}") from exc
+        if value.tzinfo is None:
+            raise RuntimeError(f"CUMCM 2026 timing field lacks timezone: {field}")
+        parsed[field] = value
+    if not (
+        parsed["registration_deadline"] < parsed["competition_start"]
+        < parsed["competition_end"]
+        == parsed["hash_deadline"]
+        < parsed["upload_open"]
+        < parsed["upload_deadline"]
+    ):
+        raise RuntimeError("CUMCM 2026 timing fields are inconsistent")
 
 
 @lru_cache(maxsize=None)
@@ -24,6 +53,8 @@ def _load_contest_profile(profile_id: str) -> dict[str, Any]:
         raise RuntimeError(f"bundled contest profile identity mismatch: {profile_id}")
     if payload.get("schema_version") != 1:
         raise RuntimeError(f"unsupported bundled contest profile schema: {profile_id}")
+    if profile_id == "cumcm-2026":
+        _validate_cumcm_2026_timing(payload)
     return payload
 
 
@@ -40,6 +71,9 @@ def submission_profile(profile_id: str) -> dict[str, Any]:
         "competition_start",
         "competition_end",
         "registration_deadline",
+        "hash_deadline",
+        "upload_open",
+        "upload_deadline",
         "timezone",
         "submission_channel",
         "freshness_checkpoints",

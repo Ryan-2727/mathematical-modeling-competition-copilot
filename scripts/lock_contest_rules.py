@@ -44,6 +44,9 @@ CUMCM_2026_RULES = {
         "competition_start",
         "competition_end",
         "registration_deadline",
+        "hash_deadline",
+        "upload_open",
+        "upload_deadline",
         "timezone",
         "submission_channel",
     )

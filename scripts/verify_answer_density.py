@@ -20,6 +20,7 @@ COMPLETE = {"pass", "complete", "verified"}
 METHOD = re.compile(r"模型|算法|方法|优化|回归|预测|仿真|model|method|algorithm|optimization|regression|forecast|simulation", re.I)
 VALIDATION = re.compile(r"验证|检验|敏感|鲁棒|误差|残差|置信|对比|validat|sensitiv|robust|error|residual|confidence|backtest", re.I)
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?\s*(?:%|[A-Za-z]+)?")
+VERIFIED_NUMBER = re.compile(r"\\VerifiedValue(?:WithUnit)?\s*\{[^{}]+\}")
 
 
 def plain_tex(text: str) -> str:
@@ -41,14 +42,24 @@ def main() -> int:
     ledger = root / "reports/conclusion_map.csv"
     errors: list[str] = []
     texts: dict[str, str] = {}
+    raw_texts: dict[str, str] = {}
     for name, path in (("abstract", abstract), ("conclusion", conclusion)):
         if not path.is_file():
             errors.append(f"{name} source is missing")
+            raw_texts[name] = ""
             texts[name] = ""
         else:
-            texts[name] = plain_tex(path.read_text(encoding="utf-8", errors="replace"))
+            raw_texts[name] = path.read_text(encoding="utf-8", errors="replace")
+            texts[name] = plain_tex(raw_texts[name])
     combined = texts["abstract"] + " " + texts["conclusion"]
-    checks = {"method": bool(METHOD.search(texts["abstract"])), "quantified_outcome": bool(NUMBER.search(texts["abstract"])), "validation": bool(VALIDATION.search(texts["abstract"]))}
+    checks = {
+        "method": bool(METHOD.search(texts["abstract"])),
+        "quantified_outcome": bool(
+            NUMBER.search(texts["abstract"])
+            or VERIFIED_NUMBER.search(raw_texts["abstract"])
+        ),
+        "validation": bool(VALIDATION.search(texts["abstract"])),
+    }
     for name, passed in checks.items():
         if not passed:
             errors.append(f"abstract lacks {name.replace('_', ' ')} evidence")

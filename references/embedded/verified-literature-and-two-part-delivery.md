@@ -29,16 +29,24 @@ It is a hard completion gate, not a suggestion.
   but current-problem discussions, posted solutions, shared code, and interactive
   answer sources remain prohibited.
 
-Maintain `reports/bibliography.csv` with these fields:
+Maintain `reports/bibliography.csv` with these fields. The final relevance
+fields prevent a metadata-valid but manuscript-irrelevant paper from being used
+only to reach the count:
 
 ```text
-citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,metadata_snapshot,metadata_sha256,retraction_status,retraction_checked_at,claim_supported,source_locator,supporting_passage,supporting_passage_sha256,status
+citation_key,title,authors,year,venue,doi_or_url,verification_source,verified_at,scholar_query,scholar_checked_at,scholar_status,metadata_snapshot,metadata_sha256,retraction_status,retraction_checked_at,claim_supported,source_locator,supporting_passage,supporting_passage_sha256,evidence_role,claim_id,paper_location,relevance_justification,removal_impact,status
 ```
 
 Set `scholar_status` to `found` only after the exact-title result has been observed,
 and record the check date. Only mark the row `verified` after the metadata check,
 Scholar result, and source-content check are complete. Keep citation keys identical
 in the ledger, the LaTeX citation commands, and `paper/references.bib`.
+`evidence_role` must be `method`, `domain_fact`, `data`, `validation`, or
+`comparison`; `claim_id` must identify a completed row in `reports/claims.csv`;
+and `paper_location` must resolve to a reachable TeX file/line or LaTeX label.
+State concretely why the source is needed and what support would disappear if it
+were removed. If fewer than ten such sources are available, record a blocking
+literature gap rather than inserting a tangential paper.
 
 Save authoritative metadata responses under `reports/bibliography_metadata/` and
 short copyright-compliant claim-supporting excerpts or precise evidence notes

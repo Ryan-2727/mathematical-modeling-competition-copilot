@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "library_id": "cumcm-bc-targeted",
+  "library_version": "2026-08-20",
+  "verified_at": "2026-08-20",
+  "scope": "Targeted routing support for recurring CUMCM B/C problem structures; model selection still requires problem-specific evidence.",
+  "required_archetypes": [
+    "designed-experiments-response-surface",
+    "bearing-only-localization",
+    "coverage-path-planning",
+    "sequential-testing-and-decisions",
+    "compositional-data",
+    "robust-supply-chain-milp",
+    "price-demand-assortment",
+    "longitudinal-interval-censored",
+    "calibrated-imbalanced-classification"
+  ],
+  "cards": [
+    {
+      "id": "designed-experiments-response-surface",
+      "title": "Designed experiments and response-surface optimization",
+      "contest_fit": ["B", "C"],
+      "signals": ["controllable factor combinations", "interaction effects", "few additional experiments", "continuous response optimization"],
+      "baseline": "Main-effects linear or low-order regression with replicated-error diagnostics.",
+      "candidate": "Hierarchical quadratic response surface with interaction terms and constrained optimization.",
+      "promotion_threshold": "Promote only when held-out or replicated-error evidence improves beyond the predeclared threshold and curvature or interaction is diagnostically supported.",
+      "diagnostics": ["lack-of-fit against pure error", "residual structure", "condition number", "stationary-point type", "boundary optimum check"],
+      "falsification_test": "Remove the added curvature or interaction terms and verify that prediction or decision quality deteriorates materially.",
+      "fallback": "Retain the main-effects model, report a bounded local recommendation, and place the unsupported optimum in model optimization.",
+      "deliverables": ["factor-effect plot", "response surface or contour plot", "feasible optimum table", "confirmation-experiment plan"],
+      "implementation_notes": ["Respect hierarchy when an interaction is retained.", "Do not optimize outside the supported factor region without an explicit extrapolation warning."],
+      "primary_sources": [
+        {
+          "title": "On the Experimental Attainment of Optimum Conditions",
+          "authors": "G. E. P. Box; K. B. Wilson",
+          "year": 1951,
+          "doi_url": "https://doi.org/10.2307/2983966"
+        }
+      ]
+    },
+    {
+      "id": "bearing-only-localization",
+      "title": "Bearing-only localization and observability",
+      "contest_fit": ["B"],
+      "signals": ["angles without ranges", "relative geometry", "formation correction", "moving observer or target"],
+      "baseline": "Closed-form geometric intersection or nonlinear least squares under an explicit reference frame.",
+      "candidate": "State-space estimator or batch nonlinear estimator with observability-aware maneuver or formation design.",
+      "promotion_threshold": "Promote only after observability or sensitivity rank is adequate and simulation recovery beats the geometric baseline under declared angle noise.",
+      "diagnostics": ["Jacobian rank", "geometry dilution", "mirror ambiguity", "multi-start dispersion", "synthetic recovery"],
+      "falsification_test": "Use degenerate or nearly collinear geometry and verify that the method reports weak observability instead of a precise location.",
+      "fallback": "Return the identifiable locus or interval and prescribe an additional bearing or maneuver rather than inventing range information.",
+      "deliverables": ["geometry and coordinate diagram", "observability heatmap", "localization-error distribution", "formation-correction trajectory"],
+      "implementation_notes": ["Separate coordinate convention errors from estimator errors.", "Use angle wrapping consistently and report units."],
+      "primary_sources": [
+        {
+          "title": "Kalman Filter Behavior in Bearings-Only Tracking Applications",
+          "authors": "Vincent J. Aidala",
+          "year": 1979,
+          "doi_url": "https://doi.org/10.1109/TAES.1979.308793"
+        },
+        {
+          "title": "Observability Criteria for Bearings-Only Target Motion Analysis",
+          "authors": "Steven C. Nardone; Vincent J. Aidala",
+          "year": 1981,
+          "doi_url": "https://doi.org/10.1109/TAES.1981.309141"
+        }
+      ]
+    },
+    {
+      "id": "coverage-path-planning",
+      "title": "Coverage path planning under geometric overlap constraints",
+      "contest_fit": ["B"],
+      "signals": ["survey lines", "coverage ratio", "overlap band", "terrain or footprint geometry", "minimum path length"],
+      "baseline": "Parallel sweep lines using a conservative constant footprint or local-width approximation.",
+      "candidate": "Cell decomposition or orientation search with spatially varying footprint and route-connection cost.",
+      "promotion_threshold": "Promote only when independent coverage checking confirms feasibility and the total length or uncovered area improves beyond the declared threshold.",
+      "diagnostics": ["coverage raster or polygon union", "overlap distribution", "boundary leakage", "turning or connection cost", "grid-resolution convergence"],
+      "falsification_test": "Recompute coverage with a finer independent discretization and adversarial boundary points.",
+      "fallback": "Use a conservative parallel sweep with documented redundancy and guaranteed coverage.",
+      "deliverables": ["footprint geometry diagram", "coverage heatmap", "path map", "length-coverage trade-off curve"],
+      "implementation_notes": ["Distinguish line spacing from true footprint overlap.", "Include transit and turning segments when the problem asks for an executable route."],
+      "primary_sources": [
+        {
+          "title": "Coverage for Robotics—A Survey of Recent Results",
+          "authors": "Howie Choset",
+          "year": 2001,
+          "doi_url": "https://doi.org/10.1023/A:1016639210559"
+        }
+      ]
+    },
+    {
+      "id": "sequential-testing-and-decisions",
+      "title": "Sequential sampling and downstream decisions",
+      "contest_fit": ["B", "C"],
+      "signals": ["accept or reject a lot", "sampling cost", "unknown defect rate", "multi-stage inspection or rework"],
+      "baseline": "Fixed-sample confidence interval or one-stage expected-cost decision tree.",
+      "candidate": "Sequential probability-ratio or Bayesian stopping rule coupled to a finite-horizon decision process.",
+      "promotion_threshold": "Promote only when type-I/type-II error or posterior-risk constraints are met and expected sample or total decision cost improves materially in simulation.",
+      "diagnostics": ["operating-characteristic curve", "average sample number", "boundary sensitivity", "policy recursion check", "Monte Carlo uncertainty"],
+      "falsification_test": "Simulate parameter values at and near every decision boundary and verify the declared risks and stopping behavior.",
+      "fallback": "Use the fixed-sample plan and a transparent finite decision tree with conservative parameter bounds.",
+      "deliverables": ["sampling boundary plot", "operating-characteristic curve", "decision tree or policy map", "cost-risk comparison"],
+      "implementation_notes": ["Separate evidence acquisition from downstream actions.", "Do not reuse a point estimate as if it were known in later decision stages."],
+      "primary_sources": [
+        {
+          "title": "Sequential Tests of Statistical Hypotheses",
+          "authors": "Abraham Wald",
+          "year": 1945,
+          "doi_url": "https://doi.org/10.1080/01621459.1945.10500736"
+        }
+      ]
+    },
+    {
+      "id": "compositional-data",
+      "title": "Compositional-data analysis",
+      "contest_fit": ["C"],
+      "signals": ["components sum to a constant", "chemical proportions", "relative abundance", "closure-induced correlation"],
+      "baseline": "Exploratory ratios and a simple classifier evaluated with composition-safe splits.",
+      "candidate": "Log-ratio coordinates followed by regularized classification, clustering, or multivariate analysis.",
+      "promotion_threshold": "Promote only when zero handling is justified and out-of-sample stability or cluster validity improves over the raw-proportion baseline.",
+      "diagnostics": ["closure check", "zero pattern", "log-ratio sensitivity", "subcomposition coherence", "bootstrap cluster stability"],
+      "falsification_test": "Perturb the zero-replacement rule and use valid subcompositions to test whether the interpretation survives.",
+      "fallback": "Report robust ratios or grouped compositions and avoid ordinary correlations on closed raw percentages.",
+      "deliverables": ["ternary or balance plot", "log-ratio heatmap", "cluster stability plot", "classification error analysis"],
+      "implementation_notes": ["State whether zeros are rounded, below detection, or structural.", "Interpret log-ratio coordinates, not raw Euclidean distance."],
+      "primary_sources": [
+        {
+          "title": "The Statistical Analysis of Compositional Data",
+          "authors": "John Aitchison",
+          "year": 1982,
+          "doi_url": "https://doi.org/10.1111/j.2517-6161.1982.tb01195.x"
+        }
+      ]
+    },
+    {
+      "id": "robust-supply-chain-milp",
+      "title": "Supply-chain planning with robust mixed-integer optimization",
+      "contest_fit": ["C"],
+      "signals": ["supplier selection", "ordering and transport", "capacity coupling", "scenario uncertainty", "multi-period planting or production"],
+      "baseline": "Deterministic linear or mixed-integer program using central estimates, independently checked for feasibility.",
+      "candidate": "Budgeted-uncertainty robust MILP or a small, justified scenario stochastic program.",
+      "promotion_threshold": "Promote only when extreme-scenario feasibility or risk improves beyond the declared threshold without unacceptable objective or implementation loss.",
+      "diagnostics": ["solver status and gap", "small-instance enumeration", "constraint residuals", "price of robustness", "out-of-sample scenario feasibility"],
+      "falsification_test": "Evaluate both policies on held-out or adversarial scenarios and independently recompute every binding constraint.",
+      "fallback": "Use the deterministic plan with safety margins and an explicit contingency rule.",
+      "deliverables": ["network or allocation diagram", "schedule heatmap", "cost-risk frontier", "binding-constraint table"],
+      "implementation_notes": ["Model recourse only when its timing is operationally possible.", "Report implementation cost and a readable policy, not only the optimum."],
+      "primary_sources": [
+        {
+          "title": "The Price of Robustness",
+          "authors": "Dimitris Bertsimas; Melvyn Sim",
+          "year": 2004,
+          "doi_url": "https://doi.org/10.1287/opre.1030.0065"
+        }
+      ]
+    },
+    {
+      "id": "price-demand-assortment",
+      "title": "Price-demand, replenishment, and assortment decisions",
+      "contest_fit": ["C"],
+      "signals": ["price-sensitive demand", "perishable inventory", "replenishment", "substitution", "category assortment"],
+      "baseline": "Leakage-safe demand forecast plus a fixed-price or myopic replenishment policy.",
+      "candidate": "Joint price-demand-inventory or assortment optimization with cross-validation and operational constraints.",
+      "promotion_threshold": "Promote only when chronological backtesting supports demand elasticity and policy simulation improves profit or waste by the predeclared amount under uncertainty.",
+      "diagnostics": ["time-split forecast error", "elasticity sign and stability", "stockout censoring", "policy regret", "waste-service trade-off"],
+      "falsification_test": "Compare against fixed-price and no-cross-effect policies on unseen periods and stress elasticity estimates.",
+      "fallback": "Use conservative replenishment quantiles and a small interpretable price grid with conditional recommendations.",
+      "deliverables": ["price-demand curve with uncertainty", "replenishment calendar", "assortment matrix", "profit-waste-service frontier"],
+      "implementation_notes": ["Do not infer causal price response from confounded observational data without an identification argument.", "Treat lost sales and censoring explicitly."],
+      "primary_sources": [
+        {
+          "title": "Optimal Dynamic Pricing of Inventories with Stochastic Demand over Finite Horizons",
+          "authors": "Guillermo Gallego; Garrett van Ryzin",
+          "year": 1994,
+          "doi_url": "https://doi.org/10.1287/mnsc.40.8.999"
+        }
+      ]
+    },
+    {
+      "id": "longitudinal-interval-censored",
+      "title": "Longitudinal trajectories and interval-censored timing",
+      "contest_fit": ["C"],
+      "signals": ["repeated measurements per subject", "threshold crossing", "measurement windows", "right or interval censoring", "optimal testing time"],
+      "baseline": "Subject-aware summaries or a simple grouped time-to-threshold estimator with bootstrap uncertainty.",
+      "candidate": "Mixed-effects trajectory model and interval-censored event-time analysis, joined only when their assumptions are compatible.",
+      "promotion_threshold": "Promote only when subject-level validation improves and the timing recommendation remains stable across trajectory and censoring assumptions.",
+      "diagnostics": ["within-subject residuals", "random-effect distribution", "subject-level resampling", "censoring pattern", "timing-regret curve"],
+      "falsification_test": "Leave out whole subjects, perturb threshold and measurement windows, and compare a nonparametric interval-censored route.",
+      "fallback": "Use empirical subject-level quantiles or Turnbull-type intervals and state that individual timing is not precisely identifiable.",
+      "deliverables": ["spaghetti and fitted-trajectory plot", "threshold-crossing distribution", "timing loss curve", "group recommendation table"],
+      "implementation_notes": ["Never split repeated observations from one subject across train and test.", "Distinguish measurement time from latent crossing time."],
+      "primary_sources": [
+        {
+          "title": "Random-Effects Models for Longitudinal Data",
+          "authors": "Nan M. Laird; James H. Ware",
+          "year": 1982,
+          "doi_url": "https://doi.org/10.2307/2529876"
+        },
+        {
+          "title": "The Empirical Distribution Function with Arbitrarily Grouped, Censored and Truncated Data",
+          "authors": "Bruce W. Turnbull",
+          "year": 1976,
+          "doi_url": "https://doi.org/10.1111/j.2517-6161.1976.tb01597.x"
+        }
+      ]
+    },
+    {
+      "id": "calibrated-imbalanced-classification",
+      "title": "Calibrated classification under imbalance",
+      "contest_fit": ["C"],
+      "signals": ["rare abnormal class", "risk probability", "decision threshold", "unequal error cost", "small labeled sample"],
+      "baseline": "Regularized logistic regression with grouped or chronological validation and prevalence-aware metrics.",
+      "candidate": "A better-performing classifier followed by out-of-fold probability calibration and cost-aware threshold selection.",
+      "promotion_threshold": "Promote only when the predeclared discrimination and calibration metrics improve on untouched validation data and the decision threshold is stable.",
+      "diagnostics": ["precision-recall curve", "calibration curve", "Brier or log loss", "subgroup error", "threshold sensitivity"],
+      "falsification_test": "Re-evaluate under prevalence shifts, grouped resampling, and an untouched test set; reject accuracy-only gains.",
+      "fallback": "Use calibrated logistic risk with a transparent threshold and report uncertainty or an abstention region.",
+      "deliverables": ["precision-recall curve", "calibration plot", "threshold-cost curve", "confusion matrix with counts"],
+      "implementation_notes": ["Fit resampling and calibration only inside training folds.", "A complex classifier without a significant calibrated decision benefit stays out of the main model."],
+      "primary_sources": [
+        {
+          "title": "Predicting Good Probabilities with Supervised Learning",
+          "authors": "Alexandru Niculescu-Mizil; Rich Caruana",
+          "year": 2005,
+          "doi_url": "https://doi.org/10.1145/1102351.1102430"
+        },
+        {
+          "title": "The Precision-Recall Plot Is More Informative than the ROC Plot When Evaluating Binary Classifiers on Imbalanced Datasets",
+          "authors": "Takaya Saito; Marc Rehmsmeier",
+          "year": 2015,
+          "doi_url": "https://doi.org/10.1371/journal.pone.0118432"
+        }
+      ]
+    }
+  ]
+}

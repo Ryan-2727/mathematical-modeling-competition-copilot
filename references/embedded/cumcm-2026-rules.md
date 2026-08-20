@@ -14,6 +14,9 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
 - Competition: 2026-09-10 18:00 through 2026-09-13 20:00,
   `Asia/Shanghai` (74 hours).
 - National registration deadline: 2026-09-07 20:00.
+- Final paper MD5 generation/submission deadline: 2026-09-13 20:00.
+- Official paper/support upload window: 2026-09-13 20:30 through
+  2026-09-14 14:00. Do not report a receipt before the window opens.
 - Submission channel: CNKI competition management system; the team performs the
   final upload manually.
 - Lock four official `mcm.edu.cn` roles: first notice, paper format, contest
@@ -43,7 +46,8 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
   filler, smaller type, or duplicated prose.
 - Electronic paper starts with the abstract page and excludes the commitment
   and number-only pages. Confirm these by visual inspection.
-- Declare exactly one AI branch with `--ai-mode none|used`. Put the official
+- The profile verifier supports exactly one AI branch with `--ai-mode
+  none|used`; a live project invoking this AI skill must use `used`. Put the official
   `AI工具使用声明` before the references. `none` requires the exact 2026 non-use
   declaration and forbids conflicting AI evidence. `used` requires the exact
   use-declaration pattern with a non-empty purpose and `AI工具使用详情.pdf` in the

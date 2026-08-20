@@ -99,6 +99,20 @@ NODE_REGISTRY = {
             ("reports/answer_density.json",),
         ),
         Node(
+            "verify-summary-numbers",
+            "paper",
+            "verify_summary_numeric_traceability.py",
+            ("--project-dir", "{project}"),
+            ("generate-paper-artifacts",),
+            (
+                "paper/sections/abstract.tex",
+                "paper/sections/conclusion.tex",
+                "results/verified_values.csv",
+                "reports/numeric_exemptions.csv",
+            ),
+            ("reports/summary_numeric_traceability.json",),
+        ),
+        Node(
             "verify-result-story",
             "paper",
             "verify_result_story.py",

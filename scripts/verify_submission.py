@@ -357,7 +357,7 @@ def has_ai_use_declaration_before_references(text: str) -> bool:
     if match is None or not before_references(text, match.start()):
         return False
     purpose = match.group(1).strip()
-    placeholders = ("请替换", "简要用途", "真实用途", "TODO", "TBD")
+    placeholders = ("请替换为真实、简要用途", "TODO", "TBD")
     return bool(purpose) and not any(marker.lower() in purpose.lower() for marker in placeholders)
 
 

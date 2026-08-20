@@ -18,7 +18,27 @@ def main() -> int:
     parser.add_argument("--prompt-summary", required=True)
     parser.add_argument("--adopted", choices=["yes", "no", "partial"], required=True)
     parser.add_argument("--human-verification", required=True)
+    parser.add_argument("--reviewer-role", required=True)
+    parser.add_argument("--reviewed-artifact", required=True)
+    parser.add_argument("--verification-method", required=True)
+    parser.add_argument("--modifications", required=True)
     args = parser.parse_args()
+    placeholders = {"pending", "todo", "tbd", "unknown", "not_recorded", "placeholder"}
+    for field in (
+        "tool",
+        "version",
+        "purpose",
+        "stage",
+        "prompt_summary",
+        "human_verification",
+        "reviewer_role",
+        "reviewed_artifact",
+        "verification_method",
+        "modifications",
+    ):
+        value = str(getattr(args, field) or "").strip()
+        if value.casefold() in placeholders:
+            parser.error(f"--{field.replace('_', '-')} must record actual evidence")
     log_path = args.log
     record = vars(args).copy()
     record["log"] = str(log_path)

@@ -438,8 +438,21 @@ class OperationalGateTests(unittest.TestCase):
             keys = [f"ref{i}" for i in range(10)]
             (root / "paper" / "main.tex").write_text(
                 "\\documentclass{article}\\begin{document}"
-                f"Evidence \\cite{{{','.join(keys)}}}."
-                "\\end{document}\n",
+                + "".join(
+                    f"Evidence claim {i} \\label{{claim:{i}}} \\cite{{{key}}}."
+                    for i, key in enumerate(keys)
+                )
+                + "\\end{document}\n",
+                encoding="utf-8",
+            )
+            (root / "reports" / "claims.csv").write_text(
+                "claim_id,subproblem,claim,source_file,source_locator,command,"
+                "figure_or_table,paper_location,human_verification,status\n"
+                + "".join(
+                    f"C{i},Q1,Evidence claim {i},results/source.csv,row {i},"
+                    f"python code/run.py,tab:{i},claim:{i},manually checked,verified\n"
+                    for i in range(10)
+                ),
                 encoding="utf-8",
             )
             fields = [
@@ -462,6 +475,11 @@ class OperationalGateTests(unittest.TestCase):
                 "source_locator",
                 "supporting_passage",
                 "supporting_passage_sha256",
+                "evidence_role",
+                "claim_id",
+                "paper_location",
+                "relevance_justification",
+                "removal_impact",
                 "status",
             ]
             rows = []
@@ -513,6 +531,11 @@ class OperationalGateTests(unittest.TestCase):
                         "source_locator": "methods, paragraph 1",
                         "supporting_passage": passage.relative_to(root).as_posix(),
                         "supporting_passage_sha256": sha256(passage),
+                        "evidence_role": "method",
+                        "claim_id": f"C{i}",
+                        "paper_location": f"claim:{i}",
+                        "relevance_justification": f"Provides the method evidence required by claim {i}",
+                        "removal_impact": f"Claim {i} would lose its methodological source",
                         "status": "verified",
                     }
                 )
@@ -531,6 +554,22 @@ class OperationalGateTests(unittest.TestCase):
                 str(out),
             )
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "PASS")
+            rows[0]["paper_location"] = "claim:missing"
+            with (root / "reports" / "bibliography.csv").open(
+                "w", encoding="utf-8", newline=""
+            ) as handle:
+                writer = csv.DictWriter(handle, fieldnames=fields)
+                writer.writeheader()
+                writer.writerows(rows)
+            self.run_script(
+                "verify_bibliography_metadata.py",
+                "--project-dir",
+                str(root),
+                "--out",
+                str(out),
+                expect=1,
+            )
+            rows[0]["paper_location"] = "claim:0"
             rows[0]["verification_source"] = "official: attacker controlled"
             rows[0]["scholar_query"] = (
                 "https://scholar.google.evil.example/scholar?q="

@@ -65,7 +65,7 @@ python scripts/lock_contest_rules.py create `
   --contest CUMCM `
   --year 2026 `
   --profile cumcm-2026 `
-  --valid-through 2026-09-13 `
+  --valid-through 2026-09-14 `
   --source-role official_notice --source-kind locator --source-url <notice-index-url> --snapshot reports/rules/notice-index.html `
   --source-role official_notice --source-kind page --source-url <notice-page-url> --snapshot reports/rules/notice-page.html `
   --source-role official_notice --source-kind attachment --source-url <notice-pdf-url> --snapshot reports/rules/notice.pdf `
@@ -87,6 +87,9 @@ python scripts/lock_contest_rules.py create `
   --rule competition_start=2026-09-10T18:00:00+08:00 `
   --rule competition_end=2026-09-13T20:00:00+08:00 `
   --rule registration_deadline=2026-09-07T20:00:00+08:00 `
+  --rule hash_deadline=2026-09-13T20:00:00+08:00 `
+  --rule upload_open=2026-09-13T20:30:00+08:00 `
+  --rule upload_deadline=2026-09-14T14:00:00+08:00 `
   --rule timezone=Asia/Shanghai `
   --rule "submission_channel=CNKI competition management system"
 ```

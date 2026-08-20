@@ -56,8 +56,10 @@ does not choose the problem.
 | H42-H54 | Finish uncertainty, stress tests, core figures, and tables |
 | H54-H64 | Complete the paper and support-material draft |
 | H64-H70 | Run independent review, numerical traceability, and strict checks |
-| H70-H72 | Rehearse packaging, hashes, AI branch, anonymity, and submission steps |
-| H72-H74 | Preserve buffer; the team performs official upload and verifies receipt |
+| H70-H73 | Finish local anonymity, AI evidence, packaging, hashes, and strict checks |
+| H73-H74 | Freeze artifacts and submit the final MD5 before 20:00; make no later content edits |
+| H74-H74.5 | Preserve the official half-hour gap; do not attempt an early upload |
+| H74.5-H92 | The team performs the official upload and records receipt evidence before 2026-09-14 14:00 |
 
 Stop losses:
 
@@ -68,7 +70,8 @@ Stop losses:
 - an enhancement without measured advantage by H42: reject it or narrow its
   claim;
 - after H54: introduce no new model family unless repairing a veto;
-- never consume H72-H74 for cosmetic revisions.
+- never consume H73-H74 for cosmetic revisions or alter an artifact after its
+  final MD5 is submitted.
 
 ## Timed training readiness
 

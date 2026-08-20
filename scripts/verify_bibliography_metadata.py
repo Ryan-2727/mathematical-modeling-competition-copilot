@@ -34,6 +34,11 @@ REQUIRED_FIELDS = {
     "source_locator",
     "supporting_passage",
     "supporting_passage_sha256",
+    "evidence_role",
+    "claim_id",
+    "paper_location",
+    "relevance_justification",
+    "removal_impact",
     "status",
 }
 CITE_RE = re.compile(
@@ -43,6 +48,7 @@ CITE_RE = re.compile(
 COMPLETE = {"verified", "pass", "complete"}
 NOT_RETRACTED = {"not_retracted", "checked_no_notice", "no_retraction_found"}
 SCHOLAR_FOUND = {"found", "verified", "match"}
+EVIDENCE_ROLES = {"method", "domain_fact", "data", "validation", "comparison"}
 
 
 def sha256_file(path: Path) -> str:
@@ -176,6 +182,33 @@ def valid_scholar_query(value: str, title_key: str) -> bool:
     return any(title_key in normalized(item) for item in queries.get("q", []))
 
 
+def paper_location_exists(
+    root: Path,
+    value: str,
+    reachable: list[Path],
+    tex_text: str,
+) -> bool:
+    location = value.strip().replace("\\", "/")
+    if not location:
+        return False
+    if location.startswith("paper/"):
+        relative, _, locator = location.partition("#")
+        path = safe_file(root, relative)
+        if path is None or path not in reachable:
+            return False
+        if not locator:
+            return True
+        match = re.fullmatch(r"L(\d+)", locator)
+        if match is None:
+            return False
+        return 1 <= int(match.group(1)) <= len(
+            path.read_text(encoding="utf-8", errors="replace").splitlines()
+        )
+    return re.search(
+        r"\\label\s*\{\s*" + re.escape(location) + r"\s*\}", tex_text
+    ) is not None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project-dir", type=Path, required=True)
@@ -200,10 +233,11 @@ def main() -> int:
             errors.append(f"cannot read bibliography.csv: {exc}")
     if missing := REQUIRED_FIELDS - fields:
         errors.append("bibliography.csv missing strict metadata columns: " + ", ".join(sorted(missing)))
+    reachable = reachable_tex_files(root / "paper") if (root / "paper").is_dir() else []
     tex_text = "\n".join(
         path.read_text(encoding="utf-8", errors="replace")
-        for path in reachable_tex_files(root / "paper")
-    ) if (root / "paper").is_dir() else ""
+        for path in reachable
+    )
     cited = {
         key.strip()
         for group in CITE_RE.findall(tex_text)
@@ -214,6 +248,18 @@ def main() -> int:
     reports: list[dict[str, Any]] = []
     seen_titles: set[str] = set()
     seen_dois: set[str] = set()
+    claims_path = root / "reports" / "claims.csv"
+    claim_ids: set[str] = set()
+    try:
+        with claims_path.open(encoding="utf-8-sig", newline="") as handle:
+            claim_reader = csv.DictReader(handle)
+            for claim in claim_reader:
+                if str(claim.get("status") or "").strip().lower() in COMPLETE:
+                    claim_id = str(claim.get("claim_id") or "").strip()
+                    if claim_id:
+                        claim_ids.add(claim_id)
+    except (OSError, UnicodeError, csv.Error) as exc:
+        errors.append(f"cannot read claims.csv for reference relevance: {exc}")
     for line, row in enumerate(rows, 2):
         local: list[str] = []
         for field in REQUIRED_FIELDS:
@@ -309,6 +355,21 @@ def main() -> int:
             local.append("claim_supported is empty")
         if not str(row.get("source_locator") or "").strip():
             local.append("source_locator is empty")
+        role = str(row.get("evidence_role") or "").strip().lower()
+        if role not in EVIDENCE_ROLES:
+            local.append("evidence_role is not an accepted manuscript evidence role")
+        claim_id = str(row.get("claim_id") or "").strip()
+        if claim_id not in claim_ids:
+            local.append("claim_id does not identify a complete reports/claims.csv claim")
+        paper_location = str(row.get("paper_location") or "").strip()
+        if not paper_location_exists(root, paper_location, reachable, tex_text):
+            local.append("paper_location is not a reachable TeX file/line or label")
+        relevance = str(row.get("relevance_justification") or "").strip()
+        if len(relevance) < 8:
+            local.append("relevance_justification is too short to establish necessity")
+        removal = str(row.get("removal_impact") or "").strip()
+        if len(removal) < 8:
+            local.append("removal_impact must state what manuscript support would be lost")
         if str(row.get("status") or "").strip().lower() not in COMPLETE:
             local.append("entry status is not verified")
         if not local and key:
@@ -333,8 +394,9 @@ def main() -> int:
     payload = {
         "status": "PASS" if not errors else "FAIL",
         "scope": (
-            "saved metadata, retraction-check record, body citation, and supporting-"
-            "passage integrity; source interpretation remains a human responsibility"
+            "saved metadata, retraction-check record, body citation, supporting-"
+            "passage integrity, and claim/location relevance; source interpretation "
+            "remains a human responsibility"
         ),
         "counts": {
             "ledger_rows": len(rows),

@@ -13,6 +13,11 @@ Write a concise analysis-method-result abstract in exactly three explicit blocks
 
 Keep validation and limitation language compact. Run
 `verify_abstract_structure.py` and `verify_answer_density.py` after drafting.
+Write result numbers through `\VerifiedValue{key}` or
+`\VerifiedValueWithUnit{key}`. Apply the same rule to the conclusion. A raw
+question number, calendar date, formula index, or official limit may remain only
+after exact line-level registration in `reports/numeric_exemptions.csv`. Run
+`verify_summary_numeric_traceability.py`; do not hand-copy a computed number.
 
 ## Result before complexity
 

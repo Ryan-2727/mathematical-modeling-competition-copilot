@@ -18,7 +18,9 @@
     "Overleaf",
     "VS Code",
     "award-focused review",
-    "official-submission"
+    "official-submission",
+    "verify_summary_numeric_traceability.py",
+    "cumcm-bc-model-library.md"
   ],
   "descriptor_checks": {
     "README.md": ["Explicit Invocation Only"],
@@ -42,14 +44,15 @@
     "references/embedded/award-oriented-evidence-chain.md": ["verify_evidence_chain.py", "model_challenge.json", "fallback_plan.csv", "verify_decision_quality.py", "verify_figure_narrative.py", "verify_page_readability.py"],
     "references/embedded/mechanism-semantics-and-argument.md": ["semantic_audit.csv", "mechanism_audit.json", "validation_design.csv", "conclusion_map.csv", "innovation_ledger.csv", "verify_modeling_argument_quality.py"],
     "references/embedded/model-reasoning-kernel.md": ["mechanism ladder", "candidate-model ladder", "parameter_registry.csv", "joint_inference_design.json", "PASS", "CONDITIONAL", "FAIL"],
+    "references/embedded/cumcm-bc-model-library.md": ["Designed experiments and response surfaces", "Bearing-only localization", "Compositional data", "Calibrated imbalanced classification", "reports/model_budget.csv"],
     "references/embedded/physics-inverse-modeling-playbook.md": ["forward observation chain", "shared physical parameters", "independent route", "synthetic recovery"],
     "references/embedded/diagnostics-and-result-reconciliation.md": ["independent_routes.csv", "result_reconciliation.csv", "disagree materially", "Do not average estimates"],
     "references/embedded/2025-corpus-observations.md": ["Post-freeze modeling-decision patterns", "shared latent parameters", "changing the optimizer", "synthetic-recovery"],
     "references/embedded/paper-presentation-and-visual-design.md": ["verify_answer_density.py", "verify_visual_design_system.py", "verify_paper_presentation.py", "presentation_checklist.csv"],
     "references/embedded/result-first-paper-convergence.md": ["analysis-method-result", "model_simplification_log.csv", "visual_storyboard.csv", "verify_result_story.py"],
     "references/embedded/orchestration-and-paper-assurance.md": ["contestctl.py doctor", "contestctl.py run", "contestctl.py summary", "project_schema_version", "rendered_figure_manifest.csv", "notation_registry.csv", "equation_dimensions.csv", "generate_paper_artifacts.py", "paper/generated/core_results.tex"],
-    "references/embedded/cumcm-2026-readiness.md": ["verify_online_actions.py", "verify_problem_audition.py", "score_training_readiness.py", "H72-H74"],
-    "references/embedded/cumcm-2026-rules.md": ["2026-09-10 18:00", "2026-09-13 20:00", "--ai-mode none|used"],
+    "references/embedded/cumcm-2026-readiness.md": ["verify_online_actions.py", "verify_problem_audition.py", "score_training_readiness.py", "H74.5-H92"],
+    "references/embedded/cumcm-2026-rules.md": ["2026-09-10 18:00", "2026-09-13 20:30", "2026-09-14 14:00", "--ai-mode"],
     "assets/latex-paper-template/main.tex": ["支撑材料文件清单", "\\lstinputlisting", "code/main.py", "sections/ai_declaration", "\\cumcmaiusedfalse"],
     "assets/latex-paper-template/sections/ai_declaration.tex": ["AI工具使用声明", "本参赛队在竞赛过程中未使用任何AI工具", "本参赛队在竞赛过程中使用了AI工具"],
     "assets/latex-paper-template-mcm/main.tex": ["\\documentclass[12pt]", "\\TeamControlNumber", "\\includeaireport", "sections/summary"],
@@ -57,6 +60,7 @@
   },
   "required_files": [
     "assets/contest-profiles/cumcm-2026.json",
+    "assets/model-library/cumcm-bc-model-cards.json",
     "assets/latex-paper-template/main.tex",
     "assets/latex-paper-template/README.md",
     "assets/latex-paper-template/.latexmkrc",
@@ -64,6 +68,7 @@
     "assets/latex-paper-template/.vscode/extensions.json",
     "assets/latex-paper-template/code/main.py",
     "assets/latex-paper-template/sections/ai_declaration.tex",
+    "assets/latex-paper-template/generated/results.tex",
     "assets/latex-paper-template-mcm/main.tex",
     "assets/latex-paper-template-mcm/README.md",
     "assets/latex-paper-template-mcm/.latexmkrc",
@@ -103,6 +108,7 @@
     "scripts/verify_latex_compatibility.py",
     "scripts/verify_manuscript_quality.py",
     "scripts/verify_model_validation.py",
+    "scripts/verify_model_library.py",
     "scripts/verify_model_reasoning_core.py",
     "scripts/verify_modeling_argument_quality.py",
     "scripts/verify_notation_registry.py",
@@ -118,6 +124,7 @@
     "scripts/verify_result_story.py",
     "scripts/verify_result_template.py",
     "scripts/verify_submission.py",
+    "scripts/verify_summary_numeric_traceability.py",
     "scripts/verify_verified_values.py",
     "scripts/verify_visual_design_system.py"
   ]

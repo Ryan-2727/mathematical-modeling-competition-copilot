@@ -39,12 +39,18 @@ The verification loop:
   family. Preserve the actual diagnostic artifacts and predeclared thresholds.
 - Every decisive subproblem claim has a completed, failure-oriented entry in `reports/stress_tests.csv` and a preserved result file.
 - Figures match source data and are referenced.
-- At least 10 unique, relevant scholarly works are cited in the LaTeX body; each
+- At least 10 unique, genuinely relevant scholarly works are cited in the LaTeX body; each
   key is present in `paper/references.bib` and `reports/bibliography.csv`, with
   authoritative metadata verification, an exact-title Google Scholar query, a
-  supported claim, and a source locator. The cited passages have been read.
+  supported claim, a source locator, an evidence role, a relevance explanation,
+  and the consequence of removing the citation. The cited passages have been
+  read. Never retain an unrelated source merely to reach the count.
 - Run `scripts/verify_bibliography_metadata.py` against hash-bound authoritative
   metadata snapshots, retraction-check records, and supporting-passage evidence.
+- Run `scripts/verify_summary_numeric_traceability.py`; every result number in
+  the abstract and conclusion must come from `paper/generated/results.tex` via
+  `\VerifiedValue{key}` or `\VerifiedValueWithUnit{key}`. Only structural
+  numbers may use a reviewed row in `reports/numeric_exemptions.csv`.
 - Run `scripts/verify_abstract_quality.py`; confirm every numbered task is
   represented by its method, decisive result, validation, and answer or
   recommendation.
@@ -62,6 +68,8 @@ The verification loop:
 - Missing plugin/runtime limitations are recorded.
 - The contest rules snapshot is current and all critical fields are verified.
 - AI use/non-use declaration and required detail report match the actual workflow.
+  The generated declaration remains human-editable, and rerendering must not
+  overwrite a reviewed purpose statement.
 - Data source permissions, transformations, hashes, environment, command, seed, solver status, and validation evidence are recorded.
 - Submission state, final hashes, anonymity scan, artifact size, and receipt are recorded when submission is in scope.
 - `reports/claims.csv` and `reports/argument_coverage.csv` pass `scripts/verify_claims.py`.
@@ -72,6 +80,10 @@ The verification loop:
   baseline/candidate refutation record, uncertainty comparison where material,
   fallback route, causal-boundary record where applicable, and implementability
   evidence beyond the objective value.
+- Run `scripts/verify_model_budget.py`; a complex candidate may enter the main
+  paper only when its measured out-of-sample or decision-relevant advantage
+  reaches the predeclared minimum. Otherwise retain the baseline as primary and
+  move the candidate to model optimization or reject it explicitly.
 - Run `scripts/verify_figure_narrative.py`; each figure identifies its claim,
   question, takeaway, and decision relevance.
 - Complete `reports/page_readability_checklist.csv` against the compiled PDF and

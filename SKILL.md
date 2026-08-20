@@ -55,8 +55,13 @@ Required actions:
   allowed; current-problem answer searching, interactive help, public posting,
   and uploading contest material are forbidden. If privacy is ambiguous, ask
   the user and wait for the answer. Record online actions locally.
-- Record material AI use from the first use. For CUMCM 2026 select
-  `ai_mode=none|used`; the two branches are mutually exclusive.
+- Before reading a live statement, record whether the AI runtime is demonstrably `local_offline` or an `external_service`. When it is external, do not send the
+  current statement, attachments, data, code, results, or paper content to it; this skill cannot honestly guarantee a no-upload boundary for external inference.
+  Search queries remain governed by the online-action ledger, and an ambiguous privacy effect requires the user's recorded decision.
+- Record material AI use from the first use. Invoking this AI skill during a live
+  CUMCM 2026 project necessarily selects `ai_mode=used`; it must never
+  self-certify `none`. Initialize live mode with actual `--ai-tool`,
+  `--ai-version`, and `--ai-runtime-boundary` values.
 
 ### 1. Setup, problem audition, and strategy
 
@@ -88,6 +93,8 @@ Read:
 - `references/embedded/llm-mm-agent-methodology.md`
 - `references/embedded/mathmodel-six-phase.md`
 - `references/embedded/problem-structure-playbooks.md`
+- for recurring CUMCM B/C structures,
+  `references/embedded/cumcm-bc-model-library.md`
 - `references/embedded/mechanism-semantics-and-argument.md`
 - `references/embedded/model-reasoning-kernel.md`
 - for physical measurement, system identification, spectroscopy, imaging, or
@@ -102,6 +109,8 @@ Required actions:
   censored, missing, and not-observed meanings in `reports/semantic_audit.csv`
   and `reports/mechanism_audit.json`. Do not disguise unknown semantics as an
   assumption.
+- Validate the bundled B/C cards with `scripts/verify_model_library.py`. Use a card only after multiple structural signals match; execute its baseline first and
+  keep the stronger route only after its diagnostic, falsification, and predeclared promotion threshold pass.
 - Compare one credible baseline with a stronger candidate in
   `reports/model_decision_log.csv`. Predeclare the candidate's advantage and
   failure test in `reports/model_challenge.json`; reject it or narrow the claim
@@ -135,8 +144,9 @@ Read as applicable:
 
 Required actions:
 
-- A completed paper needs at least 10 unique, relevant scholarly works cited in
-  reachable LaTeX. Maintain `reports/bibliography.csv`.
+- A completed paper needs at least 10 unique, relevant scholarly works cited in reachable LaTeX. Maintain `reports/bibliography.csv`; for every source record its
+  evidence role, complete claim ID, reachable paper location, relevance justification, and what support would be lost if it were removed. If ten relevant works
+  have not been verified, report the gap instead of adding an unrelated citation.
 - Verify metadata against authoritative records, observe an exact-title Google
   Scholar result, read the passage supporting each attributed claim, and save
   locators and hashed evidence. Never fabricate metadata or source content.
@@ -247,6 +257,10 @@ Required actions:
 - Show why the selected model was promoted from its simpler parent, which
   parameters are shared across conditions, whether an independent route
   supports the conclusion, and how any material disagreement was resolved.
+- Put every claim-bearing number in the abstract and conclusion behind `\VerifiedValue{...}` or `\VerifiedValueWithUnit{...}`. Register only genuine structural
+  exceptions in `reports/numeric_exemptions.csv`, then run `scripts/verify_summary_numeric_traceability.py`.
+- A candidate more complex than its baseline may be primary only when an executed comparison reaches the positive, predeclared minimum advantage in
+  `reports/model_budget.csv`. Otherwise retain the simpler route and mark the candidate `rejected` or `model_optimization`; complexity is not evidence.
 - The paper body must contain verified results. If a model cannot produce them, follow
   the user-approved simplification route from phase 2; retain the original
   unverified model only under model optimization.
@@ -319,7 +333,8 @@ Read `references/embedded/submission-and-anonymity.md`.
 - Run final anonymity, environment, delivery-profile, paper-delivery, portable
   LaTeX, and submission checks; record hashes and advance submission state only
   with evidence. For CUMCM 2026, enforce the selected AI branch, including
-  `AI工具使用详情.pdf` for `used` or the exact declaration for `none`.
+  `AI工具使用详情.pdf` for `used`. Generate the declaration starter from the completed log with `scripts/render_ai_use_report.py --declaration-out`; the delimited
+  purpose text remains human-editable and later generation must preserve a non-placeholder human edit.
 
 ### 12. Offline paper-learning and private regression
 

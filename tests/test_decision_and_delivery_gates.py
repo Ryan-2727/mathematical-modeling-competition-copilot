@@ -62,14 +62,50 @@ class DecisionAndDeliveryGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             (root / "reports").mkdir()
-            header = "subproblem,route_name,route_type,selected,estimated_hours,risk_level,validation_hours,fallback_route,expected_value,deadline_hours,status\n"
-            baseline = "Q1,baseline,baseline,true,2,low,1,fallback,not_applicable,10,verified\n"
-            fallback = "Q1,fallback,fallback,false,1,low,1,baseline,not_applicable,10,verified\n"
+            header = (
+                "subproblem,route_name,route_type,selected,estimated_hours,risk_level,"
+                "validation_hours,fallback_route,expected_value,deadline_hours,"
+                "comparison_metric,metric_direction,baseline_value,candidate_value,"
+                "minimum_advantage,validation_artifact,paper_treatment,status\n"
+            )
+            baseline = (
+                "Q1,baseline,baseline,true,2,low,1,fallback,not_applicable,10,"
+                "not_applicable,not_applicable,not_applicable,not_applicable,"
+                "not_applicable,not_applicable,primary,verified\n"
+            )
+            fallback = (
+                "Q1,fallback,fallback,false,1,low,1,baseline,not_applicable,10,"
+                "not_applicable,not_applicable,not_applicable,not_applicable,"
+                "not_applicable,not_applicable,fallback,verified\n"
+            )
             budget = root / "reports/model_budget.csv"
             budget.write_text(header + baseline + fallback, encoding="utf-8")
             self.run_script("verify_model_budget.py", root)
             budget.write_text(header + baseline + fallback.replace(",false,", ",true,"), encoding="utf-8")
             self.run_script("verify_model_budget.py", root, expect=1)
+
+            evidence = root / "results.json"
+            evidence.write_text('{"score": 0.81}\n', encoding="utf-8")
+            candidate = (
+                "Q1,complex,candidate,true,3,medium,1,baseline,better score,10,"
+                "validated_score,higher,0.80,0.81,0.02,results.json,primary,verified\n"
+            )
+            budget.write_text(
+                header
+                + baseline.replace(",true,", ",false,").replace(",primary,", ",comparison,")
+                + candidate
+                + fallback,
+                encoding="utf-8",
+            )
+            self.run_script("verify_model_budget.py", root, expect=1)
+            budget.write_text(
+                header
+                + baseline.replace(",true,", ",false,").replace(",primary,", ",comparison,")
+                + candidate.replace(",0.81,0.02,", ",0.83,0.02,")
+                + fallback,
+                encoding="utf-8",
+            )
+            self.run_script("verify_model_budget.py", root)
 
     def test_three_minute_review_requires_all_reader_path_elements(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

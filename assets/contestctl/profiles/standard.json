@@ -8,6 +8,7 @@
       "verify-rendered-figures",
       "verify-abstract-structure",
       "verify-answer-density",
+      "verify-summary-numbers",
       "verify-result-story",
       "verify-visual-design",
       "verify-figure-narrative"

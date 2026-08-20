@@ -24,6 +24,8 @@
   74 小时里程碑看板和止损规则
 - 有边界的建模路线 brainstorming
 - 按问题结构选路，以及可审计的“基线—候选模型”取舍日志
+- 可机器校验的 B/C 题定向模型卡：试验设计、纯方位定位、覆盖路径、序贯
+  决策、成分数据、鲁棒规划、价格—需求、纵向/区间删失和不平衡校准
 - 数学建模六阶段流程
 - LLM-MM-Agent 四阶段方法论与 HMML/MLE-Solver 风格建模
 - 文献检索和论文解释流程
@@ -46,12 +48,16 @@
 - 数据审计、追踪表、环境记录、匿名扫描和哈希核验
 - 单一机器可读的 CUMCM 2026 规则配置与 T-30/T-7/T-1 新鲜度检查、官方
   索引/正文/PDF 多源快照、2026 AI 声明、H6 选题权重敏感性分析，以及
+  20:00 MD5 截止、20:30 至次日 14:00 上传窗口和
   P90/趋势/连续两次完整通过的训练就绪度评分
 - 正式比赛材料全程只留本地：允许互联网搜索，Skill 不上传赛题或作答内容；
   无法判断隐私风险时暂停并询问用户
 - CUMCM 与 MCM/ICM 可执行规则配置，以及初始化时自动选择的独立可移植
   LaTeX 模板
 - 由计算结果哈希驱动的关键数值唯一真源、LaTeX 宏生成器和 11 类模型族验证适配器
+- 摘要和结论逐字面数字追溯：结果数字必须来自已核验宏，结构性数字必须有
+  精确到文件行号的豁免记录
+- 复杂模型晋级门：候选模型没有达到正的预注册优势阈值时，不得进入主模型
 - 面向答案的摘要、权威书目快照、支持性原文、LaTeX 日志、图表题注/标签和图表清单检查
 - 不默认调用 shell 的干净副本重复复现
 - PDF 渲染与元数据质检、图像/OCR 匿名检查和真实 TeX CI
@@ -80,6 +86,9 @@ OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题�
 `verification_source` 必须填写与元数据快照一致的 Crossref、DOI 或 OpenAlex
 具体 HTTPS 记录 URL；Scholar 查询统一使用
 `https://scholar.google.com/scholar?q=...`。严禁虚构书目信息、原文内容和定位信息。
+每行还必须对应 `reports/claims.csv` 中已完成的论断、可达的正文位置、证据
+角色、相关性理由，以及删除该文献后会失去的具体支撑。若尚未找到 10 篇
+真正相关文献，应报告缺口，不能加入无关引用凑数。
 还必须使用 `scripts/verify_bibliography_metadata.py` 核对保存的权威元数据
 快照、撤稿检查记录和支持性原文哈希。
 完成前必须运行 `scripts/verify_paper_delivery.py`；脚本通过只代表结构核验
@@ -131,13 +140,16 @@ python scripts/contestctl.py summary --project-dir <project>
   `verify_online_actions.py` 审计正式比赛材料仅留本地的联网行为声明。
 - `verify_submission.py --profile cumcm-2026 --ai-mode none|used` 分别核验
   参考文献之前的 2026 官方未使用/使用声明，或完整的 AI 使用证据链。
+  通过本 AI Skill 初始化的正式比赛项目会强制选择 `used`；声明用途是可人工
+  修改的 LaTeX 区块，人工修改后不会被后续生成覆盖。
 - `results/verified_values.csv` 是关键计算数值的唯一真源；
   `generate_verified_values.py` 生成 `paper/generated/results.tex`，
   `verify_verified_values.py` 检查哈希、类型、单位、LaTeX 可达性和过期状态。
 - `verify_model_validation.py` 检查回归/预测、分类、优化、随机仿真、
   网络/排序、机理/动力学、因果/计量、无监督、排队/可靠性、空间/时空及
   多目标/动态优化模型声明的验证证据，但不宣称证明数学正确性。
-- `verify_abstract_quality.py`、`verify_bibliography_metadata.py` 和
+- `verify_abstract_quality.py`、`verify_summary_numeric_traceability.py`、
+  `verify_bibliography_metadata.py` 和
   `verify_manuscript_quality.py` 检查摘要逐问答案、保存的来源证据、引用、
   题注、标签、图表清单和 LaTeX 日志。
 - `verify_delivery_profiles.py` 将完整用户交付与比赛官方允许提交的文件分开核验。

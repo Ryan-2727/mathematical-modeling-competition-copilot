@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import subprocess
 import sys
 import tempfile
@@ -89,6 +90,51 @@ class PaperPresentationQualityTests(unittest.TestCase):
             self.run_script("verify_abstract_structure.py", "--project-dir", str(root))
             abstract.write_text("Analysis: identify the decision. Method: use a robust model.", encoding="utf-8")
             self.run_script("verify_abstract_structure.py", "--project-dir", str(root), expect=1)
+
+    def test_summary_numbers_require_verified_macros_or_narrow_exemptions(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            (root / "paper/sections").mkdir(parents=True)
+            (root / "results").mkdir()
+            (root / "reports").mkdir()
+            source = root / "results/source.json"
+            source.write_text('{"score": 0.81, "count": 42}\n', encoding="utf-8")
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            (root / "results/verified_values.csv").write_text(
+                "key,value,value_type,unit,source_file,source_sha256,source_locator,"
+                "source_kind,justification\n"
+                f"score,0.81,number,dimensionless,results/source.json,{digest},/score,computed,reproduced\n"
+                f"count,42,integer,items,results/source.json,{digest},/count,computed,reproduced\n",
+                encoding="utf-8",
+            )
+            abstract = root / "paper/sections/abstract.tex"
+            conclusion = root / "paper/sections/conclusion.tex"
+            abstract.write_text(
+                r"问题 1 的主要结果为 \VerifiedValue{score}。" + "\n",
+                encoding="utf-8",
+            )
+            conclusion.write_text(
+                r"最终数量为 \VerifiedValueWithUnit{count}。" + "\n",
+                encoding="utf-8",
+            )
+            (root / "reports/numeric_exemptions.csv").write_text(
+                "source_file,line,literal,occurrence,category,reason,status\n"
+                "paper/sections/abstract.tex,1,1,1,question_id,subproblem identifier,verified\n",
+                encoding="utf-8",
+            )
+            self.run_script(
+                "verify_summary_numeric_traceability.py",
+                "--project-dir", str(root),
+            )
+            conclusion.write_text(
+                conclusion.read_text(encoding="utf-8") + "Raw error 9.9%.\n",
+                encoding="utf-8",
+            )
+            self.run_script(
+                "verify_summary_numeric_traceability.py",
+                "--project-dir", str(root),
+                expect=1,
+            )
 
     def test_result_story_requires_authorized_simplification_and_comparison_visual(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

@@ -26,6 +26,7 @@ CONCLUSION = re.compile(
     re.IGNORECASE,
 )
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?\s*(?:%|％|[A-Za-z]+)?")
+VERIFIED_NUMBER = re.compile(r"\\VerifiedValue(?:WithUnit)?\s*\{[^{}]+\}")
 TASK = re.compile(
     r"问题\s*[一二三四五六七八九十\d]+|"
     r"第[一二三四五六七八九十\d]+(?:个)?问题|"
@@ -58,10 +59,12 @@ def main() -> int:
     errors: list[str] = []
     warnings: list[str] = []
     if not path.is_file():
+        raw_text = ""
         text = ""
         errors.append(f"abstract source is missing: {path}")
     else:
-        text = plain_tex(path.read_text(encoding="utf-8", errors="replace"))
+        raw_text = path.read_text(encoding="utf-8", errors="replace")
+        text = plain_tex(raw_text)
     content_units = len(re.findall(r"[\u4e00-\u9fff]|[A-Za-z0-9]+", text))
     if content_units < args.minimum_content_units:
         errors.append(
@@ -72,7 +75,9 @@ def main() -> int:
         errors.append("abstract contains a placeholder")
     checks = {
         "method": bool(METHOD.search(text)),
-        "quantified_result": bool(NUMBER.search(TASK.sub(" ", text))),
+        "quantified_result": bool(
+            NUMBER.search(TASK.sub(" ", text)) or VERIFIED_NUMBER.search(raw_text)
+        ),
         "validation": bool(VALIDATION.search(text)),
         "conclusion_or_recommendation": bool(CONCLUSION.search(text)),
     }

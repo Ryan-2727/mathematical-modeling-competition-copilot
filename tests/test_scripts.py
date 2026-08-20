@@ -75,7 +75,7 @@ class ScriptTests(unittest.TestCase):
                 main_tex.index(r"\bibliography{references}"),
             )
             log = root / "reports" / "ai_usage_log.jsonl"
-            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "reviewed")
+            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "outline", "--stage", "writing", "--prompt-summary", "test", "--adopted", "partial", "--human-verification", "equations checked against code output", "--reviewer-role", "team member 2", "--reviewed-artifact", "paper/sections/model.tex", "--verification-method", "manual equation and output comparison", "--modifications", "rewrote unsupported wording")
             self.assertIn("TestAI", log.read_text(encoding="utf-8"))
 
     def test_init_selects_mcm_icm_template_and_profile(self) -> None:
@@ -121,15 +121,76 @@ class ScriptTests(unittest.TestCase):
             root = Path(raw) / "project"
             self.run_script("init_contest.py", "--project-dir", str(root), "--contest", "CUMCM", "--year", "2026", "--mode", "training")
             log = root / "reports" / "ai_usage_log.jsonl"
-            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "draft", "--stage", "writing", "--prompt-summary", "test", "--adopted", "yes", "--human-verification", "checked")
+            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "draft", "--stage", "writing", "--prompt-summary", "test", "--adopted", "yes", "--human-verification", "claims checked against result files", "--reviewer-role", "team member 2", "--reviewed-artifact", "paper/sections/conclusion.tex", "--verification-method", "manual result-to-text comparison", "--modifications", "corrected one claim boundary")
             report = root / "support" / "AI工具使用详情.md"
-            self.run_script("render_ai_use_report.py", "--log", str(log), "--out", str(report))
+            declaration = root / "paper" / "sections" / "ai_declaration.tex"
+            self.run_script(
+                "render_ai_use_report.py", "--log", str(log), "--out", str(report),
+                "--declaration-out", str(declaration),
+            )
+            generated = declaration.read_text(encoding="utf-8")
+            self.assertIn("draft", generated)
+            declaration.write_text(
+                generated.replace("draft", "人工修改后的真实用途"), encoding="utf-8"
+            )
+            self.run_script(
+                "render_ai_use_report.py", "--log", str(log), "--out", str(report),
+                "--declaration-out", str(declaration),
+            )
+            self.assertIn(
+                "人工修改后的真实用途", declaration.read_text(encoding="utf-8")
+            )
             archive = root / "support.zip"
             archive_manifest = root / "support_manifest.json"
             self.run_script("build_support_archive.py", "--project-dir", str(root), "--include", "support/AI工具使用详情.md", "--out", str(archive), "--manifest", str(archive_manifest))
             manifest = root / "contest_manifest.json"
             self.run_script("set_submission_state.py", "--manifest", str(manifest), "--state", "verified", "--evidence", str(report))
             self.assertEqual(json.loads(manifest.read_text(encoding="utf-8"))["submission_state"], "verified")
+
+    def test_cumcm_submission_state_respects_hash_and_upload_windows(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "project"
+            self.run_script(
+                "init_contest.py", "--project-dir", str(root), "--contest", "CUMCM",
+                "--year", "2026", "--mode", "training",
+            )
+            evidence = root / "reports/verification_report.md"
+            manifest = root / "contest_manifest.json"
+            for state in ("verified", "frozen"):
+                self.run_script(
+                    "set_submission_state.py", "--manifest", str(manifest),
+                    "--state", state, "--evidence", str(evidence),
+                )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "hashed", "--evidence", str(evidence),
+                "--at", "2026-09-13T20:01:00+08:00", expect=1,
+            )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "hashed", "--evidence", str(evidence),
+                "--at", "2026-09-13T19:59:00+08:00",
+            )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "submitted", "--evidence", str(evidence),
+                "--at", "2026-09-13T20:29:00+08:00", expect=1,
+            )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "submitted", "--evidence", str(evidence),
+                "--at", "2026-09-13T20:31:00+08:00",
+            )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "receipt_verified", "--evidence", str(evidence),
+                "--at", "2026-09-14T14:01:00+08:00", expect=1,
+            )
+            self.run_script(
+                "set_submission_state.py", "--manifest", str(manifest),
+                "--state", "receipt_verified", "--evidence", str(evidence),
+                "--at", "2026-09-14T13:59:00+08:00",
+            )
 
     def test_recursive_corpus_metrics(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -613,7 +674,7 @@ class ScriptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             log = root / "ai.jsonl"
-            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "draft", "--stage", "writing", "--prompt-summary", "outline", "--adopted", "partial", "--human-verification", "reviewed")
+            self.run_script("log_ai_use.py", "--log", str(log), "--tool", "TestAI", "--version", "1", "--purpose", "draft", "--stage", "writing", "--prompt-summary", "outline", "--adopted", "partial", "--human-verification", "claims checked against source results", "--reviewer-role", "team member 3", "--reviewed-artifact", "paper/sections/abstract.tex", "--verification-method", "manual source and number comparison", "--modifications", "removed an unsupported sentence")
             pdf = root / "AI\u5de5\u5177\u4f7f\u7528\u8be6\u60c5.pdf"
             self.run_script("render_ai_use_report.py", "--log", str(log), "--out", str(root / "report.md"), "--pdf-out", str(pdf))
             self.assertGreater(pdf.stat().st_size, 0)

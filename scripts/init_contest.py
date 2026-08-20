@@ -36,12 +36,33 @@ def main() -> int:
     parser.add_argument("--deadline", default="unknown")
     parser.add_argument("--template", choices=["auto", "cumcm", "mcm-icm"], default="auto")
     parser.add_argument("--submission-profile")
+    parser.add_argument("--ai-tool")
+    parser.add_argument("--ai-version")
+    parser.add_argument(
+        "--ai-runtime-boundary",
+        choices=["local_offline", "external_service"],
+    )
     args = parser.parse_args()
     default_template, default_profile = contest_defaults(args.contest, args.year)
     selected_template = default_template if args.template == "auto" else args.template
     selected_profile = args.submission_profile or default_profile
     is_cumcm_2026 = selected_profile == "cumcm-2026"
     cumcm_2026 = load_contest_profile("cumcm-2026") if is_cumcm_2026 else None
+    if is_cumcm_2026 and args.mode == "live":
+        missing_ai = [
+            flag
+            for flag, value in (
+                ("--ai-tool", args.ai_tool),
+                ("--ai-version", args.ai_version),
+                ("--ai-runtime-boundary", args.ai_runtime_boundary),
+            )
+            if not value
+        ]
+        if missing_ai:
+            parser.error(
+                "live CUMCM 2026 use of this AI skill requires "
+                + ", ".join(missing_ai)
+            )
     root = args.project_dir
     for name in (
         "data/raw",
@@ -65,6 +86,26 @@ def main() -> int:
         write_if_missing(root / "paper" / "references.bib", "")
     else:
         scaffold_latex_paper(root, template=selected_template)
+    if is_cumcm_2026 and args.mode == "live":
+        main_tex = root / "paper" / "main.tex"
+        if main_tex.is_file():
+            source = main_tex.read_text(encoding="utf-8-sig")
+            if r"\cumcmaiusedfalse" in source:
+                main_tex.write_text(
+                    source.replace(r"\cumcmaiusedfalse", r"\cumcmaiusedtrue", 1),
+                    encoding="utf-8",
+                )
+    ai_mode = "used" if is_cumcm_2026 and args.mode == "live" else (
+        None if is_cumcm_2026 else "not_applicable"
+    )
+    if is_cumcm_2026 and args.mode == "live":
+        contest_material_ai_access = (
+            "local_only"
+            if args.ai_runtime_boundary == "local_offline"
+            else "forbidden"
+        )
+    else:
+        contest_material_ai_access = "not_applicable"
     manifest = {
         "project_schema_version": 2,
         "contest": args.contest,
@@ -76,8 +117,25 @@ def main() -> int:
         "rules_snapshot_file": "reports/contest_rules_snapshot.md",
         "rules_lock_file": "rules.lock.json",
         "submission_profile": selected_profile,
-        "ai_mode": None if is_cumcm_2026 else "not_applicable",
+        "ai_mode": ai_mode,
+        "ai_tool": args.ai_tool if ai_mode == "used" else None,
+        "ai_version": args.ai_version if ai_mode == "used" else None,
+        "ai_runtime_boundary": args.ai_runtime_boundary if ai_mode == "used" else None,
+        "contest_material_ai_access": contest_material_ai_access,
         "contest_duration_hours": cumcm_2026["contest_duration_hours"] if cumcm_2026 else None,
+        "submission_schedule": (
+            {
+                key: cumcm_2026[key]
+                for key in (
+                    "hash_deadline",
+                    "upload_open",
+                    "upload_deadline",
+                    "timezone",
+                )
+            }
+            if cumcm_2026
+            else None
+        ),
         "quality_profile": "standard",
         "workflow": {
             "phase": "setup",
@@ -85,7 +143,13 @@ def main() -> int:
             "generated_dir": "paper/generated",
         },
         "latex_template": selected_template,
-        "live_mode_policy": "static-authoritative-sources-only" if args.mode == "live" else "not-applicable",
+        "live_mode_policy": (
+            "static-authoritative-sources-only; external runtime must not receive current contest material"
+            if args.mode == "live" and args.ai_runtime_boundary == "external_service"
+            else "static-authoritative-sources-only"
+            if args.mode == "live"
+            else "not-applicable"
+        ),
         "online_action_policy": "local-work-only; search allowed; ask user when privacy is ambiguous",
         "submission_state": "draft",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -160,7 +224,8 @@ def main() -> int:
         "verified_at,scholar_query,scholar_checked_at,scholar_status,"
         "metadata_snapshot,metadata_sha256,retraction_status,retraction_checked_at,"
         "claim_supported,source_locator,supporting_passage,"
-        "supporting_passage_sha256,status\n",
+        "supporting_passage_sha256,evidence_role,claim_id,paper_location,"
+        "relevance_justification,removal_impact,status\n",
     )
     write_if_missing(
         root / "reports/figure_manifest.csv",
@@ -187,13 +252,23 @@ def main() -> int:
     write_if_missing(root / "reports/result_reconciliation.csv", "subproblem,comparison_id,primary_route,comparison_route,primary_value,comparison_value,tolerance,disagreement_material,investigation_step,cause,resolution,claim_action,evidence_file,status\n")
     write_if_missing(root / "reports/joint_inference_design.json", '{\n  "applicable": false,\n  "reason": "",\n  "subproblems": []\n}\n')
     write_if_missing(root / "reports/conclusion_map.csv", "subproblem,question,answer_or_recommendation,decisive_value_key,method_rationale_location,validation_location,limitation_location,figure_or_table,paper_location,status\n")
+    write_if_missing(
+        root / "reports/numeric_exemptions.csv",
+        "source_file,line,literal,occurrence,category,reason,status\n",
+    )
     write_if_missing(root / "reports/innovation_ledger.csv", "subproblem,baseline,problem_specific_change,mechanism_target,added_assumption,incremental_cost,comparison_metric,baseline_value,innovation_value,metric_direction,predeclared_minimum_improvement,relative_improvement,validation_artifact,claim_boundary,status\n")
     write_if_missing(root / "reports/model_challenge.json", '{\n  "status": "pending",\n  "subproblems": [],\n  "errors": []\n}\n')
     write_if_missing(root / "reports/model_simplification_log.csv", "subproblem,primary_route,failure_diagnostic,decision_state,retained_core_factors,removed_noncritical_factors,simplified_route,user_authorization,original_model_treatment,result_file,paper_location,status\n")
     write_if_missing(root / "reports/visual_storyboard.csv", "artifact_id,artifact_type,subproblem,question,claim_id,source_result,selection_rationale,paper_location,status\n")
     write_if_missing(root / "reports/decision_stability.csv", "decision_id,subproblem,baseline_recommendation,perturbation_id,perturbation,perturbed_recommendation,recommendation_changed,materiality,conditional_conclusion,limitation_location,result_file,paper_location,status\n")
     write_if_missing(root / "reports/figure_numeric_contract.csv", "figure,label,source_data,data_sha256,axis_x,axis_y,axis_scale,x_limits,y_limits,value_transform,decisive_value_keys,paper_location,status\n")
-    write_if_missing(root / "reports/model_budget.csv", "subproblem,route_name,route_type,selected,estimated_hours,risk_level,validation_hours,fallback_route,expected_value,deadline_hours,status\n")
+    write_if_missing(
+        root / "reports/model_budget.csv",
+        "subproblem,route_name,route_type,selected,estimated_hours,risk_level,"
+        "validation_hours,fallback_route,expected_value,deadline_hours,"
+        "comparison_metric,metric_direction,baseline_value,candidate_value,"
+        "minimum_advantage,validation_artifact,paper_treatment,status\n",
+    )
     write_if_missing(
         root / "reports/problem_audition.csv",
         "problem_id,attachment_status,attachment_evidence,attachment_parse_command,"
@@ -282,8 +357,10 @@ def main() -> int:
             "figure-lock,54,stress tests figures and tables frozen,unassigned,numbers traceable,pending\n"
             "draft-lock,64,complete paper and support draft,unassigned,no missing section,pending\n"
             "review-lock,70,independent review and strict checks,unassigned,vetoes resolved,pending\n"
-            "submission-rehearsal,72,hash AI branch and package rehearsal,unassigned,local checks pass,pending\n"
-            "receipt-lock,74,manual official submission and receipt evidence,unassigned,submission verified,pending\n"
+            "submission-freeze,73,anonymous paper support package and AI branch frozen,unassigned,local checks pass,pending\n"
+            "hash-lock,74,final MD5 generated and submitted before the contest deadline,unassigned,no artifact changes after hash,pending\n"
+            "upload-open,74.5,official upload window opens,unassigned,upload not attempted early,pending\n"
+            "receipt-lock,92,manual official upload and receipt evidence complete,unassigned,submission verified,pending\n"
         )
     else:
         milestones = (

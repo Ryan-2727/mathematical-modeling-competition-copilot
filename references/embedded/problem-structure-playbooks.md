@@ -3,6 +3,10 @@
 Choose a playbook from the requested decision, explanation, or prediction. Each
 playbook is a reasoning skeleton, not a mandatory model list.
 
+For recurring CUMCM B/C structures, use the targeted routing detail in
+`cumcm-bc-model-library.md`. Keep this file as the generic layer; do not copy the
+card catalog here.
+
 ## Evaluation and ranking
 
 Define the decision maker and alternatives; justify indicator direction and

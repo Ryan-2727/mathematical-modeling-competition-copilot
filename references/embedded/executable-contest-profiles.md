@@ -27,7 +27,7 @@ parameters before using it after that date.
 
 ## CUMCM 2026
 
-Snapshot verified 2026-08-12:
+Snapshot verified 2026-08-20:
 
 Executable values come from `assets/contest-profiles/cumcm-2026.json` through
 `scripts/contest_profile.py`; this section explains the profile and is checked
@@ -42,6 +42,10 @@ for parity rather than acting as another executable source.
 The `cumcm-2026` profile preserves PDF/Word paper and ZIP/RAR support-package
 handling, both 20 MB limits, and the declared 30-page main-text count. For a
 text-extractable PDF or DOCX it also checks:
+
+- competition window 2026-09-10 18:00 through 2026-09-13 20:00;
+- final MD5 deadline 2026-09-13 20:00;
+- upload window 2026-09-13 20:30 through 2026-09-14 14:00;
 
 - the first PDF page has an abstract marker;
 - no table-of-contents heading is present;

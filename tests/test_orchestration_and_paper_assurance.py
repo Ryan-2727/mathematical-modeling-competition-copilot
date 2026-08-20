@@ -173,9 +173,15 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
         )
         (root / "reports" / "model_budget.csv").write_text(
             "subproblem,route_name,route_type,selected,estimated_hours,risk_level,"
-            "validation_hours,fallback_route,expected_value,deadline_hours,status\n"
-            "Q1,baseline,baseline,true,2,low,1,fallback,complete answer,10,verified\n"
-            "Q1,fallback,fallback,false,1,low,1,baseline,complete answer,10,verified\n",
+            "validation_hours,fallback_route,expected_value,deadline_hours,"
+            "comparison_metric,metric_direction,baseline_value,candidate_value,"
+            "minimum_advantage,validation_artifact,paper_treatment,status\n"
+            "Q1,baseline,baseline,true,2,low,1,fallback,complete answer,10,"
+            "not_applicable,not_applicable,not_applicable,not_applicable,"
+            "not_applicable,not_applicable,primary,verified\n"
+            "Q1,fallback,fallback,false,1,low,1,baseline,complete answer,10,"
+            "not_applicable,not_applicable,not_applicable,not_applicable,"
+            "not_applicable,not_applicable,fallback,verified\n",
             encoding="utf-8",
         )
 

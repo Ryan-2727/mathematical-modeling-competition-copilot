@@ -46,6 +46,7 @@ FILES = {
         "reports/paper_depth_plan.csv",
         "reports/bibliography.csv",
         "reports/figure_manifest.csv",
+        "reports/numeric_exemptions.csv",
     ),
     "delivery": (
         "delivery/manifest.csv",
@@ -67,6 +68,7 @@ REPORTS = {
         "reports/bibliography_verification.json",
         "reports/latex_compatibility.json",
         "reports/paper_depth.json",
+        "reports/summary_numeric_traceability.json",
     ),
     "delivery": (
         "reports/delivery_profiles.json",
@@ -143,6 +145,12 @@ REPORT_BINDINGS = {
         ("abstract_sha256", "paper/sections/abstract.tex", "file"),
         ("conclusion_sha256", "paper/sections/conclusion.tex", "file"),
         ("conclusion_map_sha256", "reports/conclusion_map.csv", "file"),
+    ),
+    "reports/summary_numeric_traceability.json": (
+        ("abstract_sha256", "paper/sections/abstract.tex", "file"),
+        ("conclusion_sha256", "paper/sections/conclusion.tex", "file"),
+        ("registry_sha256", "results/verified_values.csv", "file"),
+        ("exemptions_sha256", "reports/numeric_exemptions.csv", "file"),
     ),
     "reports/visual_design_system.json": (
         ("figure_manifest_sha256", "reports/figure_manifest.csv", "file"),

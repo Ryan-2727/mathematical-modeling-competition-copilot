@@ -17,7 +17,14 @@ consume writing or submission time.
 | 54-60 | Complete paper assembled; abstract contains quantitative answers |
 | 60-66 | Baseline verification and optional award-review question |
 | 66-70 | Only accepted high-impact revisions; rerun affected evidence |
-| 70-72 | Anonymity, AI disclosure, hashes, archive, upload, and receipt |
+| 70-72 | Final content freeze, anonymity, AI disclosure, archive preflight, and official-timeline check |
+
+The table is an illustrative control rhythm, not a substitute for the locked
+contest profile. For CUMCM 2026, use the exact profile schedule: freeze the
+paper during H70--H73, finish the final-content lock before H74, record the
+final MD5 no later than H74 (2026-09-13 20:00), upload only after H74.5
+(2026-09-13 20:30), and preserve the receipt before H92
+(2026-09-14 14:00). Do not change the paper after the final MD5 is recorded.
 
 ## Stop-loss rules
 

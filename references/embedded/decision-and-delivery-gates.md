@@ -41,7 +41,10 @@ subproblem, choose exactly one route, record time and validation costs, a risk
 level, expected value for non-baseline work, and a distinct fallback.  Give all
 rows one shared remaining-hours deadline.  Selected estimates may not exceed it.
 When the budget is tight, preserve a result-bearing baseline and clean validation
-before trying a more complex route.
+before trying a more complex route. For each candidate, predeclare the comparison
+metric, direction, positive absolute minimum advantage, baseline value, candidate
+value, and validation artifact. A candidate below threshold cannot be selected;
+mark it `rejected` or `model_optimization` and keep the simpler route primary.
 
 Run:
 
