@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "profile_version": "2026.08.23",
+  "reviewed_at": "2026-08-23",
+  "rating_scale": {
+    "minimum": 0,
+    "maximum": 4,
+    "meaning": "0 failed, 1 weak, 2 partial, 3 supported, 4 strong"
+  },
+  "scope": "Bundled AI/Codex prior by task family; it is not a team-skill score and same-day executable evidence has greater weight.",
+  "capabilities": [
+    {
+      "id": "data_parsing",
+      "rating": 3,
+      "limitations": "Unusual binary formats, damaged files, and undocumented field semantics still require local inspection.",
+      "evidence_type": "bundled workflow and parser capability review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "statistics",
+      "rating": 4,
+      "limitations": "Small-sample identification and unverifiable assumptions must be exposed rather than hidden by fit metrics.",
+      "evidence_type": "bundled statistical workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "forecasting",
+      "rating": 3,
+      "limitations": "Regime shifts and short or nonstationary series can dominate model choice.",
+      "evidence_type": "bundled forecasting workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "optimization",
+      "rating": 3,
+      "limitations": "Large mixed-integer or nonconvex instances may require solver-specific tuning or a documented fallback.",
+      "evidence_type": "bundled optimization kernels and workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "simulation",
+      "rating": 3,
+      "limitations": "Simulation credibility depends on calibrated inputs, convergence checks, and interpretable scenario design.",
+      "evidence_type": "bundled simulation workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "differential_equations",
+      "rating": 2,
+      "limitations": "Stiff, high-dimensional, or poorly identified physical systems need specialist numerical checks.",
+      "evidence_type": "bundled inverse-modeling workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "graph_network",
+      "rating": 3,
+      "limitations": "Large combinatorial instances can exceed contest-time compute budgets without decomposition.",
+      "evidence_type": "bundled path-planning kernel and workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "uncertainty",
+      "rating": 4,
+      "limitations": "Intervals remain conditional on declared uncertainty sources and cannot repair absent ground truth.",
+      "evidence_type": "bundled robustness and uncertainty workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "visualization",
+      "rating": 4,
+      "limitations": "Visual polish does not substitute for a data-to-claim contract or readable final-page rendering.",
+      "evidence_type": "bundled figure narrative and rendering workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "reproducible_code",
+      "rating": 4,
+      "limitations": "External proprietary solvers and unavailable data can still prevent one-command reproduction.",
+      "evidence_type": "bundled execution and evidence-chain workflow review",
+      "review_date": "2026-08-23"
+    },
+    {
+      "id": "latex_paper",
+      "rating": 4,
+      "limitations": "Final contest compliance, typography, and factual correctness still require local compilation and human review.",
+      "evidence_type": "bundled LaTeX pipeline and paper-quality workflow review",
+      "review_date": "2026-08-23"
+    }
+  ]
+}

@@ -63,8 +63,10 @@ for integration.
 Timing is compared from measured run evidence rather than an AI assertion. A
 candidate that receives more than 20% extra micro-baseline time without a typed
 early failure or documented exception makes the comparison `LIMITED`. The top
-two must receive equal declared deep-trial budgets. A recommendation may still
-be rendered under `LIMITED`, but it cannot be labeled high confidence.
+two must receive equal declared deep-trial budgets. Their actual deep-trial time
+must each reach 80% of budget and stay within 20% of one another unless a
+documented timing exception applies. A recommendation may still be rendered
+under `LIMITED`, but it cannot be labeled high confidence.
 
 ## Evaluation model
 
@@ -134,8 +136,9 @@ mutually exclusive labels:
 - `no_award`
 
 Store verified public statistics in `reports/public_award_prior.json` with
-source URL, retrieval date, competition scope, applicable years, category
-counts, and reviewer status. Convert the public proportions to a weak Dirichlet
+source URL, a retrieval record no older than 366 days, competition scope,
+applicable years, population and denominator definitions, mutually exclusive
+highest-award labels, category counts, and reviewer status. Convert the public proportions to a weak Dirichlet
 prior with configurable effective strength no greater than 10; the default is
 8. Reject a prior that lacks a saved source, uses incompatible definitions, or
 falls outside its declared applicability.
@@ -173,8 +176,9 @@ generic national rates presented as personalized estimates.
 
 Initialize these project-local artifacts:
 
-- `reports/problem_screening.csv`: one A/B/C row with timing, task families,
-  attachment state, semantic risk, expected deliverables, and evidence locators.
+- `reports/problem_screening.csv`: one A/B/C row with timing, preliminary score,
+  deep-trial/elimination decision and reason, task families, attachment state,
+  semantic risk, expected deliverables, and evidence locators.
 - `reports/ai_capability_snapshot.json`: current prior/runtime/Skill binding and
   observed capability evidence.
 - `reports/problem_selection_calibration.csv`: empty private calibration ledger.
@@ -200,8 +204,9 @@ The JSON recommendation contains:
 The Chinese Markdown report presents, for every problem, its suitable model
 families, evidence-backed advantages, disadvantages, fatal risks, fallback
 route, ranking, and probability status. It must show at least three supported
-strength/weakness/risk observations in total per problem. If evidence cannot
-support three, state the shortfall instead of inventing content.
+strength/weakness/risk observations in total per problem; `unknown` does not
+count toward this minimum. If evidence cannot support three, state the shortfall
+instead of inventing content.
 
 ## Confirmation and lock
 
@@ -258,6 +263,8 @@ portable relative locators and hashes; redact machine-specific command paths.
   selection confirmation.
 - Standard and strict profiles bind recommendation outputs to all input hashes.
 - The H6 lock remains in `verify_problem_audition.py` and requires confirmation.
+- Under schema 3, legacy `team_fit` weight scenarios remain diagnostic and cannot
+  overrule the AI-only recommendation or create an exception requirement.
 - Keep `SKILL.md` changes short and route detailed instructions to the existing
   CUMCM readiness reference.
 - Update the workflow map, Skill contract, and English/Chinese README sections.

@@ -9,6 +9,7 @@ source reading, numerical reruns, or page-by-page human review.
 - [Project schema](#project-schema)
 - [Profiles](#profiles)
 - [Unified commands](#unified-commands)
+- [CUMCM selection graph](#cumcm-selection-graph)
 - [Rendered-figure contract](#rendered-figure-contract)
 - [Notation and dimensions](#notation-and-dimensions)
 - [Generated paper artifacts](#generated-paper-artifacts)
@@ -33,6 +34,10 @@ python scripts/contestctl.py migrate --project-dir <project> --apply
 Migration adds only missing workflow fields, preserves unknown fields, and never
 deletes evidence.  A future unsupported schema blocks execution rather than being
 downgraded.
+
+Schema 3 adds the local A/B/C screening, criterion-evidence, capability,
+calibration, recommendation, and confirmation contracts. Migrating does not
+fabricate ratings or select a problem.
 
 ## Profiles
 
@@ -66,6 +71,16 @@ python scripts/contestctl.py run \
   --profile standard
 ```
 
+For CUMCM, run the staged selection graph after the A/B/C trial evidence is
+complete and before asking the user to confirm a problem:
+
+```bash
+python scripts/contestctl.py run \
+  --project-dir <project> \
+  --phase selection \
+  --profile standard
+```
+
 Run the complete graph needed by the selected freeze profile:
 
 ```bash
@@ -84,9 +99,9 @@ python scripts/contestctl.py summary \
 ```
 
 `--dry-run` resolves the graph without executing nodes.  `--force` bypasses the
-content-addressed cache.  A cached node is reused only when its declared inputs,
-dependency outputs, command registry version, profile, and output hashes are
-unchanged and its previous result was `PASS`.
+content-addressed cache.  A cached node is reused only when its declared project
+and Skill inputs, script source, dependency outputs, command registry version,
+profile, and output hashes are unchanged and its previous result was `PASS`.
 
 Status meanings:
 
@@ -101,6 +116,19 @@ The standard and strict graphs also run the advisory Chinese-prose audit. Their
 freeze graph binds any declared bundled-kernel use to synthetic regression and
 requires measured primary/fallback compute-budget evidence. The prose node may
 pass with review warnings; missing or stale compute evidence is blocking.
+
+## CUMCM selection graph
+
+The standard and strict `selection` phase runs three deterministic local nodes:
+
+1. bundled synthetic-kernel regression;
+2. same-day AI/runtime capability snapshot; and
+3. A/B/C evidence ranking with optional calibrated intervals and Chinese report.
+
+The graph deliberately stops before confirmation. Show both recommendation
+artifacts to the user, then use `record_problem_selection_confirmation.py` and
+`verify_problem_audition.py`. No node has a network client and no node locks a
+problem automatically.
 
 ## Rendered-figure contract
 

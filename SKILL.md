@@ -78,13 +78,13 @@ Required actions:
   budget, attachment inventory, and submission constraints.
 - Use the bounded brainstorming gate before committing to a route. Create
   `plan.md`, `todo.md`, and `reports/milestones.csv`.
-- For CUMCM 2026, run comparable executable baselines for candidate problems,
-  complete `reports/problem_audition.csv`, declare normalized base and
-  sensitivity weights in `reports/problem_audition_weights.json`, and lock the
-  choice by H6 with `scripts/verify_problem_audition.py`. Require a documented
-  team-authorized override when the choice is not the recomputed base winner or
-  misses the declared scenario win-rate threshold. Use the exact 74-hour
-  schedule rather than adapting a generic 72-hour board.
+- For CUMCM 2026, follow the staged A/B/C audition in the readiness reference;
+  fill `problem_screening.csv`, `problem_selection_evidence.csv`, and
+  `problem_audition.csv`, then run `contestctl.py run --phase selection`.
+  Show both recommendation reports to the user, record their declared choice
+  with `record_problem_selection_confirmation.py`, and only then run
+  `verify_problem_audition.py`. Never invent award percentages; use the exact
+  74-hour schedule and require an evidence-backed exception for another choice.
 
 ### 2. Problem analysis and model design
 

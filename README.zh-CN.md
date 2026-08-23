@@ -114,6 +114,7 @@ python scripts/init_contest.py --project-dir <project> --contest MCM/ICM --year 
 python scripts/contestctl.py migrate --project-dir <project>
 python scripts/contestctl.py migrate --project-dir <project> --apply
 python scripts/contestctl.py doctor --project-dir <project> --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase selection --profile standard
 python scripts/contestctl.py run --project-dir <project> --phase paper --profile standard
 python scripts/contestctl.py run --project-dir <project> --phase freeze --profile strict
 python scripts/contestctl.py summary --project-dir <project>
@@ -136,8 +137,12 @@ python scripts/contestctl.py summary --project-dir <project>
 - `lock_contest_rules.py` 将保存的官方规则快照与 URL、哈希、结构化字段
   和有效期绑定，并执行 CUMCM 2026 的规则新鲜度检查；`contestctl.py check`
   累计协调各阶段门，但不替代专项检查器。
-- `verify_problem_audition.py` 按声明的权重场景复算候选题得分并核验 H6
-  选题锁；`score_training_readiness.py` 用中位数、P90、最坏值、趋势、
+- `contestctl.py run --phase selection` 通过分阶段、等预算的可执行试跑比较
+  CUMCM A/B/C 三题，以当日证据更新内置 AI 先验，并生成哈希绑定的 JSON
+  与中文优劣势报告；只有本地校准证据充分时才输出获奖概率区间。
+  `record_problem_selection_confirmation.py` 记录用户声明的选择，
+  `verify_problem_audition.py` 核验确认后的 H6 选题锁；全程不评估学生团队、
+  不自动选题。`score_training_readiness.py` 用中位数、P90、最坏值、趋势、
   缺陷复发、角色/队员瓶颈和最近两次完整通过评估 8/24/48/74 小时训练；
   `verify_online_actions.py` 审计正式比赛材料仅留本地的联网行为声明。
 - `verify_submission.py --profile cumcm-2026 --ai-mode none|used` 分别核验

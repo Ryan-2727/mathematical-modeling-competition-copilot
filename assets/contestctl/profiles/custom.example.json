@@ -2,6 +2,9 @@
   "name": "custom",
   "description": "Example explicit allow-list for a custom workflow.",
   "phases": {
+    "selection": [
+      "recommend-problem-selection"
+    ],
     "paper": [
       "generate-paper-artifacts",
       "verify-notation",

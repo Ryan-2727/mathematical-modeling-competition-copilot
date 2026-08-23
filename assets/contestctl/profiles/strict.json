@@ -2,6 +2,9 @@
   "name": "strict",
   "description": "Submission-freeze workflow requiring rendering and LaTeX evidence.",
   "phases": {
+    "selection": [
+      "recommend-problem-selection"
+    ],
     "paper": [
       "generate-paper-artifacts",
       "verify-notation",

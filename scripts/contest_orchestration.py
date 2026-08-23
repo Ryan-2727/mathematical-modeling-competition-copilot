@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 
 
-CURRENT_PROJECT_SCHEMA_VERSION = 2
-REGISTRY_VERSION = 3
+CURRENT_PROJECT_SCHEMA_VERSION = 3
+REGISTRY_VERSION = 4
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
 PROFILE_DIR = SKILL_ROOT / "assets" / "contestctl" / "profiles"
@@ -35,6 +35,61 @@ class Node:
 NODE_REGISTRY = {
     node.node_id: node
     for node in (
+        Node(
+            "run-problem-selection-kernel-regression",
+            "selection",
+            "run_model_kernel_regression.py",
+            (
+                "--backend",
+                "stdlib",
+                "--out",
+                "{project}/reports/kernel-regression-stdlib.json",
+            ),
+            (),
+            (
+                "skill://assets/model-library/fixtures/*.json",
+                "skill://scripts/model_kernels/*.py",
+                "skill://scripts/run_model_kernel_regression.py",
+            ),
+            ("reports/kernel-regression-stdlib.json",),
+        ),
+        Node(
+            "create-ai-capability-snapshot",
+            "selection",
+            "create_ai_capability_snapshot.py",
+            ("--project-dir", "{project}"),
+            ("run-problem-selection-kernel-regression",),
+            (
+                "reports/kernel-regression-stdlib.json",
+                "skill://SKILL.md",
+                "skill://assets/problem-selection/ai-capability-profile.json",
+                "skill://assets/model-library/cumcm-bc-model-cards.json",
+                "skill://scripts/problem_selection_core.py",
+            ),
+            ("reports/ai_capability_snapshot.json",),
+        ),
+        Node(
+            "recommend-problem-selection",
+            "selection",
+            "recommend_problem_selection.py",
+            ("--project-dir", "{project}"),
+            ("create-ai-capability-snapshot",),
+            (
+                "reports/problem_screening.csv",
+                "reports/problem_audition.csv",
+                "reports/problem_selection_evidence.csv",
+                "reports/problem_audition_weights.json",
+                "reports/ai_capability_snapshot.json",
+                "reports/problem_selection_calibration.csv",
+                "reports/public_award_prior.json",
+                "skill://assets/problem-selection/ai-capability-profile.json",
+                "skill://scripts/problem_selection_core.py",
+            ),
+            (
+                "reports/problem_selection_recommendation.json",
+                "reports/problem_selection_recommendation.md",
+            ),
+        ),
         Node(
             "generate-paper-artifacts",
             "paper",
@@ -429,6 +484,16 @@ def migration_plan(root: Path) -> dict[str, Any]:
         "reports/compute_budget.csv",
         "reports/compute_runs.jsonl",
         "reports/prose_style_exemptions.csv",
+        "reports/problem_audition.csv",
+        "reports/problem_audition_weights.json",
+        "reports/problem_selection.json",
+        "reports/problem_screening.csv",
+        "reports/problem_selection_evidence.csv",
+        "reports/ai_capability_snapshot.json",
+        "reports/problem_selection_calibration.csv",
+        "reports/public_award_prior.json",
+        "reports/problem_selection_recommendation.json",
+        "reports/problem_selection_recommendation.md",
     )
     if raw_version < CURRENT_PROJECT_SCHEMA_VERSION:
         candidate["project_schema_version"] = CURRENT_PROJECT_SCHEMA_VERSION
@@ -484,6 +549,72 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
             "reports/compute_budget.csv": "model_id,selected,primary_run_ids,fallback_run_id,required_scale_count,single_scale_reason,remaining_time_seconds,solver_gap_required,status\n",
             "reports/compute_runs.jsonl": "",
             "reports/prose_style_exemptions.csv": "finding_sha256,rule,source_file,line,reason,reviewer,status\n",
+            "reports/problem_audition.csv": (
+                "problem_id,attachment_status,attachment_evidence,attachment_parse_command,"
+                "baseline_command,baseline_result,baseline_elapsed_hours,paper_figure,"
+                "subproblem_closure_evidence,fallback_route,fallback_evidence,"
+                "subproblem_closure_risk,result_verifiability,upgrade_headroom,team_fit,"
+                "writing_visual_potential,fatal_risk,score,status\n"
+            ),
+            "reports/problem_audition_weights.json": (
+                '{\n  "schema_version": 1,\n  "minimum_selected_win_rate": 0.75,\n'
+                '  "recorded_score_tolerance": 1.0,\n  "base_weights": {\n'
+                '    "subproblem_closure_risk": 0.30, "result_verifiability": 0.25,\n'
+                '    "upgrade_headroom": 0.15, "team_fit": 0.20,\n'
+                '    "writing_visual_potential": 0.10\n  },\n  "sensitivity_scenarios": [\n'
+                '    {"name": "closure_first", "weights": {"subproblem_closure_risk": 0.45, "result_verifiability": 0.20, "upgrade_headroom": 0.10, "team_fit": 0.15, "writing_visual_potential": 0.10}},\n'
+                '    {"name": "evidence_first", "weights": {"subproblem_closure_risk": 0.20, "result_verifiability": 0.40, "upgrade_headroom": 0.10, "team_fit": 0.20, "writing_visual_potential": 0.10}}\n'
+                '  ]\n}\n'
+            ),
+            "reports/problem_selection.json": (
+                '{\n  "schema_version": 2,\n  "selected_problem": "",\n'
+                '  "confirmed_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n'
+                '  "recommendation_file": "reports/problem_selection_recommendation.json",\n'
+                '  "recommendation_sha256": "",\n  "recommendation_generated_at_utc": null,\n'
+                '  "recommendation_input_hashes": {},\n  "confirmation": null,\n'
+                '  "selection_override": null,\n  "override": null\n}\n'
+            ),
+            "reports/problem_screening.csv": (
+                "problem_id,screening_minutes,micro_baseline_minutes,preliminary_score,"
+                "deep_trial_selected,elimination_reason,deep_trial_budget_minutes,"
+                "deep_trial_elapsed_minutes,task_families,"
+                "required_model_families,attachment_state,semantic_risk,expected_deliverables,"
+                "evidence_locator,evidence_sha256,early_failure_type,timing_exception,status\n"
+                "A,15,30,,,,0,0,,,,,,,,,,pending\n"
+                "B,15,30,,,,0,0,,,,,,,,,,pending\n"
+                "C,15,30,,,,0,0,,,,,,,,,,pending\n"
+            ),
+            "reports/problem_selection_evidence.csv": (
+                "problem_id,criterion,rating,evidence_locator,evidence_sha256,"
+                "observation_type,observation,status\n"
+            ),
+            "reports/ai_capability_snapshot.json": (
+                '{\n  "schema_version": 1,\n  "status": "pending",\n'
+                '  "valid_for_calibration": false,\n  "errors": [],\n  "warnings": []\n}\n'
+            ),
+            "reports/problem_selection_calibration.csv": (
+                "case_id,year,task_family_tags,ai_profile_version,closure_result_rating,"
+                "result_verifiability_rating,ai_capability_fit_rating,data_semantics_rating,"
+                "compute_fallback_rating,paper_figure_rating,innovation_rating,composite_score,"
+                "selected_problem_type,award_label,evidence_sha256,status\n"
+            ),
+            "reports/public_award_prior.json": (
+                '{\n  "schema_version": 1,\n  "status": "pending",\n  "source_url": "",\n'
+                '  "source_snapshot": "",\n  "source_sha256": "",\n  "retrieved_at": null,\n'
+                '  "competition_scope": "CUMCM",\n  "applicable_years": [],\n'
+                '  "applies_to_problem_types": ["A", "B", "C"],\n'
+                '  "population_definition": "",\n  "denominator_definition": "",\n'
+                '  "outcome_definition": "mutually_exclusive_highest_award",\n'
+                '  "category_counts": {"national_first": 0, "national_second": 0, '
+                '"provincial_award": 0, "no_award": 0},\n  "effective_strength": 8,\n'
+                '  "reviewer_status": "pending"\n}\n'
+            ),
+            "reports/problem_selection_recommendation.json": (
+                '{\n  "schema_version": 1,\n  "status": "pending",\n  "errors": [],\n  "warnings": []\n}\n'
+            ),
+            "reports/problem_selection_recommendation.md": (
+                "# CUMCM A/B/C 选题推荐\n\n待完成三题筛选、可执行试跑与本地证据绑定后生成。\n"
+            ),
         }
         created: list[str] = []
         for relative, content in templates.items():
@@ -504,7 +635,7 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
 def validate_registry() -> None:
     outputs: dict[str, str] = {}
     for node_id, node in NODE_REGISTRY.items():
-        if node.phase not in {"paper", "freeze"}:
+        if node.phase not in {"selection", "paper", "freeze"}:
             raise ValueError(f"workflow node {node_id!r} has an invalid phase")
         if not (SCRIPT_DIR / node.script).is_file():
             raise ValueError(f"workflow node {node_id!r} script is missing")
@@ -554,7 +685,7 @@ def load_profile(name: str, custom_path: Path | None = None) -> dict[str, Any]:
     if not isinstance(phases, dict):
         raise ValueError("profile phases must be an object")
     for phase, nodes in phases.items():
-        if phase not in {"paper", "freeze"} or not isinstance(nodes, list):
+        if phase not in {"selection", "paper", "freeze"} or not isinstance(nodes, list):
             raise ValueError(f"invalid profile phase {phase!r}")
         for node_id in nodes:
             if node_id not in NODE_REGISTRY:
@@ -578,7 +709,14 @@ def resolve_nodes(profile: dict[str, Any], phase: str) -> list[str]:
             include(dependency)
         selected.add(node_id)
 
-    phases = ("paper",) if phase == "paper" else ("paper", "freeze")
+    if phase == "selection":
+        phases = ("selection",)
+    elif phase == "paper":
+        phases = ("paper",)
+    elif phase == "freeze":
+        phases = ("paper", "freeze")
+    else:
+        raise ValueError(f"invalid workflow phase {phase!r}")
     for current in phases:
         for node_id in profile["phases"].get(current, []):
             include(str(node_id))
@@ -607,9 +745,14 @@ def resolve_nodes(profile: dict[str, Any], phase: str) -> list[str]:
 def _expanded_inputs(root: Path, patterns: tuple[str, ...]) -> list[Path]:
     paths: set[Path] = set()
     for pattern in patterns:
-        matches = list(root.glob(pattern))
+        if pattern.startswith("skill://"):
+            matches = list(SKILL_ROOT.glob(pattern[len("skill://") :]))
+            missing = SKILL_ROOT / pattern[len("skill://") :]
+        else:
+            matches = list(root.glob(pattern))
+            missing = root / pattern
         if not matches:
-            paths.add(root / pattern)
+            paths.add(missing)
         else:
             paths.update(item for item in matches if item.is_file())
     return sorted(paths, key=lambda item: item.as_posix())
@@ -634,6 +777,7 @@ def node_signature(
         "node": node.node_id,
         "profile": profile_name,
         "argv": node.argv,
+        "script_sha256": _digest_file(SCRIPT_DIR / node.script),
         "dependencies": [
             {
                 "node": item["node"],

@@ -191,7 +191,7 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             self.init_project(root)
             manifest_path = root / "contest_manifest.json"
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual(manifest["project_schema_version"], 2)
+            self.assertEqual(manifest["project_schema_version"], 3)
             self.assertEqual(manifest["quality_profile"], "standard")
             for name in (
                 "rendered_figure_manifest.csv",
@@ -200,6 +200,19 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             ):
                 self.assertTrue((root / "reports" / name).is_file())
             (root / "reports" / "parameter_registry.csv").unlink()
+            for name in (
+                "problem_audition.csv",
+                "problem_audition_weights.json",
+                "problem_selection.json",
+                "problem_screening.csv",
+                "problem_selection_evidence.csv",
+                "ai_capability_snapshot.json",
+                "problem_selection_calibration.csv",
+                "public_award_prior.json",
+                "problem_selection_recommendation.json",
+                "problem_selection_recommendation.md",
+            ):
+                (root / "reports" / name).unlink()
             legacy = {"contest": "CUMCM", "unknown_evidence": {"keep": True}}
             manifest_path.write_text(json.dumps(legacy), encoding="utf-8")
             self.run_script(
@@ -228,12 +241,19 @@ class OrchestrationAndPaperAssuranceTests(unittest.TestCase):
             )
             migrated = json.loads(manifest_path.read_text(encoding="utf-8"))
             self.assertTrue(migrated["unknown_evidence"]["keep"])
-            self.assertEqual(migrated["project_schema_version"], 2)
+            self.assertEqual(migrated["project_schema_version"], 3)
             for name in (
                 "parameter_registry.csv",
                 "independent_routes.csv",
                 "result_reconciliation.csv",
                 "joint_inference_design.json",
+                "problem_audition.csv",
+                "problem_audition_weights.json",
+                "problem_selection.json",
+                "problem_screening.csv",
+                "problem_selection_evidence.csv",
+                "problem_selection_calibration.csv",
+                "problem_selection_recommendation.json",
             ):
                 self.assertTrue((root / "reports" / name).is_file())
             self.run_script(

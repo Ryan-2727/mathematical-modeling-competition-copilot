@@ -12,8 +12,9 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `contest-operations-72h.md`: milestone schedule, role handoffs, and stop-loss rules for a 72-hour contest.
 - `contest-modes-and-compliance.md`: live-contest boundary, current rules snapshot, AI-use evidence, and submission-state machine.
 - `cumcm-2026-rules.md`: executable CUMCM 2026 format, support-package, AI-report, and submission-profile checks.
-- `cumcm-2026-readiness.md`: local-only online boundary, H6 problem audition,
-  exact 74-hour operations, and timed rehearsal readiness.
+- `cumcm-2026-readiness.md`: local-only online boundary, staged A/B/C audition,
+  AI-only evidence ranking, optional calibrated award intervals, user-confirmed
+  H6 lock, exact 74-hour operations, and timed rehearsal readiness.
 - `executable-contest-profiles.md`: versioned CUMCM and MCM/ICM official-rule
   profiles, evidence fields, template selection, and executable submission gates.
 - `operational-quality-gates.md`: hash-bound rule lock, cumulative phase
@@ -91,6 +92,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | --- | --- | --- |
 | Setup | `plan.md`, `todo.md`, `reports/milestones.csv` | User constraints and timed gates captured |
 | Compliance | `contest_manifest.json`, `rules.lock.json`, saved official snapshots, AI log, selected template/profile | Rule URLs, hashes, validity and structured fields pass; live-mode boundary recorded |
+| CUMCM selection | A/B/C screening, criterion evidence, capability snapshot, JSON/Chinese recommendation, user confirmation | Equal staged budgets; all evidence hashes current; unsupported percentages omitted; H6 lock matches the confirmed recommendation or a documented exception |
 | Analysis | `reports/problem_analysis.md` | Every subproblem mapped; CUMCM uses task-to-model routing |
 | Data | `reports/data_audit.md`, `reports/traceability.md`, `reports/claims.csv` | Data provenance and claim-to-result chain complete |
 | Modeling | `reports/model_design.md`, `reports/model_decision_log.csv`, `reports/parameter_registry.csv`, conditional `reports/joint_inference_design.json` | Model ladder is evidence-led; parameters and identifiability are explicit; route selection is justified against a baseline |

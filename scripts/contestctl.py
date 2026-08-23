@@ -633,7 +633,7 @@ def command_run(args: argparse.Namespace) -> int:
             "errors": [str(exc)],
             "warnings": [],
         }
-    if profile == "strict" and not args.dry_run:
+    if profile == "strict" and not args.dry_run and args.phase in PHASE_ORDER:
         coordination = check_phase(root, args.phase)
         payload["nodes"].append(
             {
@@ -675,6 +675,7 @@ def command_summary(args: argparse.Namespace) -> int:
         candidates = [
             root / "reports" / "workflow_freeze.json",
             root / "reports" / "workflow_paper.json",
+            root / "reports" / "workflow_selection.json",
         ]
         report = next((item for item in candidates if item.is_file()), candidates[0])
     try:
@@ -733,7 +734,7 @@ def main() -> int:
     migrate.set_defaults(handler=command_migrate)
     run = subparsers.add_parser("run")
     run.add_argument("--project-dir", type=Path, required=True)
-    run.add_argument("--phase", choices=["paper", "freeze"], required=True)
+    run.add_argument("--phase", choices=["selection", "paper", "freeze"], required=True)
     run.add_argument(
         "--profile",
         choices=["minimal", "standard", "strict", "custom"],

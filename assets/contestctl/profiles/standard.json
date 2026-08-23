@@ -2,6 +2,9 @@
   "name": "standard",
   "description": "Normal contest workflow with honest LIMITED results for unavailable optional tools.",
   "phases": {
+    "selection": [
+      "recommend-problem-selection"
+    ],
     "paper": [
       "generate-paper-artifacts",
       "verify-notation",

@@ -2,6 +2,7 @@
   "name": "minimal",
   "description": "Fast standard-library structural checks.",
   "phases": {
+    "selection": [],
     "paper": [
       "generate-paper-artifacts",
       "verify-notation"

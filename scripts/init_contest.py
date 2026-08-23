@@ -107,7 +107,7 @@ def main() -> int:
     else:
         contest_material_ai_access = "not_applicable"
     manifest = {
-        "project_schema_version": 2,
+        "project_schema_version": 3,
         "contest": args.contest,
         "year": args.year,
         "mode": args.mode,
@@ -294,8 +294,29 @@ def main() -> int:
         "writing_visual_potential,fatal_risk,score,status\n",
     )
     write_if_missing(
+        root / "reports/problem_screening.csv",
+        "problem_id,screening_minutes,micro_baseline_minutes,preliminary_score,"
+        "deep_trial_selected,elimination_reason,deep_trial_budget_minutes,"
+        "deep_trial_elapsed_minutes,task_families,"
+        "required_model_families,attachment_state,semantic_risk,expected_deliverables,"
+        "evidence_locator,evidence_sha256,early_failure_type,timing_exception,status\n"
+        "A,15,30,,,,0,0,,,,,,,,,,pending\n"
+        "B,15,30,,,,0,0,,,,,,,,,,pending\n"
+        "C,15,30,,,,0,0,,,,,,,,,,pending\n",
+    )
+    write_if_missing(
+        root / "reports/problem_selection_evidence.csv",
+        "problem_id,criterion,rating,evidence_locator,evidence_sha256,"
+        "observation_type,observation,status\n",
+    )
+    write_if_missing(
         root / "reports/problem_selection.json",
-        '{\n  "selected_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n  "selection_override": null,\n  "override": null\n}\n',
+        '{\n  "schema_version": 2,\n  "selected_problem": "",\n'
+        '  "confirmed_problem": "",\n  "selection_hour": null,\n  "rationale": "",\n'
+        '  "recommendation_file": "reports/problem_selection_recommendation.json",\n'
+        '  "recommendation_sha256": "",\n  "recommendation_generated_at_utc": null,\n'
+        '  "recommendation_input_hashes": {},\n  "confirmation": null,\n'
+        '  "selection_override": null,\n  "override": null\n}\n',
     )
     write_if_missing(
         root / "reports/problem_audition_weights.json",
@@ -316,6 +337,38 @@ def main() -> int:
         '    {"name": "team_delivery", "weights": {"subproblem_closure_risk": 0.25, "result_verifiability": 0.20, "upgrade_headroom": 0.10, "team_fit": 0.30, "writing_visual_potential": 0.15}}\n'
         '  ]\n'
         '}\n',
+    )
+    write_if_missing(
+        root / "reports/ai_capability_snapshot.json",
+        '{\n  "schema_version": 1,\n  "status": "pending",\n'
+        '  "valid_for_calibration": false,\n  "errors": [],\n  "warnings": []\n}\n',
+    )
+    write_if_missing(
+        root / "reports/problem_selection_calibration.csv",
+        "case_id,year,task_family_tags,ai_profile_version,closure_result_rating,"
+        "result_verifiability_rating,ai_capability_fit_rating,data_semantics_rating,"
+        "compute_fallback_rating,paper_figure_rating,innovation_rating,composite_score,"
+        "selected_problem_type,award_label,evidence_sha256,status\n",
+    )
+    write_if_missing(
+        root / "reports/public_award_prior.json",
+        '{\n  "schema_version": 1,\n  "status": "pending",\n  "source_url": "",\n'
+        '  "source_snapshot": "",\n  "source_sha256": "",\n  "retrieved_at": null,\n'
+        '  "competition_scope": "CUMCM",\n  "applicable_years": [],\n'
+        '  "applies_to_problem_types": ["A", "B", "C"],\n'
+        '  "population_definition": "",\n  "denominator_definition": "",\n'
+        '  "outcome_definition": "mutually_exclusive_highest_award",\n'
+        '  "category_counts": {"national_first": 0, "national_second": 0, '
+        '"provincial_award": 0, "no_award": 0},\n  "effective_strength": 8,\n'
+        '  "reviewer_status": "pending"\n}\n',
+    )
+    write_if_missing(
+        root / "reports/problem_selection_recommendation.json",
+        '{\n  "schema_version": 1,\n  "status": "pending",\n  "errors": [],\n  "warnings": []\n}\n',
+    )
+    write_if_missing(
+        root / "reports/problem_selection_recommendation.md",
+        "# CUMCM A/B/C 选题推荐\n\n待完成三题筛选、可执行试跑与本地证据绑定后生成。\n",
     )
     write_if_missing(
         root / "reports/training_runs.csv",
@@ -367,7 +420,7 @@ def main() -> int:
         milestones = (
             "milestone,hour,deliverable,owner,gate,status\n"
             "scope-lock,2,rules roles and candidate criteria,unassigned,scope agreed,pending\n"
-            "selection-lock,6,verified problem audition and selected problem,unassigned,H6 selection verified,pending\n"
+            "selection-lock,6,hash-bound A/B/C recommendation and user-confirmed problem,unassigned,H6 selection verified,pending\n"
             "baseline-run,24,all subproblems have baseline results,unassigned,results executable,pending\n"
             "model-lock,42,primary comparison and validation frozen,unassigned,claims survive challenge,pending\n"
             "figure-lock,54,stress tests figures and tables frozen,unassigned,numbers traceable,pending\n"

@@ -137,12 +137,26 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 "reports/problem_audition.csv",
                 "reports/problem_audition_weights.json",
                 "reports/problem_selection.json",
+                "reports/problem_screening.csv",
+                "reports/problem_selection_evidence.csv",
+                "reports/ai_capability_snapshot.json",
+                "reports/problem_selection_calibration.csv",
+                "reports/public_award_prior.json",
+                "reports/problem_selection_recommendation.json",
+                "reports/problem_selection_recommendation.md",
                 "reports/training_runs.csv",
                 "reports/training_defects.csv",
                 "reports/training_roles.csv",
                 "reports/online_actions.csv",
             ):
                 self.assertTrue((root / relative).is_file(), relative)
+            with (root / "reports" / "problem_screening.csv").open(
+                encoding="utf-8", newline=""
+            ) as handle:
+                self.assertEqual(
+                    [row["problem_id"] for row in csv.DictReader(handle)],
+                    ["A", "B", "C"],
+                )
             milestones = (root / "reports" / "milestones.csv").read_text(encoding="utf-8")
             self.assertIn("selection-lock,6", milestones)
             self.assertIn("hash-lock,74", milestones)

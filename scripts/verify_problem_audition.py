@@ -8,6 +8,13 @@ import json
 from pathlib import Path
 from typing import Any
 
+from problem_selection_core import (
+    PROBLEMS,
+    parse_utc,
+    sha256_file,
+    stale_input_errors,
+)
+
 
 CRITERIA = (
     "subproblem_closure_risk",
@@ -172,9 +179,88 @@ def valid_selection_override(
     return True
 
 
+def recommendation_required(root: Path) -> bool:
+    try:
+        manifest = json.loads((root / "contest_manifest.json").read_text(encoding="utf-8-sig"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return False
+    try:
+        version = int(manifest.get("project_schema_version", 0)) if isinstance(manifest, dict) else 0
+        year = int(manifest.get("year", 0)) if isinstance(manifest, dict) else 0
+    except (TypeError, ValueError):
+        return False
+    contest = "".join(
+        character for character in str(manifest.get("contest") or "").lower() if character.isalnum()
+    )
+    return version >= 3 and year == 2026 and contest in {
+        "cumcm", "高教社杯", "全国大学生数学建模竞赛"
+    }
+
+
+def verify_recommendation_confirmation(
+    root: Path, selection: dict[str, Any], selected: str, errors: list[str]
+) -> set[str]:
+    recommendation_path = root / "reports" / "problem_selection_recommendation.json"
+    required = recommendation_required(root)
+    if not recommendation_path.is_file():
+        if required:
+            errors.append("project schema 3 requires a generated problem-selection recommendation")
+        return set()
+    try:
+        recommendation = json.loads(recommendation_path.read_text(encoding="utf-8-sig"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        if required:
+            errors.append(f"cannot read problem-selection recommendation: {exc}")
+        return set()
+    if not required and (
+        not isinstance(recommendation, dict)
+        or recommendation.get("status") not in {"PASS", "LIMITED"}
+    ):
+        return set()
+    if not isinstance(recommendation, dict) or recommendation.get("schema_version") != 1:
+        errors.append("problem-selection recommendation schema must be 1")
+        return set()
+    if recommendation.get("status") not in {"PASS", "LIMITED"}:
+        errors.append("problem-selection recommendation must be generated with PASS or LIMITED status")
+    if recommendation.get("requires_user_confirmation") is not True:
+        errors.append("problem-selection recommendation is not ready for confirmation")
+    candidates = recommendation.get("candidates")
+    if not isinstance(candidates, dict) or set(candidates) != set(PROBLEMS):
+        errors.append("problem-selection recommendation must evaluate A, B, and C")
+    errors.extend(stale_input_errors(root, recommendation.get("input_hashes")))
+    if selection.get("recommendation_file") != "reports/problem_selection_recommendation.json":
+        errors.append("problem selection must bind the canonical recommendation file")
+    expected_hash = sha256_file(recommendation_path)
+    if str(selection.get("recommendation_sha256") or "").lower() != expected_hash:
+        errors.append("problem selection recommendation hash no longer matches")
+    if selection.get("recommendation_input_hashes") != recommendation.get("input_hashes"):
+        errors.append("problem selection does not preserve the recommendation input hashes")
+    if selection.get("recommendation_generated_at_utc") != recommendation.get("generated_at_utc"):
+        errors.append("problem selection recommendation timestamp does not match")
+    if str(selection.get("confirmed_problem") or "").strip() != selected:
+        errors.append("selected problem differs from the confirmed problem")
+    confirmation = selection.get("confirmation")
+    if not isinstance(confirmation, dict) or confirmation.get("decision") != "confirmed":
+        errors.append("a declared user confirmation is required before the H6 lock")
+    else:
+        confirmed_at = parse_utc(confirmation.get("recorded_at_utc"))
+        generated_at = parse_utc(recommendation.get("generated_at_utc"))
+        if confirmed_at is None or generated_at is None:
+            errors.append("recommendation/confirmation timestamps must be valid ISO datetimes")
+        elif confirmed_at < generated_at:
+            errors.append("confirmation was recorded before recommendation generation")
+        if "not identity authentication" not in str(confirmation.get("audit_limitation") or ""):
+            errors.append("confirmation must state its audit-record identity limitation")
+    allowed = set(recommendation.get("co_leading_problems") or [])
+    if recommendation.get("recommended_problem"):
+        allowed.add(str(recommendation["recommended_problem"]))
+    return {"not_recommended_by_engine"} if selected and selected not in allowed else set()
+
+
 def verify(root: Path) -> dict[str, Any]:
     errors: list[str] = []
     warnings: list[str] = []
+    engine_ranking_active = recommendation_required(root)
     rows = load_rows(root / "reports" / "problem_audition.csv", errors)
     scenarios, minimum_win_rate, score_tolerance = load_weight_scenarios(root, errors)
     if len(rows) < 2:
@@ -277,6 +363,9 @@ def verify(root: Path) -> dict[str, Any]:
         errors.append("selected problem is not a verified audition candidate")
     if not str(selection.get("rationale") or "").strip():
         errors.append("problem selection needs an evidence-based rationale")
+    recommendation_exception_reasons = verify_recommendation_confirmation(
+        root, selection, selected, errors
+    )
     try:
         selection_hour = float(selection.get("selection_hour"))
     except (TypeError, ValueError):
@@ -322,20 +411,22 @@ def verify(root: Path) -> dict[str, Any]:
         else:
             confidence = "low"
         exception_reasons = set(candidate_gate_failures.get(selected, []))
-        if selected not in base_winners:
-            exception_reasons.add("not_base_winner")
-        if win_rate < minimum_win_rate:
-            exception_reasons.add("low_scenario_win_rate")
+        exception_reasons.update(recommendation_exception_reasons)
+        if not engine_ranking_active:
+            if selected not in base_winners:
+                exception_reasons.add("not_base_winner")
+            if win_rate < minimum_win_rate:
+                exception_reasons.add("low_scenario_win_rate")
         if exception_reasons:
             valid_selection_override(
                 root, selection.get("selection_override"), exception_reasons, errors
             )
     else:
-        exception_reasons = set()
+        exception_reasons = set(recommendation_exception_reasons)
 
     return {
         "status": "FAIL" if errors else "PASS",
-        "scope": "candidate evidence, recomputed score stability, and H6 selection-lock verification",
+        "scope": "candidate evidence, recommendation/confirmation binding, recomputed score stability, and H6 selection-lock verification",
         "candidate_count": len(rows),
         "selected_problem": selected,
         "selection_hour": selection_hour,
@@ -346,6 +437,12 @@ def verify(root: Path) -> dict[str, Any]:
         "minimum_selected_win_rate": minimum_win_rate,
         "selected_minimum_margin": minimum_margin,
         "selection_confidence": confidence,
+        "selection_confidence_scope": (
+            "legacy diagnostic only; schema-3 selection authority is the hash-bound AI-only recommendation"
+            if engine_ranking_active
+            else "legacy audition weight scenarios"
+        ),
+        "legacy_weight_ranking_enforced": not engine_ranking_active,
         "candidate_gate_failures": candidate_gate_failures,
         "selection_exception_reasons": sorted(exception_reasons),
         "errors": errors,

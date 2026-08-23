@@ -125,6 +125,7 @@ versioned migration, runtime diagnosis, dependency-aware execution, and summarie
 python scripts/contestctl.py migrate --project-dir <project>
 python scripts/contestctl.py migrate --project-dir <project> --apply
 python scripts/contestctl.py doctor --project-dir <project> --profile standard
+python scripts/contestctl.py run --project-dir <project> --phase selection --profile standard
 python scripts/contestctl.py run --project-dir <project> --phase paper --profile standard
 python scripts/contestctl.py run --project-dir <project> --phase freeze --profile strict
 python scripts/contestctl.py summary --project-dir <project>
@@ -153,8 +154,13 @@ The release and paper workflow then uses deterministic checks:
   structured fields, a validity date, and the CUMCM 2026 freshness checkpoints.
   `contestctl.py check` coordinates
   cumulative phase gates without replacing specialist verifiers.
-- `verify_problem_audition.py` recomputes candidate scores across declared
-  weight scenarios and enforces the H6 selection lock;
+- `contestctl.py run --phase selection` compares CUMCM A/B/C through staged,
+  equal-budget executable trials, updates the bundled AI prior with same-day
+  evidence, and writes hash-bound JSON plus a Chinese strengths/weaknesses
+  report. Award intervals appear only with sufficient verified local
+  calibration; `record_problem_selection_confirmation.py` records the user's
+  declared choice, and `verify_problem_audition.py` enforces the confirmed H6
+  lock without scoring the student team or auto-selecting a problem;
   `score_training_readiness.py` scores 8/24/48/74-hour drills with median, P90,
   worst case, trend, recurrence, role/owner bottlenecks, and a
   latest-two-full-pass readiness gate;
