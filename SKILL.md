@@ -358,27 +358,8 @@ Read `references/embedded/training-evaluation-loop.md`.
 
 ## Core project layout
 
-`scripts/init_contest.py` is the tested authority for the complete generated
-layout. Preserve an existing structure; otherwise maintain at least:
-
-```text
-.
-|-- contest_manifest.json
-|-- rules.lock.json
-|-- plan.md
-|-- todo.md
-|-- data/{raw,processed}/
-|-- code/
-|-- results/verified_values.csv
-|-- figures/
-|-- reports/                 # phase evidence and generated gate reports
-|-- environment/
-|-- support/materials_manifest.csv
-|-- support.zip
-|-- paper/{main.tex,references.bib,sections,generated,figures,build,main.pdf}
-|-- delivery/                # complete user handoff
-`-- official-submission/     # selected-profile files only
-```
+Use `scripts/init_contest.py` as the tested layout authority; see
+`references/embedded/contest-setup.md` for the generated project structure.
 
 ## Global decision rules
 

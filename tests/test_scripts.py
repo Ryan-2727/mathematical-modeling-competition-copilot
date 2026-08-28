@@ -616,6 +616,66 @@ class ScriptTests(unittest.TestCase):
             self.run_script("similarity_preflight.py", "--draft", str(draft), "--corpus-dir", str(corpus), "--out", str(out), "--min-overlap", "1")
             self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "REVIEW")
 
+    @unittest.skipUnless(
+        shutil.which("pwsh") or shutil.which("powershell"),
+        "PowerShell is unavailable",
+    )
+    def test_sync_local_skill_verify_is_read_only_and_hash_bound(self) -> None:
+        shell = shutil.which("pwsh") or shutil.which("powershell")
+        assert shell is not None
+        script = SCRIPTS / "sync_local_skill.ps1"
+
+        with tempfile.TemporaryDirectory() as raw:
+            target = Path(raw) / "mathematical-modeling-competition-copilot"
+            copied = subprocess.run(
+                [shell, "-NoProfile", "-File", str(script), "-InstallDir", str(target)],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            self.assertEqual(copied.returncode, 0, copied.stdout + copied.stderr)
+
+            extra = target / "stale-marker.txt"
+            extra.write_text("keep me", encoding="utf-8")
+            verified = subprocess.run(
+                [
+                    shell,
+                    "-NoProfile",
+                    "-File",
+                    str(script),
+                    "-InstallDir",
+                    str(target),
+                    "-Verify",
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            self.assertEqual(verified.returncode, 0, verified.stdout + verified.stderr)
+            self.assertIn("extra", (verified.stdout + verified.stderr).lower())
+            self.assertTrue(extra.is_file())
+
+            (target / "SKILL.md").write_text("changed", encoding="utf-8")
+            mismatch = subprocess.run(
+                [
+                    shell,
+                    "-NoProfile",
+                    "-File",
+                    str(script),
+                    "-InstallDir",
+                    str(target),
+                    "-Verify",
+                ],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+            )
+            self.assertNotEqual(mismatch.returncode, 0)
+            self.assertIn("mismatch", (mismatch.stdout + mismatch.stderr).lower())
+
     def test_portable_latex_archive(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

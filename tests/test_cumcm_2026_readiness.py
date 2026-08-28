@@ -222,6 +222,25 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             self.assertEqual(report["status"], "FAIL")
             self.assertTrue(any("source role" in item for item in report["errors"]))
 
+    def test_rule_lock_accepts_noncanonical_windows_project_root(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "nested" / ".." / "project"
+            current = self.rules_payload(root, "2026-09-09T10:00:00+08:00")
+            report = lock_contest_rules.validate_lock(
+                root, current, as_of_date=date(2026, 9, 10), mode="live"
+            )
+            self.assertEqual(report["status"], "PASS", report)
+
+    def test_rule_lock_uses_effective_date_for_expiration(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            current = self.rules_payload(root, "2026-09-09T10:00:00+08:00")
+            report = lock_contest_rules.validate_lock(
+                root, current, as_of_date=date(2026, 9, 15), mode="live"
+            )
+            self.assertEqual(report["status"], "FAIL", report)
+            self.assertTrue(any("expired" in item for item in report["errors"]))
+
     def test_problem_audition_requires_executable_evidence_and_h6_lock(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

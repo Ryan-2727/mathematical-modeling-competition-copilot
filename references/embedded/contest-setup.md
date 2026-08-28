@@ -53,6 +53,30 @@ Recommended `todo.md` structure:
 
 Update `todo.md` after each phase. Do not leave status stale.
 
+## Generated Project Layout
+
+`scripts/init_contest.py` is the tested authority for the generated layout.
+Preserve an existing structure; otherwise maintain at least:
+
+```text
+.
+|-- contest_manifest.json
+|-- rules.lock.json
+|-- plan.md
+|-- todo.md
+|-- data/{raw,processed}/
+|-- code/
+|-- results/verified_values.csv
+|-- figures/
+|-- reports/                 # phase evidence and generated gate reports
+|-- environment/
+|-- support/materials_manifest.csv
+|-- support.zip
+|-- paper/{main.tex,references.bib,sections,generated,figures,build,main.pdf}
+|-- delivery/                # complete user handoff
+`-- official-submission/     # selected-profile files only
+```
+
 ## Setup Quality Gate
 
 Before modeling starts:

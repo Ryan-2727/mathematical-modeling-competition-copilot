@@ -63,12 +63,13 @@ def sha256_file(path: Path) -> str:
 
 
 def safe_project_file(root: Path, relative: str) -> Path | None:
+    project_root = root.resolve()
     candidate = Path(relative)
     if candidate.is_absolute() or ".." in candidate.parts:
         return None
-    resolved = (root / candidate).resolve()
+    resolved = (project_root / candidate).resolve()
     try:
-        resolved.relative_to(root)
+        resolved.relative_to(project_root)
     except ValueError:
         return None
     return resolved
@@ -102,6 +103,8 @@ def validate_lock(
     as_of_date: date | None = None,
     mode: str = "precontest",
 ) -> dict[str, Any]:
+    root = root.resolve()
+    effective_date = as_of_date or date.today()
     errors: list[str] = []
     warnings: list[str] = []
     if not isinstance(payload, dict):
@@ -115,7 +118,7 @@ def validate_lock(
     except ValueError:
         errors.append("valid_through must be YYYY-MM-DD")
     else:
-        if date.today() > valid_through:
+        if effective_date > valid_through:
             errors.append(f"rules lock expired on {valid_through.isoformat()}")
     sources = payload.get("sources")
     if not isinstance(sources, list) or not sources:
@@ -214,7 +217,7 @@ def validate_lock(
         checkpoints = payload.get("freshness_checkpoints")
         if checkpoints != CUMCM_2026_CHECKPOINTS:
             errors.append("CUMCM 2026 freshness checkpoints must be T-30, T-7, and T-1")
-        today = as_of_date or date.today()
+        today = effective_date
         due = [item for item in CUMCM_2026_CHECKPOINTS if date.fromisoformat(item) <= today]
         latest_due_checkpoint = due[-1] if due else ""
         checked = parse_datetime(payload.get("created_at_utc"), "created_at_utc", errors)
@@ -230,7 +233,7 @@ def validate_lock(
         "scope": "hash, freshness, official URL, and structured-rule verification",
         "profile_family": family,
         "mode": mode,
-        "as_of_date": (as_of_date or date.today()).isoformat(),
+        "as_of_date": effective_date.isoformat(),
         "latest_due_checkpoint": latest_due_checkpoint,
         "sources": source_reports,
         "errors": errors,

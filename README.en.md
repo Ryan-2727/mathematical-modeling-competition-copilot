@@ -198,6 +198,9 @@ The release and paper workflow then uses deterministic checks:
 - `run_reproduction.py` runs argv-based commands in a clean copy, retains
   per-run logs, and compares repeated outputs by hashes or declared numeric
   tolerances. Shell execution requires explicit opt-in.
+- `sync_local_skill.ps1 -Verify` performs a read-only hash audit of the local
+  installation, reports missing, mismatched, and extra files, and never deletes
+  extra local content.
 - `verify_pdf_visual.py`, `anonymity_scan.py`, and `verify_submission.py`
   distinguish `PASS`, `LIMITED`, and `FAIL`; a mandatory visual rule cannot pass
   merely because a renderer or OCR tool is absent.
@@ -420,7 +423,11 @@ Windows, preview first and then run:
 ```powershell
 .\scripts\sync_local_skill.ps1 -WhatIf
 .\scripts\sync_local_skill.ps1
+.\scripts\sync_local_skill.ps1 -Verify
 ```
+
+Use `-Verify` after synchronization to confirm the tracked payload matches the
+checkout. Extra local files are reported and left untouched.
 
 On Windows, run Python validation in UTF-8 mode:
 

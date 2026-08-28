@@ -171,6 +171,8 @@ python scripts/contestctl.py summary --project-dir <project>
 - `verify_delivery_profiles.py` 将完整用户交付与比赛官方允许提交的文件分开核验。
 - `run_reproduction.py` 在干净副本中执行 argv 命令，保存每次运行日志，
   并按哈希或声明的数值容差比较重复运行；shell 执行必须显式启用。
+- `sync_local_skill.ps1 -Verify` 只读核验本地安装副本的哈希，报告缺失、内容不一致
+  和额外文件；不会删除本地额外内容。
 - `verify_pdf_visual.py`、`anonymity_scan.py` 和 `verify_submission.py`
   区分 `PASS`、`LIMITED` 与 `FAIL`；强制视觉规则不会因为渲染器或 OCR
   缺失而被误判为通过。
@@ -459,7 +461,11 @@ Windows 上更新已有本地安装时，先预览再执行：
 ```powershell
 .\scripts\sync_local_skill.ps1 -WhatIf
 .\scripts\sync_local_skill.ps1
+.\scripts\sync_local_skill.ps1 -Verify
 ```
+
+同步后使用 `-Verify` 检查已跟踪 payload 是否与当前仓库一致。额外的本地文件只会
+被报告并保留，不会被删除。
 
 Windows 上运行 Python 验证时显式启用 UTF-8：
 
