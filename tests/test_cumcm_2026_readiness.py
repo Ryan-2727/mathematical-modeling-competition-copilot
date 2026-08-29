@@ -40,6 +40,8 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
         self.assertEqual(profile["hash_deadline"], "2026-09-13T20:00:00+08:00")
         self.assertEqual(profile["upload_open"], "2026-09-13T20:30:00+08:00")
         self.assertEqual(profile["upload_deadline"], "2026-09-14T14:00:00+08:00")
+        self.assertEqual(profile["national_similarity_threshold"], 0.25)
+        self.assertTrue(profile["live_current_problem_communication_platform_access_forbidden"])
         self.assertEqual(profile["freshness_checkpoints"], lock_contest_rules.CUMCM_2026_CHECKPOINTS)
         self.assertEqual(set(profile["source_urls"]), lock_contest_rules.CUMCM_2026_SOURCE_ROLES)
         self.assertEqual(profile["verified_at"], "2026-08-20")
@@ -148,6 +150,8 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 "reports/training_defects.csv",
                 "reports/training_roles.csv",
                 "reports/online_actions.csv",
+                "reports/submission_md5_lock.json",
+                "reports/similarity_risk.json",
             ):
                 self.assertTrue((root / relative).is_file(), relative)
             with (root / "reports" / "problem_screening.csv").open(
@@ -510,14 +514,17 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
             root = Path(raw)
             fields = [
                 "action_id", "mode", "action_type", "purpose", "destination",
-                "contains_current_contest_material", "privacy_ambiguity",
-                "user_decision", "evidence", "status",
+                "contains_current_contest_material", "current_problem_related",
+                "destination_category", "privacy_ambiguity", "user_decision",
+                "classification_evidence", "evidence", "status",
             ]
             safe_search = {
                 "action_id": "n1", "mode": "live", "action_type": "search",
                 "purpose": "official rule check", "destination": "www.mcm.edu.cn",
-                "contains_current_contest_material": "no", "privacy_ambiguity": "no",
+                "contains_current_contest_material": "no", "current_problem_related": "no",
+                "destination_category": "official", "privacy_ambiguity": "no",
                 "user_decision": "not_required", "evidence": "rules.lock.json",
+                "classification_evidence": "official CUMCM domain",
                 "status": "declared",
             }
             path = root / "reports" / "online_actions.csv"

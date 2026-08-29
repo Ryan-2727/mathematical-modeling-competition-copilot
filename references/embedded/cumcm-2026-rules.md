@@ -25,14 +25,22 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
 - Recheck online at T-30, T-7, and T-1 before the contest. During live work use
   the local lock unless the user explicitly authorizes a refresh.
 
+## Physical paper sequence
+
+The physical paper sequence is: page 1 commitment form, page 2 number-only
+page, page 3 abstract-only page, and main text beginning on page 4. The abstract
+is normally no more than one page. These administrative front pages describe
+the physical version only.
+
+## Electronic paper submission
+
+The electronic paper starts with the abstract page and excludes both the
+commitment form and number-only page. Submit one standalone, uncompressed PDF
+or Word document of at most 20 MB. Confirm the abstract-first boundary by visual
+inspection.
+
 ## Enforced by `verify_submission.py --profile cumcm-2026`
 
-- Paper version sequence: page 1 is the commitment form, page 2 is the
-  number-only page, page 3 is the abstract-only page, and main text begins on
-  page 4. The abstract is normally no more than one page. The electronic paper
-  starts from the abstract and therefore excludes the first two administrative
-  pages.
-- Electronic paper: one standalone PDF or Word document, at most 20 MB.
 - Support package: one ZIP or RAR archive, at most 20 MB when supplied.
 - Main text: do not create a table of contents or a separate contents page;
   count no more than 30 main-text pages, excluding appendices. Appendices have
@@ -44,8 +52,6 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
   a shorter paper or genuinely requires approaching 30. Prefer information
   density, complete reasoning, effective figures, and model validation over
   filler, smaller type, or duplicated prose.
-- Electronic paper starts with the abstract page and excludes the commitment
-  and number-only pages. Confirm these by visual inspection.
 - The profile verifier supports exactly one AI branch with `--ai-mode
   none|used`; a live project invoking this AI skill must use `used`. Put the official
   `AI工具使用声明` before the references. `none` requires the exact 2026 non-use
@@ -58,3 +64,10 @@ official URLs and access time in `reports/contest_rules_snapshot.md`.
 The profile is a guardrail, not a substitute for the current official rules or
 regional notices. If they differ, update the snapshot and use the stricter
 requirement.
+
+For the national similarity rule, keep the local long-phrase preflight separate
+from official evidence. Fill `reports/similarity_risk.json` from the actual
+Tongfang/CNKI report and run `scripts/verify_similarity_risk.py`. If either
+official metric is at least 25%, the paper reaches the national-review risk
+threshold; apply any stricter regional threshold. Missing official evidence is
+`LIMITED`, never a similarity-compliance pass.

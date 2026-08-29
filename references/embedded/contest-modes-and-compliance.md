@@ -51,10 +51,14 @@ claim supported, and whether it is static and authoritative. Reject a source who
 provenance, permission, or relevance cannot be established.
 
 For CUMCM 2026, also read `cumcm-2026-readiness.md`. Keep all current-contest
-materials and work local; this skill must not upload them. Internet searching is
-allowed without a lexical search-term ban. Record online actions locally with
-`scripts/verify_online_actions.py`. When disclosure risk is unclear, ask the user
-and wait for the reply before proceeding.
+materials and work local; this skill must not upload them. Generic research on
+official, scholarly, and static-reference sources is permitted, but live access
+to current-problem content on a communication platform is forbidden, including
+browsing and opening a search result. Do not impose a lexical search-term ban.
+Record online actions locally with `scripts/verify_online_actions.py`. When the
+content relation or destination category is unclear, ask the user and wait for
+the recorded reply. A reply resolves uncertainty but cannot waive a known
+official prohibition.
 
 ## Freeze and submission states
 
@@ -64,6 +68,8 @@ Use only these states: `draft`, `verified`, `frozen`, `hashed`, `submitted`,
 - `verified`: all content, code, references, and visual checks pass;
 - `frozen`: no further content edits without returning to `draft`;
 - `hashed`: `scripts/verify_submission.py` records final hashes and file sizes;
+  for CUMCM 2026, `scripts/verify_submission_md5_lock.py` must additionally
+  match the current file bytes to timely official-client MD5 evidence;
 - `submitted`: submission time and method recorded;
 - `receipt_verified`: platform confirmation or receipt recorded.
 

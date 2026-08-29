@@ -14,7 +14,7 @@ from typing import Any
 
 
 CURRENT_PROJECT_SCHEMA_VERSION = 3
-REGISTRY_VERSION = 4
+REGISTRY_VERSION = 5
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
 PROFILE_DIR = SKILL_ROOT / "assets" / "contestctl" / "profiles"
@@ -443,6 +443,38 @@ NODE_REGISTRY = {
                 "reports/innovation_ledger.csv",
             ),
             ("reports/modeling_argument_quality.json",),
+        ),
+        Node(
+            "verify-submission-md5-lock",
+            "freeze",
+            "verify_submission_md5_lock.py",
+            (
+                "--project-dir", "{project}",
+                "--ledger", "{project}/reports/submission_md5_lock.json",
+                "--out", "{project}/reports/submission_md5_verification.json",
+            ),
+            (),
+            (
+                "reports/submission_md5_lock.json",
+                "official-submission/**/*",
+            ),
+            ("reports/submission_md5_verification.json",),
+        ),
+        Node(
+            "verify-official-similarity-risk",
+            "freeze",
+            "verify_similarity_risk.py",
+            (
+                "--project-dir", "{project}",
+                "--ledger", "{project}/reports/similarity_risk.json",
+                "--out", "{project}/reports/similarity_risk_verification.json",
+            ),
+            (),
+            (
+                "reports/similarity_risk.json",
+                "paper/main.pdf",
+            ),
+            ("reports/similarity_risk_verification.json",),
         ),
     )
 }
@@ -878,6 +910,15 @@ def run_workflow(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     profile = load_profile(profile_name, custom_profile)
+    if profile_name == "strict":
+        try:
+            manifest = _load_json(root / "contest_manifest.json")
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+            manifest = {}
+        if manifest.get("submission_profile") == "cumcm-2026":
+            profile["phases"]["freeze"].extend(
+                ("verify-submission-md5-lock", "verify-official-similarity-risk")
+            )
     node_ids = resolve_nodes(profile, phase)
     cache_path = root / "reports" / "workflow_cache.json"
     cache = _read_cache(cache_path)

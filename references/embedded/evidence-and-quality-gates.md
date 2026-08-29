@@ -50,7 +50,11 @@ the argument chain.
 
 Use `scripts/similarity_preflight.py` only on drafts and an offline historical
 corpus. It flags unusually long exact phrase overlap for human review. It is
-not a plagiarism verdict and must never become a current-problem answer source.
+not a plagiarism verdict, does not estimate either official Tongfang/CNKI
+metric, and cannot establish compliance with a 25% threshold. For CUMCM 2026,
+record the two actual official metrics in `reports/similarity_risk.json` and run
+`scripts/verify_similarity_risk.py`; missing official evidence remains
+`LIMITED`.
 
 ## Reasoning narrative gate
 

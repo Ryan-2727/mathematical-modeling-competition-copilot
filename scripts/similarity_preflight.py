@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Flag long exact phrase overlap between a draft and an offline corpus."""
+"""Advisory: flag long exact phrase overlap against an offline corpus."""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +30,16 @@ def main() -> int:
         if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES:
             overlap = len(draft & tokens(path))
             if overlap >= args.min_overlap: findings.append({"file": str(path), "shared_12_token_phrases": overlap})
-    payload = {"status": "REVIEW" if findings else "PASS", "draft": str(args.draft), "findings": findings, "note": "A review flag is not a plagiarism verdict."}
+    payload = {
+        "status": "REVIEW" if findings else "PASS",
+        "scope": "local_long_phrase_advisory",
+        "draft": str(args.draft),
+        "findings": findings,
+        "note": (
+            "This is not a plagiarism verdict, does not estimate either official "
+            "Tongfang/CNKI metric, and cannot establish compliance with the 25% threshold."
+        ),
+    }
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(payload["status"])

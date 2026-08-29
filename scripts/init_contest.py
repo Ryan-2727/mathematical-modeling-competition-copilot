@@ -150,7 +150,11 @@ def main() -> int:
             if args.mode == "live"
             else "not-applicable"
         ),
-        "online_action_policy": "local-work-only; search allowed; ask user when privacy is ambiguous",
+        "online_action_policy": (
+            "local-work-only; generic official/scholarly/static research allowed; "
+            "live current-problem communication-platform access forbidden; "
+            "ask user when classification is uncertain; no lexical query blacklist"
+        ),
         "submission_state": "draft",
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
     }
@@ -389,8 +393,26 @@ def main() -> int:
     write_if_missing(
         root / "reports/online_actions.csv",
         "action_id,mode,action_type,purpose,destination,"
-        "contains_current_contest_material,privacy_ambiguity,user_decision,evidence,status\n",
+        "contains_current_contest_material,current_problem_related,"
+        "destination_category,privacy_ambiguity,user_decision,"
+        "classification_evidence,evidence,status\n",
     )
+    if is_cumcm_2026:
+        write_if_missing(
+            root / "reports/submission_md5_lock.json",
+            '{\n  "schema_version": 1,\n  "profile": "cumcm-2026",\n'
+            '  "artifacts": []\n}\n',
+        )
+        write_if_missing(
+            root / "reports/similarity_risk.json",
+            '{\n  "schema_version": 1,\n  "profile": "cumcm-2026",\n'
+            '  "provider": "",\n  "paper_path": "paper/main.pdf",\n'
+            '  "paper_sha256": "",\n  "report_time": "",\n'
+            '  "evidence": "",\n  "reviewer": "",\n'
+            '  "regional_threshold": null,\n  "metrics": {\n'
+            '    "overall_text_copy_ratio": null,\n'
+            '    "excluding_own_published_ratio": null\n  }\n}\n',
+        )
     write_if_missing(root / "reports/three_minute_review.csv", "element,reader_question,direct_answer,evidence_type,evidence_ref,paper_location,status\n")
     write_if_missing(root / "reports/decision_robustness.csv", "decision_id,uncertainty_material,comparison_type,scenario_count,expected_value,worst_case_value,extreme_feasibility_rate,policy_changed,interpretation,status\n")
     write_if_missing(root / "reports/implementation_readiness.csv", "decision_id,implementation_steps,required_inputs,execution_cost,execution_time,interpretability,extreme_feasibility_rate,failure_mode,contingency,paper_location,status\n")

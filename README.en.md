@@ -55,9 +55,12 @@ A new computer can install only this repository and still get the full mathemati
 - A single machine-readable CUMCM 2026 rule profile with T-30/T-7/T-1 freshness checks, official
   locator/page/PDF snapshots, the 2026 AI declarations, an H6 weight-sensitivity
   problem audition, the 20:00 MD5 deadline, the 20:30-to-next-day-14:00 upload
-  window, and P90/trend/two-full-pass readiness scoring
-- a local-only live-contest boundary: internet search is allowed, contest work is
-  never uploaded by the skill, and privacy-ambiguous actions pause for user input
+  window, actual frozen-file/client-MD5 comparison, official two-metric
+  similarity evidence, and P90/trend/two-full-pass readiness scoring
+- a precise live-contest internet boundary: generic official, scholarly, and
+  static-reference research is allowed, but browsing current-problem content on
+  communication platforms is forbidden; uncertain classifications pause for
+  user input, and search terms have no lexical blacklist
 - executable CUMCM and MCM/ICM rule profiles with separate portable LaTeX
   templates selected automatically at project initialization
 - a decisive-value registry that generates LaTeX macros from hashed computation

@@ -71,7 +71,7 @@ The verification loop:
   checker to rewrite the paper automatically; unreadable sources and stale
   exceptions remain hard failures.
 - Submission format matches contest requirements.
-- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result.
+- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result. Then run `verify_submission_md5_lock.py` against timely official-client evidence and `verify_similarity_risk.py` against the actual two-metric Tongfang/CNKI report. Missing official evidence is `LIMITED`, not `PASS`.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
   counts. Confirm every numbered subproblem has its own completed depth-plan row;
   a long code appendix does not compensate for an abbreviated main argument.

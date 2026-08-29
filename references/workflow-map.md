@@ -104,7 +104,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Optional review | blinded reviewer reports, aggregation, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; objections cite artifacts, vetoes are resolved or disclosed, and final checks rerun after changes |
 | Skill release | blinded benchmark manifest and regression report | No score exceeds its accepted regression tolerance; baselines are never changed automatically |
 | Delivery | `delivery/` PDF/source/support manifests | Complete user handoff is frozen, verified, and anonymous |
-| Submission | profile-permitted files under `official-submission/`, hash manifest, receipt evidence | No forbidden extra files; official artifacts pass the selected profile |
+| Submission | profile-permitted files under `official-submission/`, SHA-256 manifest, actual MD5 lock, official similarity evidence, receipt evidence | No forbidden extra files; current bytes match timely client MD5 evidence; both official similarity metrics are below the applicable threshold; official artifacts pass the selected profile |
 
 ## Fallback Behavior
 

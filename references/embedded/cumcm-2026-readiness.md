@@ -18,12 +18,17 @@ this skill to upload them to a website, repository, cloud drive, online compiler
 online execution service, or external AI service. The team performs the final
 official submission manually after local verification.
 
-Internet searching is allowed. Do not impose a lexical restriction on search
-terms. Record planned and completed online actions in
-`reports/online_actions.csv` and run `scripts/verify_online_actions.py`. If it is
-unclear whether an online action would disclose contest material, pause and ask
-the user. Continue only after recording the reply. This is a declaration audit,
-not an operating-system network interceptor.
+Generic research on official, scholarly, and static-reference sources is
+permitted. During the live contest, do not browse, read, open a search result,
+post, upload, or discuss current-problem content on a communication platform,
+including repositories, forums, Q&A sites, group chats, social blogs, and live
+streams. Do not impose a lexical restriction on search terms. Record content
+relation, destination category, planned/completed action, and classification
+evidence in `reports/online_actions.csv`, then run
+`scripts/verify_online_actions.py`. If either classification is uncertain,
+pause and ask the user; continue only after recording the reply. The reply
+cannot override an action already known to violate the official rule. This is a
+declaration audit, not an operating-system network interceptor.
 
 ## Six-hour problem audition
 
@@ -117,7 +122,7 @@ does not choose the problem.
 | H54-H64 | Complete the paper and support-material draft |
 | H64-H70 | Run independent review, numerical traceability, and strict checks |
 | H70-H73 | Finish local anonymity, AI evidence, packaging, hashes, and strict checks |
-| H73-H74 | Freeze artifacts and submit the final MD5 before 20:00; make no later content edits |
+| H73-H74 | Freeze artifacts, compute and submit the final MD5 before 20:00, then verify the actual frozen bytes against the official-client MD5 evidence; make no later content edits |
 | H74-H74.5 | Preserve the official half-hour gap; do not attempt an early upload |
 | H74.5-H92 | The team performs the official upload and records receipt evidence before 2026-09-14 14:00 |
 
@@ -132,6 +137,11 @@ Stop losses:
 - after H54: introduce no new model family unless repairing a veto;
 - never consume H73-H74 for cosmetic revisions or alter an artifact after its
   final MD5 is submitted.
+
+At hash lock, fill `reports/submission_md5_lock.json` and run
+`scripts/verify_submission_md5_lock.py`. A local SHA-256 manifest or a recorded
+deadline is not MD5 evidence. Any later save invalidates the lock and requires a
+new official MD5 cycle before the deadline.
 
 ## Timed training readiness
 

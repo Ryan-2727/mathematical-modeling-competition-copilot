@@ -11,13 +11,22 @@ from typing import Any
 
 FIELDS = {
     "action_id", "mode", "action_type", "purpose", "destination",
-    "contains_current_contest_material", "privacy_ambiguity", "user_decision",
-    "evidence", "status",
+    "contains_current_contest_material", "current_problem_related",
+    "destination_category", "privacy_ambiguity", "user_decision",
+    "classification_evidence", "evidence", "status",
 }
 FORBIDDEN_LIVE_ACTIONS = {
     "upload", "post", "sync", "share", "external_ai", "online_compile",
     "online_execute", "cloud_store", "repository_push",
 }
+DESTINATION_CATEGORIES = {
+    "official", "scholarly", "static_reference", "communication_platform",
+    "uncertain",
+}
+KNOWN_COMMUNICATION_HOSTS = (
+    "github.com", "gitee.com", "csdn.net", "zhihu.com", "weibo.com",
+    "tieba.baidu.com", "qq.com", "weixin.qq.com", "bilibili.com", "douyin.com",
+)
 
 
 def verify(root: Path) -> dict[str, Any]:
@@ -43,27 +52,57 @@ def verify(root: Path) -> dict[str, Any]:
         seen.add(action_id)
         if mode not in {"training", "live", "posthoc"}:
             errors.append(f"online_actions.csv:{line} mode is invalid")
-        for field in ("action_type", "purpose", "destination", "evidence"):
+        for field in (
+            "action_type", "purpose", "destination", "classification_evidence",
+            "evidence",
+        ):
             if not row.get(field, "").strip():
                 errors.append(f"online_actions.csv:{line} {field} is missing")
         contains = row.get("contains_current_contest_material", "").strip().lower()
+        related = row.get("current_problem_related", "").strip().lower()
+        destination_category = row.get("destination_category", "").strip().lower()
+        destination = row.get("destination", "").strip().lower()
         ambiguity = row.get("privacy_ambiguity", "").strip().lower()
         decision = row.get("user_decision", "").strip().lower()
         if contains not in {"yes", "no"} or ambiguity not in {"yes", "no"}:
             errors.append(f"online_actions.csv:{line} privacy flags must be yes or no")
+        if related not in {"yes", "no", "uncertain"}:
+            errors.append(f"online_actions.csv:{line} current_problem_related is invalid")
+        if destination_category not in DESTINATION_CATEGORIES:
+            errors.append(f"online_actions.csv:{line} destination_category is invalid")
+        known_platform = any(host in destination for host in KNOWN_COMMUNICATION_HOSTS)
+        if known_platform and destination_category not in {"communication_platform", "uncertain"}:
+            errors.append(
+                f"online_actions.csv:{line} destination is a known communication platform "
+                "but its category says otherwise"
+            )
         if mode == "live" and action in FORBIDDEN_LIVE_ACTIONS:
             errors.append(f"online_actions.csv:{line} live mode forbids {action}; keep contest work local")
-        if ambiguity == "yes" and decision not in {"approved", "denied"}:
-            errors.append(f"online_actions.csv:{line} privacy is ambiguous; ask the user and record the reply")
-        if ambiguity == "yes" and decision == "denied" and row.get("status", "").strip() != "cancelled":
-            errors.append(f"online_actions.csv:{line} denied action must be cancelled")
+        if (
+            mode == "live"
+            and related == "yes"
+            and destination_category == "communication_platform"
+        ):
+            errors.append(
+                f"online_actions.csv:{line} live mode forbids accessing current-problem "
+                "content on a communication platform"
+            )
+        unresolved = ambiguity == "yes" or related == "uncertain" or destination_category == "uncertain"
+        if unresolved and decision not in {"approved", "safe", "denied", "prohibited"}:
+            errors.append(
+                f"online_actions.csv:{line} classification is ambiguous; ask the user "
+                "and record the reply before proceeding"
+            )
+        if unresolved and decision in {"denied", "prohibited"} and row.get("status", "").strip() != "cancelled":
+            errors.append(f"online_actions.csv:{line} prohibited action must be cancelled")
         if row.get("status", "").strip() not in {"declared", "completed", "cancelled"}:
             errors.append(f"online_actions.csv:{line} status is invalid")
     return {
         "status": "FAIL" if errors else "PASS",
         "scope": (
-            "local declaration audit only; search text is not lexically restricted or transmitted, "
-            "and operating-system network interception is out of scope"
+            "local declaration audit only; search text has no lexical blacklist, but live "
+            "access to current-problem content on communication platforms is forbidden; "
+            "operating-system network interception is out of scope"
         ),
         "action_count": len(rows),
         "errors": errors,

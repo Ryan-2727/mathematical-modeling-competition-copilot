@@ -51,10 +51,12 @@ Required actions:
   `reports/rules_lock_verification.json`. An initializer skeleton is not
   official evidence, and a prior-year rule is never the silent default.
 - Keep current contest statements, attachments, data, screenshots, ideas,
-  code, results, paper fragments, and summaries local. Internet search is
-  allowed; current-problem answer searching, interactive help, public posting,
-  and uploading contest material are forbidden. If privacy is ambiguous, ask
-  the user and wait for the answer. Record online actions locally.
+  code, results, paper fragments, and summaries local. Route internet use
+  through the compliance reference: generic official, scholarly, and static
+  research may proceed, but live access to current-problem content on any
+  communication platform is forbidden even when only browsing. There is no
+  lexical search-term blacklist. If classification is uncertain, ask the user
+  and wait for the recorded answer. Record online actions locally.
 - Before reading a live statement, record whether the AI runtime is demonstrably `local_offline` or an `external_service`. When it is external, do not send the
   current statement, attachments, data, code, results, or paper content to it; this skill cannot honestly guarantee a no-upload boundary for external inference.
   Search queries remain governed by the online-action ledger, and an ambiguous privacy effect requires the user's recorded decision.

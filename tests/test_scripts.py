@@ -97,6 +97,8 @@ class ScriptTests(unittest.TestCase):
             self.assertEqual(manifest["latex_template"], "mcm-icm")
             self.assertEqual(manifest["submission_profile"], "mcm-icm-current")
             self.assertTrue((root / "paper" / "main.tex").is_file())
+            self.assertFalse((root / "reports" / "submission_md5_lock.json").exists())
+            self.assertFalse((root / "reports" / "similarity_risk.json").exists())
 
     def test_skill_contract_and_invocation_gate(self) -> None:
         result = self.run_script("validate_skill_contract.py")
@@ -615,7 +617,10 @@ class ScriptTests(unittest.TestCase):
             (corpus / "old.md").write_text("one two three four five six seven eight nine ten eleven twelve", encoding="utf-8")
             out = root / "similarity.json"
             self.run_script("similarity_preflight.py", "--draft", str(draft), "--corpus-dir", str(corpus), "--out", str(out), "--min-overlap", "1")
-            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["status"], "REVIEW")
+            payload = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "REVIEW")
+            self.assertEqual(payload["scope"], "local_long_phrase_advisory")
+            self.assertIn("cannot establish compliance with the 25% threshold", payload["note"])
 
     @unittest.skipUnless(
         shutil.which("pwsh") or shutil.which("powershell"),

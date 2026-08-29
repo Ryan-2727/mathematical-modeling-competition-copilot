@@ -51,6 +51,8 @@
   "max_paper_mb": 20,
   "max_support_mb": 20,
   "max_main_text_pages": 30,
+  "national_similarity_threshold": 0.25,
+  "live_current_problem_communication_platform_access_forbidden": true,
   "toc_forbidden": true,
   "ai_modes": ["none", "used"],
   "ai_report_filename": "AI工具使用详情.pdf",
