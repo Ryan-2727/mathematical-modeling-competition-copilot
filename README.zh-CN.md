@@ -168,6 +168,9 @@ python scripts/contestctl.py summary --project-dir <project>
   题注、标签、图表清单和 LaTeX 日志。
 - `verify_chinese_academic_style.py` 只输出带文件与行号的中文论文语言建议和
   哈希绑定的人工豁免，不自动改写 LaTeX 正文。
+- `verify_paper_reasoning_narrative.py` 检查已执行的模型对比、影响结论的参数来源、
+  真实失败运行和条件边界是否自然落到论文并由具名成员复核；它不要求固定小标题，
+  也不判断作者身份。
 - `verify_delivery_profiles.py` 将完整用户交付与比赛官方允许提交的文件分开核验。
 - `run_reproduction.py` 在干净副本中执行 argv 命令，保存每次运行日志，
   并按哈希或声明的数值容差比较重复运行；shell 执行必须显式启用。
@@ -400,6 +403,7 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- model_design.md
 |   |-- experiment_log.md
 |   |-- model_decision_log.csv
+|   |-- paper_reasoning_map.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- bibliography.csv
@@ -495,6 +499,7 @@ python -X utf8 -m unittest discover -s tests -v
 |   |-- contestctl.py
 |   |-- lock_contest_rules.py
 |   |-- scaffold_latex_paper.py
+|   |-- verify_paper_reasoning_narrative.py
 |   |-- verify_abstract_quality.py
 |   |-- verify_bibliography_metadata.py
 |   |-- verify_delivery_profiles.py

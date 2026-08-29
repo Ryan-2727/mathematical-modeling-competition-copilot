@@ -159,6 +159,30 @@ NODE_REGISTRY = {
             ("reports/chinese_academic_style.json",),
         ),
         Node(
+            "verify-paper-reasoning-narrative",
+            "paper",
+            "verify_paper_reasoning_narrative.py",
+            (
+                "--project-dir",
+                "{project}",
+                "--out",
+                "{project}/reports/paper_reasoning_narrative.json",
+            ),
+            ("generate-paper-artifacts",),
+            (
+                "reports/paper_reasoning_map.csv",
+                "reports/model_decision_log.csv",
+                "reports/parameter_registry.csv",
+                "reports/model_simplification_log.csv",
+                "reports/fallback_plan.csv",
+                "reports/bibliography.csv",
+                "reports/traceability.md",
+                "results/**/*",
+                "paper/**/*.tex",
+            ),
+            ("reports/paper_reasoning_narrative.json",),
+        ),
+        Node(
             "verify-answer-density",
             "paper",
             "verify_answer_density.py",
@@ -484,6 +508,7 @@ def migration_plan(root: Path) -> dict[str, Any]:
         "reports/compute_budget.csv",
         "reports/compute_runs.jsonl",
         "reports/prose_style_exemptions.csv",
+        "reports/paper_reasoning_map.csv",
         "reports/problem_audition.csv",
         "reports/problem_audition_weights.json",
         "reports/problem_selection.json",
@@ -541,7 +566,8 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
     if payload["status"] == "PASS" and apply:
         manifest = payload.pop("manifest")
         templates = {
-            "reports/parameter_registry.csv": "subproblem,model_id,parameter,symbol,role,unit,scope,source,bounds,identifiability_status,claim_boundary,status\n",
+            "reports/parameter_registry.csv": "subproblem,model_id,parameter,symbol,role,unit,scope,source,bounds,identifiability_status,claim_boundary,status,claim_sensitive,source_class,source_locator,source_sha256,citation_key,calibration_command,sensitivity_evidence,paper_location\n",
+            "reports/paper_reasoning_map.csv": "subproblem,paper_location,modeling_path,modeling_path_evidence,modeling_path_evidence_sha256,model_choice_required,model_choice_location,parameter_location,failed_route_required,failed_route_location,boundary_required,boundary_location,human_reviewer,status\n",
             "reports/independent_routes.csv": "subproblem,route_id,route_role,principle,data_representation,failure_mode,result_file,result_value,tolerance,comparison_status,limitation,status\n",
             "reports/result_reconciliation.csv": "subproblem,comparison_id,primary_route,comparison_route,primary_value,comparison_value,tolerance,disagreement_material,investigation_step,cause,resolution,claim_action,evidence_file,status\n",
             "reports/joint_inference_design.json": '{\n  "applicable": false,\n  "reason": "migration requires an applicability decision",\n  "subproblems": []\n}\n',

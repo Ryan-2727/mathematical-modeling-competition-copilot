@@ -166,6 +166,36 @@ class ChineseAcademicStyleTests(unittest.TestCase):
             self.assertNotIn("causal_overclaim", rules)
             self.assertEqual(report["advisory_status"], "PASS", report)
 
+    def test_formulaic_prose_is_located_without_ai_authorship_verdict(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            self.scaffold(
+                root,
+                "\\section{摘要}\n"
+                "首先，我们建立了预测模型。\n\n"
+                "首先，我们建立了优化模型。\n\n"
+                "首先，我们建立了评价模型。\n\n"
+                "其次，采用层次分析法。再次，采用回归方法。最后，采用模拟方法。\n"
+                "该模型具有显著优势。该方法在任何情况下均完全适用。\n",
+                "\\section{结论}\n综上所述，该方案效果较好。\n",
+            )
+            report = self.run_audit(root)
+            rules = {item["rule"] for item in report["unresolved_findings"]}
+            self.assertTrue(
+                {
+                    "repetitive_paragraph_opening",
+                    "mechanical_transition_density",
+                    "generic_model_praise",
+                    "unbounded_scope_claim",
+                    "method_catalogue",
+                }
+                <= rules,
+                rules,
+            )
+            serialized = json.dumps(report, ensure_ascii=False).casefold()
+            self.assertNotIn("ai-generated", serialized)
+            self.assertNotIn("ai生成", serialized)
+
 
 if __name__ == "__main__":
     unittest.main()

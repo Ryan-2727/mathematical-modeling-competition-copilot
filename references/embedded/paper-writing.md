@@ -29,6 +29,16 @@ restating their detailed checks here.
 - Keep formulas connected to plain-language purpose.
 - Introduce figures and tables before or near their appearance.
 - Tie every conclusion to a result, figure, table, or source.
+- Let evidence determine which reasoning details appear. Explain model choice only
+  when a credible competitor was executed, parameter provenance only for
+  claim-sensitive values, failed routes only when a real failed-run artifact
+  exists, and abnormal boundaries when identifiability or fallback evidence makes
+  the conclusion conditional. Weave these details into the relevant paragraph;
+  do not create ritual headings or stock confessions.
+- Maintain `reports/paper_reasoning_map.csv` as a paper-location map to the
+  existing decision, parameter, simplification, fallback, and traceability
+  ledgers. Run `scripts/verify_paper_reasoning_narrative.py`; every completed map
+  row requires a named human reviewer, not a tool identity.
 - Do not invent numbers while writing.
 - Cite at least 10 unique, relevant, real scholarly works in the LaTeX body.
   Verify each work and its supported claim using
@@ -39,8 +49,9 @@ restating their detailed checks here.
 - For a Chinese LaTeX paper, run
   `scripts/verify_chinese_academic_style.py` after drafting. Review its located
   warnings for undefined abbreviations, long prose, duplicate conclusions,
-  unsupported evaluative or causal wording, raw precision inconsistency, and
-  excessive self-reference. The default is advisory and never rewrites prose.
+  repeated openings, mechanical transitions, detached method catalogues,
+  unsupported evaluative or causal wording, overbroad scope, raw precision
+  inconsistency, and excessive self-reference. The default is advisory. It never rewrites prose and never labels authorship.
   Record a deliberate exception only in `reports/prose_style_exemptions.csv`;
   use training-only `--fail-on` when the team explicitly wants a blocking lint.
 
@@ -59,5 +70,6 @@ Record the selected branch in `reports/verification_report.md`:
 - authoritative bibliography ledger and exact-title Google Scholar checks
 - compiled `paper/main.pdf` plus complete LaTeX source
 - `reports/chinese_academic_style.json`, including unresolved and human-exempted findings
+- `reports/paper_reasoning_narrative.json`, including each evidence-triggered paper location and human review
 - verified `support.zip` containing code, data or retrieval evidence, environment,
   exact commands, results, licenses, and hashes

@@ -11,6 +11,7 @@
       "verify-rendered-figures",
       "verify-abstract-structure",
       "verify-chinese-style",
+      "verify-paper-reasoning-narrative",
       "verify-answer-density",
       "verify-summary-numbers",
       "verify-result-story",

@@ -22,7 +22,8 @@
     "verify_summary_numeric_traceability.py",
     "cumcm-bc-model-library.md",
     "profile_compute_run.py",
-    "verify_chinese_academic_style.py"
+    "verify_chinese_academic_style.py",
+    "verify_paper_reasoning_narrative.py"
   ],
   "descriptor_checks": {
     "README.md": ["Explicit Invocation Only"],
@@ -51,8 +52,8 @@
     "references/embedded/diagnostics-and-result-reconciliation.md": ["independent_routes.csv", "result_reconciliation.csv", "disagree materially", "Do not average estimates"],
     "references/embedded/2025-corpus-observations.md": ["Post-freeze modeling-decision patterns", "shared latent parameters", "changing the optimizer", "synthetic-recovery"],
     "references/embedded/paper-presentation-and-visual-design.md": ["verify_answer_density.py", "verify_visual_design_system.py", "verify_paper_presentation.py", "presentation_checklist.csv"],
-    "references/embedded/paper-writing.md": ["verify_chinese_academic_style.py", "prose_style_exemptions.csv", "never rewrites prose"],
-    "references/embedded/result-first-paper-convergence.md": ["analysis-method-result", "model_simplification_log.csv", "visual_storyboard.csv", "verify_result_story.py"],
+    "references/embedded/paper-writing.md": ["verify_chinese_academic_style.py", "prose_style_exemptions.csv", "never rewrites prose", "paper_reasoning_map.csv", "never labels authorship"],
+    "references/embedded/result-first-paper-convergence.md": ["analysis-method-result", "model_simplification_log.csv", "visual_storyboard.csv", "verify_result_story.py", "verify_paper_reasoning_narrative.py"],
     "references/embedded/orchestration-and-paper-assurance.md": ["contestctl.py doctor", "contestctl.py run", "--phase selection", "contestctl.py summary", "project_schema_version", "rendered_figure_manifest.csv", "notation_registry.csv", "equation_dimensions.csv", "generate_paper_artifacts.py", "paper/generated/core_results.tex"],
     "references/embedded/cumcm-2026-readiness.md": ["verify_online_actions.py", "problem_screening.csv", "problem_selection_evidence.csv", "INSUFFICIENT_EVIDENCE", "record_problem_selection_confirmation.py", "verify_problem_audition.py", "score_training_readiness.py", "H74.5-H92"],
     "references/embedded/cumcm-2026-rules.md": ["2026-09-10 18:00", "2026-09-13 20:30", "2026-09-14 14:00", "--ai-mode"],
@@ -141,6 +142,7 @@
     "scripts/verify_notation_registry.py",
     "scripts/verify_online_actions.py",
     "scripts/verify_page_readability.py",
+    "scripts/verify_paper_reasoning_narrative.py",
     "scripts/verify_paper_delivery.py",
     "scripts/verify_paper_depth.py",
     "scripts/verify_paper_presentation.py",

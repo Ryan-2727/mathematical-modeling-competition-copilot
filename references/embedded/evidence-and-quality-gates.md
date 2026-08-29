@@ -51,3 +51,14 @@ the argument chain.
 Use `scripts/similarity_preflight.py` only on drafts and an offline historical
 corpus. It flags unusually long exact phrase overlap for human review. It is
 not a plagiarism verdict and must never become a current-problem answer source.
+
+## Reasoning narrative gate
+
+Use `reports/paper_reasoning_map.csv` only as a location map; the authoritative
+facts remain in the model-decision, parameter, simplification, fallback, result,
+and traceability ledgers. Run `scripts/verify_paper_reasoning_narrative.py` to
+require model-choice rationale, parameter provenance, failed-route discussion,
+or boundary language only when their underlying evidence triggers them. The gate
+does not require fixed visible headings and cannot replace a named human prose
+review. Pair it with the advisory Chinese style audit, which locates formulaic
+patterns but never rewrites text or infers authorship.

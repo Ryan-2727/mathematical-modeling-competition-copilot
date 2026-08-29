@@ -59,7 +59,7 @@ The following formerly separate skills or helper workflows are embedded as refer
 - `independent-review-and-regression.md`: blinded reviewer packets, artifact
   locators, disagreement/veto aggregation, and release-regression policy.
 - `diagrams.md`: flowcharts, architecture diagrams, and non-data visual explanation.
-- `paper-writing.md`: paper-writing branch selector.
+- `paper-writing.md`: paper-writing branch selector and evidence-triggered reasoning narrative discipline.
 - `paper-depth-and-page-budget.md`: evidence-based main-text depth profiles,
   section budgets, and detailed-versus-brief writing rules.
 - `paper-writing-zh-cn-format2025.md`: historical Chinese layout reference based
@@ -99,7 +99,7 @@ When these plugins are unavailable, continue the modeling workflow and record th
 | Literature | `reports/bibliography.csv`, metadata snapshots, passage evidence, `paper/references.bib` | At least 10 uniquely cited, relevant works have hash-bound authoritative metadata, exact-title Scholar queries, retraction checks, checked passages, claim IDs, reachable paper locations, and removal-impact evidence |
 | Computation | code/notebooks, `results/verified_values.csv`, generated LaTeX macros, model-validation report, optional `reports/model_kernel_usage.csv`, `reports/compute_budget.csv`, `reports/compute_runs.jsonl`, independent routes, reconciliation, stress/units ledgers | Executed; hashes and units reconcile; synthetic kernel checks stay separate from contest evidence; primary/fallback runtime, memory scope, timeout, solver evidence, diagnostics, conflicts, and decisive claims are challenged |
 | Figures/tables | `figures/`, tables, figure manifests, page overview | Hash-bound at insertion size; text, lines, resolution, clipping, hierarchy, grayscale, and color-vision reviews are recorded |
-| Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, numeric and prose exception ledgers, notation/dimension registry, complete portable LaTeX source tree | Every abstract/conclusion number is a verified macro or narrow structural exemption; Chinese prose findings are located for human review; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
+| Writing | `paper/main.tex`, `paper/main.pdf`, generated result fragments, `reports/paper_reasoning_map.csv`, numeric and prose exception ledgers, notation/dimension registry, complete portable LaTeX source tree | Every abstract/conclusion number is a verified macro or narrow structural exemption; evidence-triggered model choice, parameter provenance, real failed runs, and boundaries have natural paper locations and a named human reviewer; Chinese prose findings are located for human review; symbols and units reconcile; Overleaf-style root and VS Code `build/` outputs pass |
 | Final check | verification report, paper-depth report, argument coverage, claim report, model/value reports, `reports/latex_compatibility.json`, PDF visual report, portable-source ZIP report, `reports/paper_delivery.json` | Depth, compile, visual, anonymity, numeric, reproduction, and delivery gates pass or name scoped limitations |
 | Optional review | blinded reviewer reports, aggregation, `reports/reviewer_scorecard.csv`, award-readiness report | Only after explicit user opt-in; objections cite artifacts, vetoes are resolved or disclosed, and final checks rerun after changes |
 | Skill release | blinded benchmark manifest and regression report | No score exceeds its accepted regression tolerance; baselines are never changed automatically |

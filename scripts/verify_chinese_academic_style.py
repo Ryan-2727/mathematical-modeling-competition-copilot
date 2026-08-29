@@ -44,6 +44,17 @@ COMMAND_WITH_TEXT = re.compile(r"\\[A-Za-z@]+\*?(?:\[[^\]]*\])?\{([^{}]*)\}")
 COMMAND = re.compile(r"\\[A-Za-z@]+\*?(?:\[[^\]]*\])?")
 ABBREVIATION = re.compile(r"(?<![A-Za-z0-9])([A-Z][A-Z0-9-]{1,})(?![A-Za-z0-9])")
 VAGUE = re.compile(r"显著|明显|较好|有效|优异|较高|大幅|具有优势|表现良好")
+MECHANICAL_OPENING = re.compile(
+    r"^(首先|其次|再次|最后|综上所述|由此可见|值得注意的是|需要指出的是)[，,]?"
+)
+METHOD_OPENING = re.compile(
+    r"^(?:(?:首先|其次|再次|最后)[，,]?)?(?:我们)?(?:建立|采用|使用|引入|构建)"
+)
+GENERIC_MODEL_PRAISE = re.compile(
+    r"(?:模型|方法|方案).{0,12}(?:显著优势|明显优势|优异|表现良好|效果较好)"
+)
+UNBOUNDED_SCOPE = re.compile(r"适用于所有|在任何情况下|完全适用|普遍适用|无论.{0,20}均")
+SCOPE_QUALIFIER = re.compile(r"条件|范围内|边界|仅|当|若|除外|限制|测试区间")
 CAUSAL = re.compile(r"导致|造成|促进|抑制|驱动|使得|决定了")
 CAUSAL_QUALIFIER = re.compile(
     r"可能|相关|关联|证据不足|无法识别|不能识别|因果图|混杂|反事实|"
@@ -165,6 +176,7 @@ def collect_findings(
     abbreviation_seen: set[str] = set()
     precision_groups: dict[str, list[tuple[int, str, int]]] = {}
     self_references: list[tuple[str, int, str]] = []
+    all_paragraphs: list[tuple[str, int, str]] = []
     chinese_characters = 0
 
     for path in files:
@@ -174,6 +186,7 @@ def collect_findings(
         records = [(line, prose_line(raw)) for line, raw in enumerate(raw_lines, 1)]
         chinese_characters += sum(len(CHINESE.findall(text)) for _, text in records)
         paragraphs, sentences = paragraphs_and_sentences(relative, records)
+        all_paragraphs.extend((relative, line, paragraph) for line, paragraph in paragraphs)
         all_sentences.extend(sentences)
         for line, paragraph in paragraphs:
             visible = len(re.sub(r"\s+", "", paragraph))
@@ -252,6 +265,79 @@ def collect_findings(
                     sentence.text,
                 )
             )
+        if GENERIC_MODEL_PRAISE.search(sentence.text) and not has_evidence:
+            findings.append(
+                finding(
+                    "generic_model_praise",
+                    "major",
+                    sentence.source_file,
+                    sentence.line,
+                    "replace generic praise with the comparison metric and its evidence",
+                    sentence.text,
+                )
+            )
+        if UNBOUNDED_SCOPE.search(sentence.text) and not SCOPE_QUALIFIER.search(sentence.text):
+            findings.append(
+                finding(
+                    "unbounded_scope_claim",
+                    "major",
+                    sentence.source_file,
+                    sentence.line,
+                    "state the tested scope and abnormal boundary conditions",
+                    sentence.text,
+                )
+            )
+
+    opening_groups: dict[str, list[tuple[str, int, str]]] = {}
+    for relative, line, paragraph in all_paragraphs:
+        normalized_opening = normalize_sentence(paragraph)[:7]
+        if len(normalized_opening) >= 5:
+            opening_groups.setdefault(normalized_opening, []).append((relative, line, paragraph))
+    for occurrences in opening_groups.values():
+        if len(occurrences) >= 3:
+            relative, line, paragraph = occurrences[2]
+            findings.append(
+                finding(
+                    "repetitive_paragraph_opening",
+                    "minor",
+                    relative,
+                    line,
+                    "three or more paragraphs repeat the same opening stem",
+                    paragraph,
+                )
+            )
+
+    mechanical = [sentence for sentence in all_sentences if MECHANICAL_OPENING.search(sentence.text)]
+    if len(mechanical) >= 4 and len(mechanical) / max(len(all_sentences), 1) >= 0.4:
+        sentence = mechanical[3]
+        findings.append(
+            finding(
+                "mechanical_transition_density",
+                "minor",
+                sentence.source_file,
+                sentence.line,
+                "transition words dominate the prose; connect steps through problem-specific reasoning",
+                sentence.text,
+            )
+        )
+    catalogue = [sentence for sentence in all_sentences if METHOD_OPENING.search(sentence.text)]
+    catalogue_without_evidence = [
+        sentence
+        for sentence in catalogue
+        if not re.search(r"【已验证数值】|【证据】|\d", sentence.text)
+    ]
+    if len(catalogue_without_evidence) >= 4:
+        sentence = catalogue_without_evidence[3]
+        findings.append(
+            finding(
+                "method_catalogue",
+                "minor",
+                sentence.source_file,
+                sentence.line,
+                "the prose lists methods without linking each choice to evidence, diagnostics, or results",
+                sentence.text,
+            )
+        )
 
     normalized: list[tuple[Sentence, str]] = [
         (sentence, normalize_sentence(sentence.text)) for sentence in all_sentences

@@ -77,6 +77,7 @@ class ExecutableQualityIntegrationTests(unittest.TestCase):
         strict = contest_orchestration.load_profile("strict")
         for profile in (standard, strict):
             self.assertIn("verify-chinese-style", profile["phases"]["paper"])
+            self.assertIn("verify-paper-reasoning-narrative", profile["phases"]["paper"])
             self.assertIn("verify-model-kernel-evidence", profile["phases"]["freeze"])
             self.assertIn("verify-compute-budget", profile["phases"]["freeze"])
 

@@ -257,7 +257,12 @@ Required actions:
   result/interpretation -> local validation -> limitation.
 - Show why the selected model was promoted from its simpler parent, which
   parameters are shared across conditions, whether an independent route
-  supports the conclusion, and how any material disagreement was resolved.
+  supports the conclusion, and how any material disagreement was resolved. Bind
+  the modeling path, claim-sensitive parameter provenance, genuine failed runs,
+  triggered boundary cases, and a named human review location through
+  `reports/paper_reasoning_map.csv`, then run
+  `scripts/verify_paper_reasoning_narrative.py`. Integrate these facts where the
+  argument needs them; never fabricate an alternative or force fixed headings.
 - Put every claim-bearing number in the abstract and conclusion behind `\VerifiedValue{...}` or `\VerifiedValueWithUnit{...}`. Register only genuine structural
   exceptions in `reports/numeric_exemptions.csv`, then run `scripts/verify_summary_numeric_traceability.py`.
 - A candidate more complex than its baseline may be primary only when an executed comparison reaches the positive, predeclared minimum advantage in
@@ -271,7 +276,7 @@ Required actions:
   the model, key parameters, core results, and model-appropriate validation in
   the body. Use current official page limits; corpus-derived ranges are advisory
   and never justify padding.
-- For Chinese LaTeX, run the advisory `scripts/verify_chinese_academic_style.py`; review or bind exceptions, but never auto-rewrite prose.
+- For Chinese LaTeX, run the advisory `scripts/verify_chinese_academic_style.py`; review located formulaic openings, method catalogues, generic praise, duplicate prose, and overbroad scope by hand or bind a justified exception, but never auto-rewrite prose or infer authorship.
 - Produce `paper/main.pdf` and a rebuildable UTF-8 XeLaTeX/latexmk source tree
   with relative paths, `main.tex`, bibliography, sections, generated values,
   figures, styles, `.latexmkrc`, and `.vscode/`. The same portable root ZIP must

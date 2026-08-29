@@ -42,6 +42,7 @@ class ScriptTests(unittest.TestCase):
                 "reviewer_scorecard.csv",
                 "milestones.csv",
                 "paper_depth_plan.csv",
+                "paper_reasoning_map.csv",
             ):
                 self.assertTrue((root / "reports" / filename).is_file(), filename)
             for filename in (

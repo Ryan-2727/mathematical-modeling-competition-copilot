@@ -90,9 +90,13 @@ combine adjacent items, but none may disappear.
    geometric, statistical, economic, or decision mechanism that controls it.
 2. **Method rationale.** Introduce the chosen method in plain language, explain
    why it fits this mechanism, and mention the baseline or rejected alternative
-   when that choice is not obvious.
+   when an executed comparison makes that choice material. State the diagnostic
+   that promoted model A over model B; do not praise complexity in the abstract.
 3. **Variables and assumptions.** Define local symbols, units, domains, coordinate
-   systems, and the assumptions that enable this model.
+   systems, and the assumptions that enable this model. For every
+   claim-sensitive threshold or parameter, identify whether it came from a
+   verified source passage, official rule, reproducible calibration, or explicit
+   assumption, and state the tested range.
 4. **Derivation.** Move from the mechanism to equations, objective, and constraints
    step by step. Explain the meaning of transformations and boundary conditions;
    do not show only the final formula.
@@ -104,7 +108,9 @@ combine adjacent items, but none may disappear.
    question and why the value/trend is reasonable.
 7. **Local validation.** Add a direct check near the result: residual, limiting
    case, independent calculation, constraint audit, precision comparison, or
-   sensitivity. Keep a later global validation section as well.
+   sensitivity. State genuine failed attempts and abnormal boundary behavior
+   only where saved evidence changes interpretation. Keep a later global
+   validation section as well.
 
 ## What to write fully and what to compress
 

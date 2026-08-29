@@ -33,6 +33,17 @@ and the resulting artifact. Present the original, unexecuted route only as
 `模型优化` / `model_optimization`; never present its unverified value as a result.
 If authorization is withheld, state the boundary and do not invent an answer.
 
+## Evidence-triggered narrative
+
+After results stabilize, complete `reports/paper_reasoning_map.csv` and run
+`verify_paper_reasoning_narrative.py`. Keep the visible structure driven by the
+problem, not by a checklist: place the modeling path near the derivation, the
+model comparison beside the promotion decision, parameter sources beside their
+first claim-bearing use, and applicable boundaries beside the result or
+conclusion. Mention a failed route only when a saved execution artifact and
+diagnostic exist. If no credible alternative or failed run exists, do not invent
+one merely to make the prose look personal.
+
 ## Visual evidence portfolio
 
 Plan visuals in `reports/visual_storyboard.csv`. Each subproblem needs a

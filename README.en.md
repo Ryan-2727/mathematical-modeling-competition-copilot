@@ -193,6 +193,10 @@ The release and paper workflow then uses deterministic checks:
   references, captions, labels, figure manifests, and LaTeX logs.
 - `verify_chinese_academic_style.py` emits advisory, line-located Chinese prose
   findings and hash-bound human exceptions without automatically rewriting LaTeX.
+- `verify_paper_reasoning_narrative.py` checks that executed model comparisons,
+  claim-sensitive parameter sources, genuine failed runs, and conditional
+  boundaries are placed naturally in the paper and reviewed by a named person;
+  it requires no stock headings and never infers authorship.
 - `verify_delivery_profiles.py` verifies the full user handoff separately from
   the files allowed in the official contest submission.
 - `run_reproduction.py` runs argv-based commands in a clean copy, retains
@@ -361,6 +365,7 @@ Chinese example:
 |   |-- model_design.md
 |   |-- experiment_log.md
 |   |-- model_decision_log.csv
+|   |-- paper_reasoning_map.csv
 |   |-- stress_tests.csv
 |   |-- units.csv
 |   |-- bibliography.csv
@@ -457,6 +462,7 @@ This is a navigation view, not an exhaustive file manifest. The tested
 |   |-- contestctl.py
 |   |-- lock_contest_rules.py
 |   |-- scaffold_latex_paper.py
+|   |-- verify_paper_reasoning_narrative.py
 |   |-- verify_abstract_quality.py
 |   |-- verify_bibliography_metadata.py
 |   |-- verify_delivery_profiles.py
