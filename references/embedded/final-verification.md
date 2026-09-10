@@ -79,7 +79,7 @@ The verification loop:
   unresolved corpus coverage block strict release. This local gate never
   replaces the actual Tongfang/CNKI two-metric report.
 - Submission format matches contest requirements.
-- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result. Then run `verify_submission_md5_lock.py` against timely official-client evidence and `verify_similarity_risk.py` against the actual two-metric Tongfang/CNKI report. Missing official evidence is `LIMITED`, not `PASS`.
+- For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the full-paper `cumcm.no_administrative_pages` result, the selected AI branch, and the support archive result. A text-uninspectable PDF or Word file needs current-paper hash-bound human evidence with `administrative_pages_absent=true`; the fallback remains `LIMITED`. Then run `verify_submission_md5_lock.py` against timely official-client evidence and `verify_similarity_risk.py` against the actual two-metric Tongfang/CNKI report. Missing official evidence is `LIMITED`, not `PASS`.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix
   counts. Confirm every numbered subproblem has its own completed depth-plan row;
   a long code appendix does not compensate for an abbreviated main argument.

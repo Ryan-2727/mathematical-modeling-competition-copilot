@@ -727,7 +727,23 @@ class ScriptTests(unittest.TestCase):
     def test_cumcm_2026_submission_profile(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
-            paper = root / "paper.docx"; paper.write_bytes(b"docx-placeholder")
+            paper = root / "paper.docx"
+            document_xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    <w:p><w:r><w:t>摘要</w:t></w:r></w:p>
+    <w:p><w:r><w:t>本文给出模型、结果与验证。</w:t></w:r></w:p>
+    <w:p><w:r><w:t>AI工具使用声明</w:t></w:r></w:p>
+    <w:p><w:r><w:t>本参赛队在竞赛过程中使用了AI工具，主要用于语言润色和代码调试，详细使用情况见支撑材料。</w:t></w:r></w:p>
+    <w:p><w:r><w:t>参考文献</w:t></w:r></w:p>
+    <w:p><w:r><w:t>附录</w:t></w:r></w:p>
+    <w:p><w:r><w:t>支撑材料的文件列表：code/run.py</w:t></w:r></w:p>
+    <w:p><w:r><w:t>完整源程序代码如下。</w:t></w:r></w:p>
+  </w:body>
+</w:document>
+"""
+            with zipfile.ZipFile(paper, "w") as archive:
+                archive.writestr("word/document.xml", document_xml)
             support = root / "support.zip"
             with zipfile.ZipFile(support, "w") as archive:
                 archive.writestr("AI\u5de5\u5177\u4f7f\u7528\u8be6\u60c5.pdf", b"pdf-placeholder")

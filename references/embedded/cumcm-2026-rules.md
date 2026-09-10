@@ -41,6 +41,13 @@ inspection.
 
 ## Enforced by `verify_submission.py --profile cumcm-2026`
 
+- Electronic-paper administrative pages: scan all extractable PDF pages or the
+  complete DOCX text for commitment-form and number-only-page signatures. The
+  `cumcm.no_administrative_pages` gate reports only page numbers and signature
+  classes, never personal field values. If text extraction is unavailable,
+  require current-paper hash-bound human evidence with
+  `administrative_pages_absent=true`; this fallback is `LIMITED`, not a claim
+  of machine inspection.
 - Support package: one ZIP or RAR archive, at most 20 MB when supplied.
 - Main text: do not create a table of contents or a separate contents page;
   count no more than 30 main-text pages, excluding appendices. Appendices have

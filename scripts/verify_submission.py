@@ -137,7 +137,10 @@ def inspect_pdf(path: Path) -> PdfInspection:
     pdftotext = shutil.which("pdftotext.exe") or shutil.which("pdftotext")
     tools["pdftotext"] = {
         "available": bool(pdftotext),
-        "scope": "first-page, contents, header, appendix, and AI text evidence",
+        "scope": (
+            "first-page, administrative-page, contents, header, appendix, "
+            "and AI text evidence"
+        ),
     }
     if pdftotext and page_count is not None:
         extracted: list[str] = []
@@ -271,6 +274,31 @@ def has_toc(text: str) -> bool:
 
 def has_abstract_marker(text: str) -> bool:
     return bool(re.search(r"(?im)^\s*(?:摘\s*要|abstract)(?:\b|$)", text))
+
+
+def administrative_page_signatures(page_texts: list[str]) -> list[dict[str, object]]:
+    findings: list[dict[str, object]] = []
+    commitment_heading = re.compile(
+        r"(?:全国大学生数学建模竞赛)?(?:参赛(?:队)?)?承诺书"
+    )
+    number_page_heading = re.compile(
+        r"(?:(?:全国大学生数学建模竞赛|参赛论文))?(?:论文)?编号(?:专用)?页"
+    )
+    team_number_field = re.compile(r"(?:参赛)?队(?:号|编号)[：:]", re.I)
+    paper_number_field = re.compile(r"论文编号[：:]", re.I)
+    for page_number, text in enumerate(page_texts, 1):
+        signatures: list[str] = []
+        compact_lines = [compact_text(line) for line in text.splitlines() if line.strip()]
+        compact_page = compact_text(text)
+        if any(commitment_heading.fullmatch(line) for line in compact_lines):
+            signatures.append("commitment_heading")
+        if any(number_page_heading.fullmatch(line) for line in compact_lines):
+            signatures.append("number_page_heading")
+        if team_number_field.search(compact_page) and paper_number_field.search(compact_page):
+            signatures.append("team_and_paper_number_fields")
+        if signatures:
+            findings.append({"page": page_number, "signatures": signatures})
+    return findings
 
 
 def has_appendix_manifest(text: str, support_supplied: bool) -> tuple[bool, bool]:
@@ -468,6 +496,68 @@ def verify_cumcm(
         warnings.append(
             "Word first-page layout was not machine-inspected; preserve legacy "
             "CUMCM Word workflow and inspect it visually"
+        )
+
+    administrative_pages: list[dict[str, object]] | None = None
+    location_label = ""
+    if page_texts:
+        administrative_pages = administrative_page_signatures(page_texts)
+        location_label = "page"
+    elif docx_text:
+        administrative_pages = administrative_page_signatures([docx_text])
+        location_label = "document"
+    if administrative_pages is not None:
+        locations = ", ".join(
+            (
+                f"page {item['page']} ({'/'.join(item['signatures'])})"
+                if location_label == "page"
+                else f"document ({'/'.join(item['signatures'])})"
+            )
+            for item in administrative_pages
+        )
+        clear = not administrative_pages
+        add_check(
+            checks,
+            errors,
+            limitations,
+            "cumcm.no_administrative_pages",
+            clear,
+            (
+                "no commitment-form or number-only page signature found"
+                if clear
+                else "electronic paper contains an administrative-page signature at "
+                + locations
+            ),
+            "all extracted electronic-paper text; personal field values are not reported",
+        )
+    elif evidence:
+        clear = evidence_bool(evidence, "administrative_pages_absent")
+        add_check(
+            checks,
+            errors,
+            limitations,
+            "cumcm.no_administrative_pages",
+            clear,
+            (
+                "hash-bound human evidence records no commitment-form or number-only page"
+                if clear
+                else "compliance evidence does not confirm administrative_pages_absent"
+            ),
+            "recorded full-paper review",
+            limited=clear,
+        )
+    else:
+        add_check(
+            checks,
+            errors,
+            limitations,
+            "cumcm.no_administrative_pages",
+            False,
+            (
+                "administrative-page exclusion requires extracted PDF/DOCX text "
+                "or hash-bound human evidence"
+            ),
+            "complete electronic-paper content",
         )
 
     if all_text is not None:

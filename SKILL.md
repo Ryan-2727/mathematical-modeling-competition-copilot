@@ -323,8 +323,8 @@ Required gates:
 - Compile both project-root and `build/` outputs; verify the rendered PDF,
   page-by-page readability, presentation, anonymity, portable source ZIP, and
   clean copied-project reproduction. For CUMCM 2026, explicitly record abstract
-  page count, main-text page count, appendix page count, absence of a contents
-  page, and whether code/large tables were correctly moved out of the body. A
+  page count, main-text page count, appendix page count, absence of commitment/
+  number-only and contents pages, and whether code/large tables were correctly moved out of the body. A
   missing mandatory renderer is not a visual pass.
 - Build `support.zip` from `support/materials_manifest.csv` and run the paper,
   support, delivery-profile, and submission gates. Inspect the PDF and cited

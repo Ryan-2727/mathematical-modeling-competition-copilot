@@ -107,6 +107,7 @@ class SubmissionProfileTests(unittest.TestCase):
             statuses = {item["id"]: item["status"] for item in payload["checks"]}
             for check_id in (
                 "cumcm.first_page_abstract",
+                "cumcm.no_administrative_pages",
                 "cumcm.toc_forbidden",
                 "cumcm.appendix_support_manifest",
                 "cumcm.appendix_code_evidence",
@@ -222,6 +223,167 @@ class SubmissionProfileTests(unittest.TestCase):
                     "cumcm.appendix_code_evidence",
                 }.issubset(failed)
             )
+
+    def test_cumcm_rejects_commitment_and_number_pages_without_generic_false_positive(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            paper = self.make_pdf(root)
+            base_pages = [
+                "摘要\n本文给出模型、结果与验证。\n关键词：建模",
+                "模型建立\n算法步骤编号用于复现实验，但这里不是行政页面。",
+                "AI工具使用声明\n本参赛队在竞赛过程中未使用任何AI工具。\n参考文献\n[1] Test.",
+                "附录：代码与支撑材料说明\n本论文没有支撑材料\n本论文没有用到程序",
+            ]
+
+            with patch.object(submission, "inspect_pdf", return_value=inspected(base_pages)):
+                normal = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                )
+            admin_check = next(
+                item for item in normal["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(admin_check["status"], "PASS", normal)
+
+            commitment_pages = list(base_pages)
+            commitment_pages.insert(
+                2,
+                "全国大学生数学建模竞赛\n承 诺 书\n参赛队员签字：某某",
+            )
+            with patch.object(
+                submission, "inspect_pdf", return_value=inspected(commitment_pages)
+            ):
+                commitment = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                )
+            check = next(
+                item for item in commitment["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(check["status"], "FAIL")
+            self.assertIn("page 3", check["evidence"])
+            self.assertNotIn("某某", check["evidence"])
+
+            number_pages = list(base_pages)
+            number_pages.insert(1, "参赛队号：20260001\n论文编号：ABC123")
+            with patch.object(
+                submission, "inspect_pdf", return_value=inspected(number_pages)
+            ):
+                numbered = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                )
+            check = next(
+                item for item in numbered["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(check["status"], "FAIL")
+            self.assertIn("page 2", check["evidence"])
+            self.assertNotIn("20260001", check["evidence"])
+
+            docx = root / "paper.docx"
+            xml = (
+                '<?xml version="1.0" encoding="UTF-8"?>'
+                '<w:document xmlns:w="http://schemas.openxmlformats.org/'
+                'wordprocessingml/2006/main"><w:body>'
+                '<w:p><w:r><w:t>摘要</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>编号专用页</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>AI工具使用声明</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>本参赛队在竞赛过程中未使用任何AI工具。</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>参考文献</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>附录</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>本论文没有支撑材料</w:t></w:r></w:p>'
+                '<w:p><w:r><w:t>本论文没有用到程序</w:t></w:r></w:p>'
+                '</w:body></w:document>'
+            )
+            with zipfile.ZipFile(docx, "w") as archive:
+                archive.writestr("word/document.xml", xml)
+            docx_payload = submission.verify_submission(
+                paper=docx,
+                support=None,
+                profile_name="cumcm-2026",
+                main_text_pages=3,
+                ai_mode="none",
+            )
+            check = next(
+                item for item in docx_payload["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(check["status"], "FAIL")
+            self.assertIn("document", check["evidence"])
+
+    def test_cumcm_uninspectable_paper_requires_admin_page_absence_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            paper = self.make_pdf(root)
+            unavailable = submission.PdfInspection(
+                page_count=None,
+                page_texts=None,
+                tools={
+                    "pdfinfo": {"available": False, "scope": "PDF page count"},
+                    "pdftotext": {"available": False, "scope": "PDF text"},
+                },
+            )
+            evidence = root / "evidence.json"
+            evidence.write_text(
+                json.dumps({
+                    "paper_sha256": hashlib.sha256(paper.read_bytes()).hexdigest(),
+                    "reviewer": "student-1",
+                    "recorded_at": "2026-09-10T20:00:00+08:00",
+                    "first_page_abstract": True,
+                    "toc_absent": True,
+                    "appendix_support_manifest": True,
+                    "appendix_code_or_no_program": True,
+                    "ai_non_use_declaration_before_references": True,
+                    "ai_inline_disclosure_absent": True,
+                    "ai_reference_entry_absent": True,
+                    "administrative_pages_absent": True,
+                }),
+                encoding="utf-8",
+            )
+            with patch.object(submission, "inspect_pdf", return_value=unavailable):
+                limited = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                    evidence_path=evidence,
+                )
+            check = next(
+                item for item in limited["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(check["status"], "LIMITED", limited)
+
+            payload = json.loads(evidence.read_text(encoding="utf-8"))
+            payload["administrative_pages_absent"] = False
+            evidence.write_text(json.dumps(payload), encoding="utf-8")
+            with patch.object(submission, "inspect_pdf", return_value=unavailable):
+                failure = submission.verify_submission(
+                    paper=paper,
+                    support=None,
+                    profile_name="cumcm-2026",
+                    main_text_pages=3,
+                    ai_mode="none",
+                    evidence_path=evidence,
+                )
+            check = next(
+                item for item in failure["checks"]
+                if item["id"] == "cumcm.no_administrative_pages"
+            )
+            self.assertEqual(check["status"], "FAIL")
 
     def test_mcm_profile_enforces_summary_font_filename_headers_and_page_count(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
