@@ -241,6 +241,23 @@ class Cumcm2026ComplianceHardeningTests(unittest.TestCase):
             nodes = {item["node"] for item in payload["nodes"]}
             self.assertIn("verify-submission-md5-lock", nodes)
             self.assertIn("verify-official-similarity-risk", nodes)
+            self.assertNotIn("verify-local-originality", nodes)
+
+            (root / "reports" / "originality_config.json").write_text(
+                json.dumps({
+                    "schema_version": 1,
+                    "enabled": True,
+                    "main_tex": "paper/main.tex",
+                    "corpus_dirs": [str(root.parent / "private-corpus")],
+                    "historical_corpus_confirmed": True,
+                }),
+                encoding="utf-8",
+            )
+            payload = contest_orchestration.run_workflow(
+                root, "paper", "standard", None, dry_run=True
+            )
+            nodes = {item["node"] for item in payload["nodes"]}
+            self.assertIn("verify-local-originality", nodes)
 
             (root / "contest_manifest.json").write_text(
                 json.dumps({"submission_profile": "mcm-icm-current"}), encoding="utf-8"

@@ -70,6 +70,14 @@ The verification loop:
   every located advisory finding or bind a human exception. Do not use the
   checker to rewrite the paper automatically; unreadable sources and stale
   exceptions remain hard failures.
+- For CUMCM 2026, configure an authorized local historical corpus and run
+  `scripts/originality_preflight.py`. Open
+  `reports/originality_preflight.md`, inspect every located HIGH/MEDIUM draft
+  paragraph against its source, and bind the human disposition in
+  `reports/originality_review.csv`. The scan must remain local and text-only;
+  it generates no image or replacement prose. `REVIEW`, stale reviews, and
+  unresolved corpus coverage block strict release. This local gate never
+  replaces the actual Tongfang/CNKI two-metric report.
 - Submission format matches contest requirements.
 - For CUMCM 2026, run `verify_submission.py --profile cumcm-2026 --ai-mode none|used`; explicitly record main-text pages, visual abstract-first/no-TOC checks, the selected AI branch, and the support archive result. Then run `verify_submission_md5_lock.py` against timely official-client evidence and `verify_similarity_risk.py` against the actual two-metric Tongfang/CNKI report. Missing official evidence is `LIMITED`, not `PASS`.
 - Run `verify_paper_depth.py` with the visually confirmed main-text and appendix

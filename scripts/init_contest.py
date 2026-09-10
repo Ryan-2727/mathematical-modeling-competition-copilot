@@ -399,6 +399,16 @@ def main() -> int:
     )
     if is_cumcm_2026:
         write_if_missing(
+            root / "reports/originality_config.json",
+            '{\n  "schema_version": 1,\n  "enabled": false,\n'
+            '  "main_tex": "paper/main.tex",\n  "corpus_dirs": [],\n'
+            '  "historical_corpus_confirmed": false\n}\n',
+        )
+        write_if_missing(
+            root / "reports/originality_review.csv",
+            "finding_id,draft_sha256,disposition,reason,reviewer,status\n",
+        )
+        write_if_missing(
             root / "reports/submission_md5_lock.json",
             '{\n  "schema_version": 1,\n  "profile": "cumcm-2026",\n'
             '  "artifacts": []\n}\n',

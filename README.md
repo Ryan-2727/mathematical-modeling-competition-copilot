@@ -112,6 +112,27 @@ First run `scripts/verify_latex_compatibility.py`: it must produce a fresh,
 compile-backed `reports/latex_compatibility.json` after successful
 Overleaf-style and VS Code-style builds.
 
+### Local originality preflight
+
+For CUMCM 2026, initialization creates `reports/originality_config.json` and
+`reports/originality_review.csv`. Point the configuration only at an authorized
+local historical-paper corpus, set `enabled` and
+`historical_corpus_confirmed` to `true`, then run:
+
+```bash
+python scripts/originality_preflight.py --project-dir <project> --config <project>/reports/originality_config.json --out-json <project>/reports/originality_preflight.json --out-md <project>/reports/originality_preflight.md
+```
+
+The offline, text-only scan follows all `\input`/`\include` files and lists each
+HIGH/MEDIUM draft paragraph, exact file/line, historical source/page, match
+signals, and a human revision direction. It creates no images and generates no
+replacement or detector-evasion prose. A named team member records
+`resolved`, `accepted_with_citation`, or `false_positive` in the review CSV;
+paragraph edits invalidate stale approvals. This is only a local triage aid and
+never estimates or replaces the official Tongfang/CNKI two-metric check. See
+`references/embedded/local-originality-preflight.md` for thresholds and the
+complete workflow.
+
 ## Executable Evidence Gates
 
 Initialization selects the contest template and submission profile:
@@ -378,6 +399,9 @@ Chinese example:
 |   |-- paper_depth_plan.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
+|   |-- originality_config.json
+|   |-- originality_review.csv
+|   |-- originality_preflight.md
 |   |-- latex_compatibility.json
 |   |-- portable_latex_verification.json
 |   |-- paper_delivery.json

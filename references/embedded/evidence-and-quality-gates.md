@@ -48,13 +48,23 @@ the argument chain.
 
 ## Originality preflight
 
-Use `scripts/similarity_preflight.py` only on drafts and an offline historical
-corpus. It flags unusually long exact phrase overlap for human review. It is
-not a plagiarism verdict, does not estimate either official Tongfang/CNKI
-metric, and cannot establish compliance with a 25% threshold. For CUMCM 2026,
-record the two actual official metrics in `reports/similarity_risk.json` and run
-`scripts/verify_similarity_risk.py`; missing official evidence remains
-`LIMITED`.
+Read `local-originality-preflight.md`. Configure the authorized historical
+corpus in `reports/originality_config.json`, then run
+`scripts/originality_preflight.py`. It expands the complete multi-file LaTeX
+paper and reports HIGH/MEDIUM exact and near-match risks in
+`reports/originality_preflight.md`, including the draft paragraph, exact source
+location, compact source excerpt, metrics, and a human remediation direction.
+Resolve each item in `reports/originality_review.csv`; paragraph hashes make
+reviews stale after edits. The checker is local, text-only, creates no images,
+and never writes replacement or detector-evasion prose. Keep the legacy
+`scripts/similarity_preflight.py` only for compatible single-file exact-overlap
+checks.
+
+This is not a plagiarism verdict, does not estimate either official
+Tongfang/CNKI metric, and cannot establish compliance with a 25% threshold. For
+CUMCM 2026, record the two actual official metrics in
+`reports/similarity_risk.json` and run `scripts/verify_similarity_risk.py`;
+missing official evidence remains `LIMITED`.
 
 ## Reasoning narrative gate
 

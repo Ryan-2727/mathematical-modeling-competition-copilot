@@ -101,6 +101,24 @@ OpenAlex、期刊或会议等权威元数据，保存 Google Scholar 精确题�
 Overleaf 风格和 VS Code 风格的真实编译，并生成与当前源码指纹一致的
 `reports/latex_compatibility.json`。
 
+### 本地原创性预检
+
+CUMCM 2026 初始化会创建 `reports/originality_config.json` 和
+`reports/originality_review.csv`。只把配置指向获准本地使用的历史优秀论文库，
+将 `enabled` 与 `historical_corpus_confirmed` 设为 `true`，然后运行：
+
+```bash
+python scripts/originality_preflight.py --project-dir <项目目录> --config <项目目录>/reports/originality_config.json --out-json <项目目录>/reports/originality_preflight.json --out-md <项目目录>/reports/originality_preflight.md
+```
+
+扫描完全离线、仅处理文本，会递归读取全部 `\input`/`\include` 文件，并逐条列出
+HIGH/MEDIUM 风险段落、正文文件与行号、历史来源与页码、命中指标和人工修改方向。
+它不生成图片，也不生成替换稿或规避检测的改写。具名队员核对原文后，在复核 CSV
+中登记 `resolved`、`accepted_with_citation` 或 `false_positive`；正文一经修改，
+旧段落哈希对应的复核自动失效。本功能只用于本地人工排查，不计算、更不能替代官方
+同方知网双指标查重。阈值、状态和完整操作见
+`references/embedded/local-originality-preflight.md`。
+
 ## 可执行证据门禁
 
 初始化会自动选择竞赛模板和提交配置：
@@ -415,6 +433,9 @@ Use $mathematical-modeling-competition-copilot to solve this mathematical modeli
 |   |-- paper_depth_plan.csv
 |   |-- reviewer_scorecard.csv
 |   |-- milestones.csv
+|   |-- originality_config.json
+|   |-- originality_review.csv
+|   |-- originality_preflight.md
 |   |-- latex_compatibility.json
 |   |-- portable_latex_verification.json
 |   |-- paper_delivery.json

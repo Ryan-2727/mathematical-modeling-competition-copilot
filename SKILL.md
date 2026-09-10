@@ -239,6 +239,8 @@ Read:
 - `references/embedded/paper-writing-en-contest-base.md` and
   `references/embedded/paper-writing-mcm-icm-current.md` for MCM/ICM
 - `references/embedded/latex-paper-pipeline.md`
+- for local historical-corpus review,
+  `references/embedded/local-originality-preflight.md`
 - when learning from an offline corpus,
   `references/embedded/paper-learning-from-exemplars.md`,
   `references/embedded/2025-corpus-observations.md`, and
@@ -279,6 +281,16 @@ Required actions:
   the body. Use current official page limits; corpus-derived ranges are advisory
   and never justify padding.
 - For Chinese LaTeX, run the advisory `scripts/verify_chinese_academic_style.py`; review located formulaic openings, method catalogues, generic praise, duplicate prose, and overbroad scope by hand or bind a justified exception, but never auto-rewrite prose or infer authorship.
+- For CUMCM 2026, configure only an authorized historical corpus in
+  `reports/originality_config.json`, run
+  `scripts/originality_preflight.py`, and show the user
+  `reports/originality_preflight.md` before freeze. Identify every HIGH/MEDIUM
+  paragraph by draft location, source location, risk evidence, and human repair
+  direction. Do not upload material, create images, generate replacement prose,
+  or claim an official similarity percentage. Require a hash-current named
+  human disposition in `reports/originality_review.csv`; `REVIEW`, stale rows,
+  or `LIMITED` corpus coverage blocks strict release. Still require the separate
+  actual Tongfang/CNKI two-metric gate.
 - Produce `paper/main.pdf` and a rebuildable UTF-8 XeLaTeX/latexmk source tree
   with relative paths, `main.tex`, bibliography, sections, generated values,
   figures, styles, `.latexmkrc`, and `.vscode/`. The same portable root ZIP must
@@ -306,7 +318,8 @@ Required gates:
 - Verify claims/evidence chains, semantic and modeling arguments, executable
   kernel evidence, compute budgets, model validation, Chinese prose advisories, uncertainty/decision quality, causal boundaries, abstract/result
   story, bibliography, manuscript, figures/tables, notation/dimensions, and
-  verified values.
+  verified values. For configured CUMCM 2026 projects, unresolved or stale local
+  originality reviews and unreadable corpus coverage block strict release.
 - Compile both project-root and `build/` outputs; verify the rendered PDF,
   page-by-page readability, presentation, anonymity, portable source ZIP, and
   clean copied-project reproduction. For CUMCM 2026, explicitly record abstract

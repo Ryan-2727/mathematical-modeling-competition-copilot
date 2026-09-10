@@ -14,7 +14,7 @@ from typing import Any
 
 
 CURRENT_PROJECT_SCHEMA_VERSION = 3
-REGISTRY_VERSION = 5
+REGISTRY_VERSION = 6
 SCRIPT_DIR = Path(__file__).resolve().parent
 SKILL_ROOT = SCRIPT_DIR.parent
 PROFILE_DIR = SKILL_ROOT / "assets" / "contestctl" / "profiles"
@@ -290,6 +290,27 @@ NODE_REGISTRY = {
             ("reports/manuscript_quality.json",),
         ),
         Node(
+            "verify-local-originality",
+            "paper",
+            "originality_preflight.py",
+            (
+                "--project-dir", "{project}",
+                "--config", "{project}/reports/originality_config.json",
+                "--out-json", "{project}/reports/originality_preflight.json",
+                "--out-md", "{project}/reports/originality_preflight.md",
+            ),
+            (),
+            (
+                "reports/originality_config.json",
+                "reports/originality_review.csv",
+                "paper/**/*.tex",
+            ),
+            (
+                "reports/originality_preflight.json",
+                "reports/originality_preflight.md",
+            ),
+        ),
+        Node(
             "verify-decision-stability",
             "freeze",
             "verify_decision_stability.py",
@@ -552,6 +573,11 @@ def migration_plan(root: Path) -> dict[str, Any]:
         "reports/problem_selection_recommendation.json",
         "reports/problem_selection_recommendation.md",
     )
+    if manifest.get("submission_profile") == "cumcm-2026":
+        required_files += (
+            "reports/originality_config.json",
+            "reports/originality_review.csv",
+        )
     if raw_version < CURRENT_PROJECT_SCHEMA_VERSION:
         candidate["project_schema_version"] = CURRENT_PROJECT_SCHEMA_VERSION
         changes.append(
@@ -674,6 +700,19 @@ def migrate_project(root: Path, apply: bool, out: Path) -> dict[str, Any]:
                 "# CUMCM A/B/C 选题推荐\n\n待完成三题筛选、可执行试跑与本地证据绑定后生成。\n"
             ),
         }
+        if manifest.get("submission_profile") == "cumcm-2026":
+            templates.update(
+                {
+                    "reports/originality_config.json": (
+                        '{\n  "schema_version": 1,\n  "enabled": false,\n'
+                        '  "main_tex": "paper/main.tex",\n  "corpus_dirs": [],\n'
+                        '  "historical_corpus_confirmed": false\n}\n'
+                    ),
+                    "reports/originality_review.csv": (
+                        "finding_id,draft_sha256,disposition,reason,reviewer,status\n"
+                    ),
+                }
+            )
         created: list[str] = []
         for relative, content in templates.items():
             target = root / relative
@@ -910,11 +949,29 @@ def run_workflow(
     dry_run: bool = False,
 ) -> dict[str, Any]:
     profile = load_profile(profile_name, custom_profile)
-    if profile_name == "strict":
+    try:
+        manifest = _load_json(root / "contest_manifest.json")
+    except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
+        manifest = {}
+    originality_configured = False
+    originality_path = root / "reports" / "originality_config.json"
+    if manifest.get("submission_profile") == "cumcm-2026" and originality_path.is_file():
         try:
-            manifest = _load_json(root / "contest_manifest.json")
+            originality = _load_json(originality_path)
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
-            manifest = {}
+            originality_configured = True
+        else:
+            enabled = originality.get("enabled")
+            corpus_dirs = originality.get("corpus_dirs")
+            originality_configured = (
+                (enabled is True and isinstance(corpus_dirs, list) and bool(corpus_dirs))
+                or not isinstance(enabled, bool)
+                or not isinstance(corpus_dirs, list)
+            )
+    if originality_configured and profile_name in {"standard", "strict"}:
+        if "verify-local-originality" not in profile["phases"]["paper"]:
+            profile["phases"]["paper"].append("verify-local-originality")
+    if profile_name == "strict":
         if manifest.get("submission_profile") == "cumcm-2026":
             profile["phases"]["freeze"].extend(
                 ("verify-submission-md5-lock", "verify-official-similarity-risk")

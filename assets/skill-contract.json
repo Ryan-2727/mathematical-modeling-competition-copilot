@@ -23,7 +23,8 @@
     "cumcm-bc-model-library.md",
     "profile_compute_run.py",
     "verify_chinese_academic_style.py",
-    "verify_paper_reasoning_narrative.py"
+    "verify_paper_reasoning_narrative.py",
+    "originality_preflight.py"
   ],
   "descriptor_checks": {
     "README.md": ["Explicit Invocation Only"],
@@ -39,7 +40,8 @@
     "references/embedded/latex-paper-pipeline.md": ["Overleaf", "VS Code", "latexmk", "reports/latex_compatibility.json", ".vscode/settings.json", ".latexmkrc", "Ctrl+Alt+V", "verify_portable_latex.py"],
     "references/embedded/verified-literature-and-two-part-delivery.md": ["Google Scholar", "reports/bibliography.csv", "support/materials_manifest.csv"],
     "references/embedded/computation-and-visualization.md": ["results/verified_values.csv", "paper/generated/results.tex", "verify_model_validation.py"],
-    "references/embedded/final-verification.md": ["verify_pdf_visual.py", "anonymity_scan.py", "clean copied project"],
+    "references/embedded/final-verification.md": ["verify_pdf_visual.py", "anonymity_scan.py", "clean copied project", "originality_preflight.py", "originality_review.csv"],
+    "references/embedded/local-originality-preflight.md": ["text-only", "originality_config.json", "originality_review.csv", "HIGH", "MEDIUM", "creates no images", "Tongfang/CNKI"],
     "references/embedded/independent-review-and-regression.md": ["aggregate_reviewer_reports.py", "run_benchmark_regression.py", "prepare_private_regression.py"],
     "references/embedded/executable-contest-profiles.md": ["cumcm-2026", "mcm-icm-current"],
     "references/embedded/operational-quality-gates.md": ["rules.lock.json", "contestctl.py", "verify_abstract_quality.py", "verify_bibliography_metadata.py", "verify_manuscript_quality.py", "verify_delivery_profiles.py", "official-submission", "Coupled feasibility gate", "reports/feasibility_audit.json", "attachment-to-subproblem coverage", "zero/blank-value semantics", "censored/not-detected", "Data-scale and time-split gate", "reports/data_scale_audit.json"],
@@ -106,6 +108,7 @@
     "scripts/model_kernels/coverage.py",
     "scripts/model_kernels/interval_censored.py",
     "scripts/model_kernels/robust_allocation.py",
+    "scripts/originality_preflight.py",
     "scripts/prepare_private_regression.py",
     "scripts/profile_compute_run.py",
     "scripts/probe_runtime_capabilities.py",

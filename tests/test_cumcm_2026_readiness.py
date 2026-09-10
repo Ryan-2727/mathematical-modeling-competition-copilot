@@ -150,6 +150,8 @@ class Cumcm2026ReadinessTests(unittest.TestCase):
                 "reports/training_defects.csv",
                 "reports/training_roles.csv",
                 "reports/online_actions.csv",
+                "reports/originality_config.json",
+                "reports/originality_review.csv",
                 "reports/submission_md5_lock.json",
                 "reports/similarity_risk.json",
             ):
